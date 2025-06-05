@@ -1,0 +1,35 @@
+GET type = [
+    http://localhost:8000/get_home_data/
+    http://localhost:8000/get_course_data/
+    http://localhost:8000/get_gallery_data/
+    http://localhost:8000/get_video_data/
+    http://localhost:8000/get_success_stories/
+    http://localhost:8000/get_blog_data/
+    http://localhost:8000/get_visa_services/
+    http://localhost:8000/get_about_us_data/
+    http://localhost:8000/get_team_data/
+    http://localhost:8000/get_news_data/
+    http://localhost:8000/get_country_data/
+    http://localhost:8000/get_occupation_data/
+    http://localhost:8000/get_faq_data/
+]
+
+GET type (details) = [
+    http://localhost:8000/get_success_story_detail/id
+    http://localhost:8000/get_course_detail/id
+    http://localhost:8000/get_gallery_image_detail/id
+    http://localhost:8000/get_video_detail/id
+    http://localhost:8000/get_success_story_detail/id
+    http://localhost:8000/get_blog_detail/id
+    http://localhost:8000/get_news_detail/id
+    http://localhost:8000/get_team_detail/id
+    http://localhost:8000/get_visa_service_detail/id
+    http://localhost:8000/get_blog_comments/id
+]
+
+POST type = [
+    http://localhost:8000/visa-inquiry/
+    http://localhost:8000/submit-pr-visa-inquiry/
+    http://localhost:8000/submit_blog_comment/
+    http://localhost:8000/submit_cv/
+]
