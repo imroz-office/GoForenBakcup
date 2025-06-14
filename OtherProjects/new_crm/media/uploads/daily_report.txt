@@ -1,0 +1,266 @@
+def open_daily_report_page(request): 
+
+    if 'session_id' in request.session:
+        Username = request.session['session_user']
+        company_id = request.session['company_id']
+        session_id = request.session.get('session_id')
+        user_compeny = request.session['user_compney']
+        session_roleid = request.session.get('session_roleid')
+        cnx = mysql.connector.connect(user='shubhamsingh_sit_crm', password='kish@1102', host='localhost', database='shubhamsingh_sit_crm')
+        cursor = cnx.cursor(dictionary=True)  # Use dictionary cursor for easier data access
+        today_date = datetime.now().date()
+        # data = tbl_daily_report.objects.filter(userId=session_id, status="pending", leave_date =today_date)
+        query_today = """
+                            SELECT * FROM tbl_daily_report
+                            WHERE  DATE(reportDate) = %s AND userId = %s
+                            """
+                            
+        cursor.execute(query_today, (today_date,session_id))
+        data = cursor.fetchall()
+        data_length = len(data)
+       
+        if data_length == 0:
+            
+            report_id = 0
+            return render(request, "add-daily-report.html", {'report_id':report_id, 'Username':Username,'comp_name':user_compeny, 'session_roleid':session_roleid, 'companey_list':master_company.objects.all(),'company_id': company_id}) 
+        else:
+            query_today = """
+                            SELECT * FROM tbl_daily_report
+                            WHERE  DATE(reportDate) = %s AND userId = %s AND status = %s
+                            """
+                            
+            cursor.execute(query_today, (today_date,session_id,"pending"))
+            data = cursor.fetchall()
+            data_length = len(data)
+            if data_length == 0: 
+                report_id = 0
+                return render(request, "add-daily-report.html", {'report_id':report_id, 'Username':Username,'comp_name':user_compeny, 'session_roleid':session_roleid, 'companey_list':master_company.objects.all(),'company_id': company_id}) 
+     
+            else:
+        
+                report_id = data[0]['repoId']
+                return render(request, "add-daily-report.html", {'data':data, 'report_id':report_id, 'Username':Username,'comp_name':user_compeny, 'session_roleid':session_roleid, 'companey_list':master_company.objects.all(),'company_id': company_id}) 
+    else:
+    
+        return redirect(open_sign_in_page)
+
+def add_daily_report(request):
+    if 'session_id' in request.session:
+        if request.method == 'POST':
+            userid = request.session['session_id']
+            company_id = request.session['company_id']
+            username = request.session['session_user']
+            session_head_id = request.session.get('head_id')
+                
+            lep1 = request.POST.get('daily1', '')
+            lep2 = request.POST.get('daily2', '')
+            lep3 = request.POST.get('daily3', '')
+
+            today = timezone.now().date()
+            
+            leave_application_exists = tbl_leave_appli.objects.filter(
+                emp_id=userid,
+                app_start_date__lte=today,
+                app_end_date__gte=today,
+                status='approved'
+            ).exists()
+    
+            # If the user has a leave application for today, redirect them
+            if leave_application_exists:
+                messages.warning(request, 'You cannot submit a daily report today as you have applied for leave.')
+                return redirect('open_daily_report_least_page')
+                
+            existing_report = tbl_daily_report.objects.filter(userId=userid, reportDate=today).first()
+
+            if not existing_report:
+                # Create a new daily report
+                daily_report = tbl_daily_report(
+                    add_by_id=userid,
+                    lep1=lep1,
+                    lep2=lep2,
+                    lep3=lep3,
+                    company_id=company_id,
+                    status="pending",
+                    userId=userid,
+                    add_by_name=username,
+                    head_id=session_head_id,
+                    reportDate=timezone.now(),
+                    leave_date=today
+                )
+                daily_report.save()
+            else:
+                # Only update fields if they are not already filled
+                if not existing_report.lep1 and lep1:
+                    existing_report.lep1 = lep1
+                if not existing_report.lep2 and lep2:
+                    existing_report.lep2 = lep2
+                if not existing_report.lep3 and lep3:
+                    existing_report.lep3 = lep3
+
+                existing_report.status = "completed" if existing_report.lep3 else "pending"
+                existing_report.update_by_id = userid
+                existing_report.update_by_name = username
+                existing_report.save()
+
+            log_user_activity(
+                ope='Add/Edit daily report',
+                comment=f'Added a daily report for user {userid}.' if not existing_report else f'Edited daily report for user {userid}.',
+                by_user_id=userid,
+                by_user_name=username,
+                status='online',
+                lanti=None,
+                longti=None,
+            )
+
+            return redirect('open_daily_report_least_page')
+
+    return redirect('open_sign_in_page')
+
+
+
+    
+def open_daily_report_least_page(request):
+    if 'session_id' in request.session:
+        session_id = request.session.get('session_id')
+        session_roleid = request.session.get('session_roleid')
+        company_id = request.session['company_id']
+
+        # Get the date range from the request
+        from_date = request.GET.get('fromDate')
+        to_date = request.GET.get('toDate')
+
+        # Initialize the data queryset
+        if session_roleid == "1":
+            data = tbl_daily_report.objects.all()
+        else:
+            data = tbl_daily_report.objects.filter(add_by_id=session_id)
+
+        # Filter by date range if dates are provided
+        if from_date and to_date:
+            data = data.filter(reportDate__range=[from_date, to_date])
+
+        data = data.order_by('-reportDate')
+
+        return render(request, "daily-report-leasting.html", {
+            'data': data,
+            'Username': request.session['session_user'],
+            'session_id': session_id,
+            'session_roleid': session_roleid,
+            'comp_name': request.session['user_compney'],
+            'companey_list': master_company.objects.all(),
+            'company_id': company_id
+        })
+    else:
+        return redirect(open_sign_in_page)
+    
+def open_edit_daily_report(request, repoId):
+    if 'session_id' in request.session:
+        user_compeny = request.session['user_compney']
+        company_id = request.session['company_id']
+        session_roleid = request.session.get('session_roleid')
+        data =  get_object_or_404(tbl_daily_report, repoId=repoId)
+
+        
+    
+        return render(request,"edit-daily-report.html",{
+                # user_id = userid,
+                'lead': data, 
+                'daily1':data.lep1,
+                'daily2':data.lep2,
+                'daily3':data.lep3,
+                'comp_name':user_compeny, 
+                'session_roleid':session_roleid,
+                'companey_list':master_company.objects.all(),
+                'company_id': company_id,
+               
+            })
+    else:
+        return redirect(open_sign_in_page)
+
+    
+        def edit_daily_report_record(request, repoId):
+        if 'session_id' in request.session:
+            if request.method == 'POST':
+                userid = request.session['session_id']
+                username = request.session['session_user']
+    
+                lep1 = request.POST.get('daily1', '')
+                lep2 = request.POST.get('daily2', '')
+                lep3 = request.POST.get('daily3', '')
+    
+                data = get_object_or_404(tbl_daily_report, repoId=repoId)
+    
+                # Update logic as needed based on leave_type
+                if data.leave_type == "":
+                    data.lep1 = lep1 or data.lep1
+                    data.lep2 = lep2 or data.lep2
+                    data.lep3 = lep3 or data.lep3
+                    data.status = "completed" if lep3 else "pending"
+                elif data.leave_type in ["first_half", "sec_half"]:
+                    if lep1:
+                        data.lep1 = lep1
+                    if lep2:
+                        data.lep2 = lep2
+                    if lep3:
+                        data.lep3 = lep3
+                    data.status = "completed"
+    
+                data.update_by_id = userid
+                data.update_by_name = username
+                data.save()
+    
+                log_user_activity(
+                    ope='Edit Daily Report',
+                    comment=f'Edited daily report with ID {repoId}.',
+                    by_user_id=userid,
+                    by_user_name=username,
+                    status='online',
+                    lanti=None,
+                    longti=None,
+                )
+                return redirect('open_daily_report_least_page')
+    
+        return redirect('open_sign_in_page')
+
+        def view_daily_report(request, repoId):
+        if 'session_id' in request.session:
+    
+            Username = request.session['session_user']  # Retrieve session_id from session
+            user_compeny = request.session['user_compney']
+            company_id = request.session['company_id']
+    
+            session_id = request.session.get('session_id')
+            session_roleid = request.session.get('session_roleid')
+            cnx = mysql.connector.connect(user='shubhamsingh_sit_crm', password='kish@1102', host='localhost', database='shubhamsingh_sit_crm')
+            cursor = cnx.cursor(dictionary=True)  # Use dictionary cursor for easier data access
+            # Retrieve session_id from session
+            if session_id and session_roleid:
+                if session_roleid == "1":
+    
+                    data =  get_object_or_404(tbl_daily_report, repoId=repoId)
+                    # sql_query = 'SELECT * FROM tbl_followup ORDER BY create_time DESC'
+                    # cursor.execute(sql_query)
+                    # show_list = cursor.fetchone()
+                   
+                else:
+                    data =  get_object_or_404(tbl_daily_report, repoId=repoId)
+                    # sql_query = 'SELECT * FROM tbl_followup WHERE lead_id = %s ORDER BY create_time DESC'
+                    # cursor.execute(sql_query, (l_id,))
+                    # show_list = cursor.fetchone()
+                   
+               
+    
+            return render(request,"view-daily-report.html",{
+                    # user_id = userid,
+                    'lead': data, 
+                    'user_name':Username,
+                    'comp_name':user_compeny, 
+                    'session_roleid':session_roleid,
+                    'companey_list':master_company.objects.all(),
+                    'company_id': company_id,
+                    
+                    
+                    # 'leadtypes': master_leadtype.objects.all() 
+                })
+        else:
+            return redirect(open_sign_in_page)
