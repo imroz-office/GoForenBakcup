@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+{% if request.GET.success1 %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Incorrect Old Password.',
+            text: 'Please check your old password and try again.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the desired page after confirmation
+                window.location.href =  "{% url 'profile' %}";
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% if request.GET.success %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Password Changed Successfully',
+            text: 'Your password has been updated.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the desired page after confirmation
+                window.location.href =  "{% url 'profile' %}";
+            }
+        });
+    });
+</script>
+{% endif %}
+
+{% if request.GET.success2 %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Profile Updated Successfully!',
+            text: 'Your profile has been updated. All changes are now saved.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the desired page after confirmation
+                window.location.href =  "{% url 'profile' %}";
+            }
+        });
+    });
+</script>
+{% endif %}
+
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1><i class="fa fa-user-circle"></i> My Profile</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--<div class="row">-->
+
+		<!--</div>-->
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<h4>Profile</h4>
+							<br><br>
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+									<form action="{% url 'profile_Update' %}" method="post" id="editProfile" role="form">
+                                        {% csrf_token %}
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="fname">Full Name</label>
+                                                        <input type="text" class="form-control" id="fname" name="name" value="{{ request.session.session_user }}" maxlength="128" />
+                                                    </div>
+                                                </div>
+                                            </div><br>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="mobile">Mobile Number</label>
+                                                        <input type="text" class="form-control" id="mobile" name="mobile" oninput="this.value = this.value.replace(/[^0-9]/g, '');" value="{{ request.session.session_mobile }}" maxlength="10" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><br>
+                                        <div class="box-footer">
+                                            <input type="submit" class="btn btn-primary" value="Submit" />
+                                            <!--<input type="reset" class="btn btn-default" value="Reset" />-->
+                                        </div>
+                                    </form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<h4>Change Password</h4>
+							<br><br>
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+									<form action="{% url 'change_Password' %}" id="addUser" method="post">
+                                        {% csrf_token %}
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="inputOldPassword">Old Password</label>
+                                                        <input type="text" class="form-control" id="inputOldPassword" placeholder="Old password" name="current_password" maxlength="20" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="inputPassword1">New Password</label>
+                                                        <input type="text" class="form-control" id="password" placeholder="New password" name="new_password" maxlength="20" required>
+                                                    </div>
+                                                </div>
+                                            </div><br>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="inputPassword2">Confirm New Password</label>
+                                                        <input type="text" class="form-control" id="cpassword" placeholder="Confirm new password" name="confirm_new_password" maxlength="20" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div><br>
+                    
+                                        <div class="box-footer">
+                                            <input type="submit" class="btn btn-primary" value="Submit" />
+                                        </div>
+                                    </form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // When the form is submitted
+        $('#addUser').on('submit', function(event) {
+            var password = $('#password').val();
+            var confirmPassword = $('#cpassword').val();
+
+            // Check if password and confirm password match
+            if (password !== confirmPassword) {
+                // Display SweetAlert error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'New Passwords do not match!',
+                });
+
+                event.preventDefault();  // Prevent form submission
+            }
+        });
+    });
+</script>
+
+{% endblock %}

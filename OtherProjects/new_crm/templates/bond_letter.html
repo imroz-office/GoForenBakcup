@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bond Letter</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            background-color: gray;
+            padding: 0;
+            margin: 0;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            background-color: white;
+            margin: 20px auto;
+            padding: 40px 30mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align:justify;
+            /*place-content:center;*/
+        }
+
+        p {
+            margin: 10px 0;
+            line-height: 1.6;
+            text-align:justify;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        ul {
+            margin: 5px 0 15px 20px;
+        }
+
+        .print-button {
+            text-align: center;
+            margin: 30px 0;
+            position:fixed;
+            top:10px;
+            left:10px;
+        }
+
+        .print-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .print-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page 1 -->
+    <div class="page">
+        <p style="text-align:right;">Date: <span id="today-date"></span></p>
+
+        <p><strong>{{ employee.name.title|default:"" }} {{ employee.middle_name.title|default:"" }} {{ employee.last_name.title|default:"" }}</strong>,<br>
+        {{ employee.address|default:"_________" }},<br>
+        {{ employee.city|default:"_________" }},<br>
+        {{ employee.country|default:"_________" }},
+        {{ employee.zip_code|default:"_________" }},<br>
+        </p>
+        <p  style="text-align:center;"><strong>Subject:</strong> Bond for post of {{ employee.role_name.title|default_if_none:"_____________" }}</p>
+
+        <p><strong>Dear {{ employee.name.title|default:"" }} {{ employee.middle_name.title|default:"" }} {{ employee.last_name.title|default:"" }}</strong>,</p>
+
+        <p>We are pleased to offer you the position of {{ employee.role_name.title|default_if_none:"_____________" }} with our Company {{ employee.company_name.title|default:"" }} on the following terms and conditions:</p>
+
+        <p><strong>1. Commencement of employment</strong><br>
+        Your employment will be effective as of {{ employee.join_date|date:"F j, Y"|default_if_none:"_____________" }}.</p>
+
+        <p><strong>2. Job title</strong><br>
+        Your job title will be {{ employee.role_name.title|default:"_____________" }}.</p>
+
+        <p><strong>3. Salary</strong><br>
+        Your salary and other benefits will be as set out in Schedule 1, hereto.</p>
+
+        <p><strong>4. Place of posting</strong><br>
+        You will be posted at Surat, Gujarat. You may however be required to work at any place of business which the Company has, or may later acquire.</p>
+
+        <p><strong>5. Hours of Work</strong><br>
+        The normal working days are Monday through Saturday. You will be required to work for such hours as necessary for the proper discharge of your duties to the Company. The normal working hours are from <strong>{{ employee.attendence_time|default:"" }}</strong> and you are expected to work not less than given hours each week, and if necessary for additional hours depending on your responsibilities..</p>
+
+        <p><strong>6. Leave/Holidays</strong></p>
+        <ul>
+            <li>You are entitled to casual leave of 1 day.</li>
+            <li>You are entitled to 0.5 working days of paid sick leave.</li>
+            <li>The Company shall notify a list of declared holidays at the beginning of each year.</li>
+        </ul>
+
+        <p><strong>7. Nature of duties</strong><br>
+        You will perform to the best of your ability all the duties as are inherent in your post and such additional duties as the company may call upon you to perform. Your specific duties are set out in Schedule II hereto.</p>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="page page-break">
+        <p><strong>8. Company property</strong><br>
+        You will maintain in good condition Company property entrusted to you. All property must be returned upon leaving the company.</p>
+
+        <p><strong>9. Borrowing/accepting gifts</strong><br>
+        You will not borrow or accept any money, gift, reward or compensation for your personal gains from or otherwise place yourself under pecuniary obligation to any person/client with whom you may be having official dealings.</p>
+
+        <p><strong>10. Termination</strong></p>
+        <ul>
+            <li>Your appointment can be terminated by the Company, without any reason, by giving you not less than 3 months’ prior notice in writing or salary in lieu thereof. For the purpose of this clause, salary shall mean basic salary.</li>
+            <li>You may terminate your employment with the Company, without any cause, by giving no less than 3 months’ prior notice or salary for unsaved period, left after adjustment of pending leaves, as on date.</li>
+            <li>The Company reserves the right to terminate your employment summarily without any notice period or termination payment, if it has reasonable ground to believe you are guilty of misconduct or negligence, or have committed any fundamental breach of contract or caused any loss to the Company. </li>
+            <li>On the termination of your employment for whatever reason, you will return to the Company all property; documents and paper, both original and copies thereof, including any samples, literature, contracts, records, lists, drawings, blueprints, letters, notes, data and the like; and Confidential Information, in your possession or under your control relating to your employment or to clients’ business affairs. </li>
+        </ul>
+
+        <p><strong>11. Confidential Information</strong></p>
+        <ul>
+            <li>During your employment with the Company you will devote your whole time, attention and skill to the best of your ability for its business. You shall not, directly or indirectly, engage or associate yourself with, be connected with, concerned, employed or engaged in any other business or activities or any other post or work part time or pursue any course of study whatsoever, without the prior permission of the Company.</li>
+            <li>You must always maintain the highest degree of confidentiality and keep as confidential the records, documents and other Confidential Information relating to the business of the Company which may be known to you or confided in you by any means and you will use such records, documents and information only in a duly authorized manner in the interest of the Company. For the purposes of this clause ‘Confidential Information’ means information about the Company’s business and that of its customers which is not available to the general public and which may be learnt by you in the course of your employment. This includes, but is not limited to, information relating to the organization, its customer lists, employment policies, personnel, and information about the Company’s products, processes including ideas, concepts, projections, technology, manuals, drawing, designs, specifications, and all papers, resumes, records and other documents containing such Confidential Information.</li>
+            <li>At no time, will you remove any Confidential Information from the office without permission.</li>
+        </ul> 
+    </div>
+
+    <!-- Page 3 -->
+    <div class="page page-break">
+        <ul>
+            <li>Your duty to safeguard and not disclose Confidential Information will survive the expiration or termination of this Agreement and/or your employment with the Company.</li>
+            <li>Breach of the conditions of this clause will render you liable to summary dismissal under clause  above in addition to any other remedy the Company may have against you in law.</li>
+        </ul>
+
+        <p><strong>12. Notices</strong><br>
+       Notices may be given by you to the Company at its registered office address. Notices may be given by the Company to you at the address intimated by you in the official records.</p>
+
+        <p><strong>13. Applicability of Company Policy</strong><br>
+        The Company shall be entitled to make policy declarations from time to time pertaining to matters like leave entitlement, maternity leave, employees’ benefits, working hours, transfer policies, etc., and may alter the same from time to time at its sole discretion. All such policy decisions of the Company shall be binding on you and shall override this Agreement to that extent.</p>
+
+        <p><strong>14. Governing Law/Jurisdiction</strong><br>
+        Your employment with the Company is subject to Indian laws. All disputes shall be subject to the jurisdiction of Surat,Gujarat only.</p>
+
+        <p><strong>15. Acceptance of our offer</strong><br>
+        Please confirm your acceptance of this Contract of Employment by signing and returning the duplicate copy.</p>
+
+        <p>We welcome you, and look forward to receiving your acceptance and to working with you.</p>
+
+        <br><br>
+        <p>Yours Sincerely,</p>
+
+        <br><br>
+        <p style="text-align:right;">Authorized Signatory</p>
+        </div>
+
+    <!-- Print Button -->
+    <div class="print-button">
+        <button onclick="window.print()">🖨️ Print</button>
+    </div>
+    
+<script>
+  const today = new Date();
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = today.toLocaleDateString(undefined, options);
+
+  document.getElementById('today-date').textContent = formattedDate;
+</script>
+
+</body>
+</html>

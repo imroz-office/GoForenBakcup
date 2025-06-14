@@ -1,0 +1,559 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts"
+                    style="display: flex; justify-content: space-between;">
+                    <div>
+                        {% if is_edit %} <h1>Edit SMO </h1> {% else %} <h1>ADD SMO </h1> {% endif %}
+                        
+                    </div>
+                    <div>
+                    <a href="{% url 'SEO' %}" type="button"
+							class="btn btn-primary right-sidebar-in content-sidebar-menu">
+							<i class="bi bi-person-fill" style="font-size: 1rem;"></i>View List
+						</a>
+                    <!--<div>-->
+                    <!--                   <a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+                    <!--                   <i class="bi bi-funnel-fill"></i> Filter-->
+                    <!--   </a>-->
+                    <!--</div>-->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+
+                <div class="ec-cat-list card card-default mb-24px">
+                    <div class="card-body">
+                        <div class="row ec-vendor-uploads">
+                            {% if is_edit %} <h4>Edit SMO</h4> {% else %} <h4>ADD SMO</h4> {% endif %}
+
+                            
+                            <br><br>
+                            <div class="col-lg-12">
+                                <div class="ec-vendor-upload-detail">
+                                    <form id="addSMOForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_seo' lead.smoId %}{% else %}{% url 'addseo' %}{% endif %}" method="post">
+                                        {% csrf_token %}
+                                        
+                                        <div class="col-md-6" id="oldClientField" style="display: block;">
+                                            <label for="" class="form-label">Company Name</label>
+                                            <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                            <select name="clt_id" aria-label="Select a Client" data-placeholder="Select a Client..." id="oldClientName"
+                                                class="form-select form-select-solid" style="background-color: #ebebeb4a;" onchange="updateClientDetails()">
+                                                <option value="">Select a Company...</option>
+                                                {% for client in client_list %}
+                                                <option value="{{ client.clt_id }}" {% if lead.clt_id == client.clt_id %}selected{% endif %}>{{ client.comp_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label for="company_name" class="form-label">Client Name</label>
+                                             <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                            <input type="text" required class="form-control slug-title" name="c_name" placeholder="Client Name" id="client_name" value="{{ lead.c_name|default:'' }}">
+                                        </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label for="company_name" class="form-label">Plan</label>
+                                             <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                <select name="seo_plan_id" aria-label="Select a Client" data-placeholder="Select a Client..." id="" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                                    <option value="">Select a Plan...</option>
+                                                    {% for i in seo_plan %}
+                                                    <option value="{{ i.id }}" {% if lead.seo_plan_id == i.id %}selected{% endif %}>{{ i.plan_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <!--<input type="text" required class="form-control slug-title" name="client_name" placeholder="Client Name" value="{{ lead.c_name|default:'' }}">-->
+                                            </div>
+                                        </div>
+                                        
+                                        {% if is_edit and lead.seo_plan_id %}
+                                            <div class="col-lg-12" style="margin-top: 10px;">
+                                                <div class="col-lg-6">
+                                                    <label for="company_name" class="form-label">Start Date</label>
+                                                     <div class="input-group clockpicker">
+                                                        <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                    <input type="date" required class="form-control slug-title" name="seo_start" placeholder="Client Name" id="seo_start" value="{{ lead.seo_start|date:'Y-m-d'|default:'' }}">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-lg-12" style="margin-top: 10px;">
+                                                <div class="col-lg-6">
+                                                    <label for="company_name" class="form-label">End Date</label>
+                                                     <div class="input-group clockpicker">
+                                                        <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                    <input type="date" required class="form-control slug-title" name="seo_expire" placeholder="Client Name" id="seo_expire" value="{{ lead.seo_expire|date:'Y-m-d'|default:'' }}">
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="col-lg-6">
+                                            <label for="company_name" class="form-label">Website URL</label>
+                                             <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                            <input type="text" required class="form-control slug-title" name="web_url" placeholder="Enter Website URL" value="{{ lead.web_url|default:'' }}">
+                                        </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label for="company_name" class="form-label">Remark</label>
+                                             <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                            <input type="text" required class="form-control slug-title" name="remark" placeholder="Enter Remark" value="{{ lead.remark|default:'' }}">
+                                        </div>
+                                        </div>  
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                                    <script>
+                                        function updateClientDetails() {
+                                        var selectedClient = document.getElementById('oldClientName').value;
+                                    
+                                        // You can replace the following with an AJAX request to fetch the client details dynamically
+                                        var clients = [
+                                            {% for client in client_list %}
+                                            {
+                                                clt_id: "{{ client.clt_id }}",
+                                                name: "{{ client.name }}",
+                                                // comp_name: "{{ client.comp_name }}",
+                                                // email: "{{ client.email }}",
+                                                // mobile: "{{ client.mobile }}",
+                                                // address: "{{ client.address }}",
+                                                // city: "{{ client.city }}",
+                                                // state: "{{ client.state }}",
+                                                // country: "{{ client.country }}"
+                                            },
+                                            {% endfor %}
+                                        ];
+                                        
+                                        var client = clients.find(c => c.clt_id === selectedClient);
+                                        
+                                        if (client) {
+                                            // Update fields based on selected client
+                                            // document.getElementById('inputEmail4').value = client.email || '';
+                                            document.getElementById('client_name').value = client.name || '';
+                                            // document.getElementById('inputMobile').value = client.mobile || '';
+                                            // document.getElementById('inputAddress').value = client.address || '';
+                                            // document.getElementById('citySelect').value = client.city || '';
+                                            // document.getElementById('stateInput').value = client.state || '';
+                                            // document.getElementById('countryInput').value = client.country || '';
+                                        } else {
+                                            // Clear fields if no client is selected
+                                            document.getElementById('inputEmail4').value = '';
+                                            // document.getElementById('comp_name').value = '';
+                                            // document.getElementById('inputMobile').value = '';
+                                            // document.getElementById('inputAddress').value = '';
+                                            // document.getElementById('citySelect').value = '';
+                                            // document.getElementById('stateInput').value = '';
+                                            // document.getElementById('countryInput').value = '';
+                                        }
+                                    }
+
+                                    </script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $('#addSMOForm').submit(function(e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        // Disable the submit button to prevent further clicks
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true);  // Disable the submit button
+        submitButton.text('Submitting...');    // Optional: Change the button text to indicate submission
+
+        // Prepare the form data
+        var formData = $(this).serialize();  
+
+        // Check if the form is for adding or editing by inspecting the action URL
+        var isEdit = $(this).attr('action').includes('edit_seo'); 
+
+        // Send the form data using AJAX
+        $.ajax({
+            url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Show success alert with SweetAlert for Add or Edit
+                    Swal.fire({
+                        icon: 'success',
+                        title: isEdit ? 'SEO Updated!' : 'SEO Added!',
+                        text: response.message,
+                    }).then(() => {
+                        if (isEdit) {
+                            window.location.href = "{% url 'SEO' %}"; 
+                        } else {
+                            window.location.href = "{% url 'add_seo' %}"; 
+                        }
+                    });
+                } else {
+                    // Show error alert if something goes wrong
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred, please try again.',
+                });
+            },
+            complete: function() {
+                // You can keep the button disabled if needed, or re-enable it if necessary
+                // submitButton.prop('disabled', false);  // Re-enable the button after the request completes
+                // submitButton.text(isEdit ? 'Update' : 'Submit');  // Reset the button text if necessary
+            }
+        });
+    });
+});
+
+</script>
+
+
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

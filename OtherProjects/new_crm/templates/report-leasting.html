@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+
+
+<div class="content-body">
+            <!-- row -->
+			<div class="container-fluid">
+								<div class="row">
+					<div class="main-div">
+						<div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between;">
+					        <div>
+							<h1>Report</h1>
+						     </div>
+					        <div>
+                                <a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">
+                                <i class="bi bi-funnel-fill"></i> Filter
+					      	    </a>
+					        </div>
+				        	</div>
+					</div>
+				</div>
+					<div class="col-xl-12 active-p">
+					<div class="tab-content" id="pills-tabContent">
+						<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+							<div class="card">
+								<div class="card-body px-0">
+								  <div class="table-responsive active-projects user-tbl  dt-filter">
+									<table id="user-tbl" class="table shorting">
+										<thead>
+											<tr>
+												<!--<th>-->
+												<!--	<div class="form-check custom-checkbox ms-0">-->
+												<!--		<input type="checkbox" class="form-check-input" id="checkAll" required="">-->
+												<!--		<label class="form-check-label" for="checkAll"></label>-->
+												<!--	</div>-->
+												<!--</th>-->
+												<th>Date</th>
+												<th>Sales Person</th>
+												<th>Segment</th>
+												<th>Status</th>
+												<th>Stage</th>
+												<th>Total</th>
+											</tr>
+										</thead>
+										<tbody>
+										    <tr>
+										        <td>demo</td>
+										        <td>demo</td>
+										        <td>demo</td>
+										        <td>demo</td>
+										        <td>demo</td>
+										        <td>demo</td>
+										    </tr>
+										</tbody>
+										
+									</table>
+								</div>
+							   </div>
+							</div>
+						
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+        </div>
+
+
+{% endblock %}

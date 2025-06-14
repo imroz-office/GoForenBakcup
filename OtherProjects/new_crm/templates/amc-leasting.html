@@ -1,0 +1,1030 @@
+{% extends "base.html" %}
+{% load static %}
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<style>
+    .form-select {
+        display: block;
+        padding: 10px 15px;
+        width: 100%;
+
+        -moz-padding-start: calc(0.75rem - 3px);
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #888888;
+        background-color: #F3F0EC;
+        background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+        border: 1px solid #E6E6E6;
+        border-radius: 6px;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        appearance: none;
+    }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(26px);
+    }
+</style>
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts"
+                    style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>Manage AMC</h1>
+                    </div>
+                    <div>
+                        <a href="{% url 'AMC' %}" type="button"
+							class="btn btn-primary right-sidebar-in content-sidebar-menu">
+							<i class="bi bi-person-fill" style="font-size: 1rem;"></i>View AMC
+						</a>
+                       <!-- <a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+                       <!--    <i class="bi bi-funnel-fill"></i> Filter-->
+                       <!--</a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--<div class="row">-->
+        <!--	<div class="col-xl-12 col-lg-12">-->
+        <!--		<div class="ec-cat-list card card-default mb-24px">-->
+        <!--			<div class="card-body">-->
+        <!--				<div class="row ec-vendor-uploads">-->
+        					<!--<h4>{{ is_edit|yesno:"Edit Payment Voucher,Add Payment Voucher" }}</h4>-->
+        <!--					<br><br>-->
+        <!--					<div class="col-lg-12">-->
+        <!--						<div class="ec-vendor-upload-detail">-->
+        <!--							<form id=""  class="form row g-3" action="{% url 'add_payment' %}" method="post">-->
+        <!--								{% csrf_token %}-->
+        								
+        <!--								<div class="col-lg-6">-->
+        <!--									<label for="inputRemark" class="form-label">Select Company</label>-->
+        <!--									<div class="input-group clockpicker">-->
+        <!--                                        <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+        <!--									<select name="clt_id" aria-label="Unit Measure" required data-placeholder="Unit Measure" class="form-select form-select-solid" style="background-color: #ebebeb4a;" >-->
+        <!--                                        <option value="">Select Company</option>-->
+        <!--                                        {% for c in client %}-->
+        <!--                                        <option value="{{ c.clt_id }}" {% if entries.clt_id == c.clt_id %}selected{% endif %}>{{ c.comp_name }}</option>-->
+        <!--                                        {% endfor %}-->
+        <!--                                    </select>-->
+        <!--								</div>-->
+        <!--								</div>-->
+        <!--								<div class="col-lg-12">-->
+        <!--									<button type="submit" class="btn btn-primary">Submit</button>-->
+        <!--								</div>-->
+        <!--							</form>-->
+        <!--						</div>-->
+        <!--					</div>-->
+        <!--				</div>-->
+        <!--			</div>-->
+        <!--		</div>-->
+        <!--	</div>-->
+        <!--</div>-->
+        
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+
+                <div class="ec-cat-list card card-default mb-24px">
+                    <div class="card-body">
+                        <div class="row ec-vendor-uploads">
+                            <h4>{{ is_edit|yesno:"Edit AMC,Add AMC" }}</h4>
+                            <br><br>
+                            <div class="col-lg-12">
+                                <div class="ec-vendor-upload-detail">
+                                    <form id="addamcForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_amc' amc_entry.amc_id %}{% else %}{% url 'addamc' %}{% endif %}" method="post">
+                                        {% csrf_token %}
+                                        <div class="col-md-6" id="oldClientField" style="display: block;">
+                                            <label for="" class="form-label">Company Name</label>
+                                            <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                            <select name="clt_id" aria-label="Select a Client" data-placeholder="Select a Client..." id="oldClientName"
+                                                class="form-select form-select-solid" style="background-color: #ebebeb4a;" onchange="updateClientDetails()">
+                                                <option value="">Select a Client...</option>
+                                                {% for client in client %}
+                                                <option value="{{ client.clt_id }}" {% if amc_entry.clt_id == client.clt_id %}selected{% endif %}>{{ client.comp_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        </div>
+<!--                                        <div class="col-lg-6">-->
+<!--                                            <label for="company_name" class="form-label">Client Name</label>-->
+<!--                                             <div class="input-group clockpicker">-->
+<!--                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+<!--                                            <input type="text" required class="form-control slug-title" name="client_name" placeholder="Company Name" id="name" value="{{ amc_entry.name|default:'' }}">-->
+<!--                                        </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-lg-6">-->
+<!--                                            <label for="inputEmail4" class="form-label">Email</label>-->
+<!--                                             <div class="input-group clockpicker">-->
+<!--                                              <span class="input-group-text"><i class="fas fa-at"></i></span>-->
+<!--                                            <input type="email" required class="form-control slug-title" name="email" placeholder="Enter Email" id="inputEmail4" value="{{ amc_entry.email|default:'' }}">-->
+<!--                                        </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-lg-6">-->
+<!--                                            <label for="inputMobile" class="form-label">Mobile</label>-->
+<!--                                                  <div class="input-group clockpicker">-->
+<!--                                              <span class="input-group-text"><i class="fas fa-at"></i></span>-->
+<!--                                            <input type="text" required class="form-control slug-title" name="mobile" placeholder="Enter Mobile" id="inputMobile" value="{{ amc_entry.mobile|default:'' }}" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');">-->
+<!--                                        </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-lg-6">-->
+<!--                                            <label for="inputAddress" class="form-label">Address</label>-->
+<!--                                            <div class="input-group clockpicker">-->
+<!--                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>-->
+<!--                                            <input type="text" required class="form-control slug-title" name="address" placeholder="Enter Address" id="inputAddress" value="{{ amc_entry.address|default:'' }}">-->
+<!--                                        </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="col-lg-6">-->
+<!--											<label class="form-label">Select City</label>-->
+<!--												 <div class="input-group clockpicker">-->
+<!--                                              <span class="input-group-text"><i class="fas fa-map"></i></span>-->
+<!--											<select name="city" aria-label="Select a City" id="citySelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">-->
+<!--                                                <option value="">Select City</option>-->
+<!--                                                {% for city in citys %}-->
+<!--                                                    <option value="{{ city.city }}" {% if amc_entry.city == city.city %}selected{% endif %} data-state="{{ city.state }}" data-country="{{ city.country }}">{{ city.city }}</option>-->
+<!--                                                {% endfor %}-->
+<!--                                            </select>-->
+<!--										</div>-->
+<!--										</div>-->
+<!--                                        <div class="col-lg-6">-->
+<!--											<label for="inputEmail4" class="form-label">State</label>-->
+<!--											 <div class="input-group clockpicker">-->
+<!--                                              <span class="input-group-text"><i class="fas fa-globe"></i></span>-->
+<!--											<input type="text" required class="form-control slug-title" name="state"-->
+<!--												placeholder="State" id="stateInput" value="{{ amc_entry.state|default:'' }}" readonly>-->
+<!--										</div>-->
+<!--										</div>-->
+<!--										<div class="col-lg-6">-->
+<!--											<label for="inputEmail4" class="form-label">Country</label>-->
+<!--											      <div class="input-group clockpicker">-->
+<!--                                              <span class="input-group-text"><i class="fas fa-globe"></i></span>-->
+<!--											<input type="text" required class="form-control slug-title" name="country"-->
+<!--												placeholder="Country" id="countryInput" value="{{ amc_entry.country|default:'' }}" readonly>-->
+<!--										</div>-->
+<!--</div>-->
+                                        <div class="col-lg-6">
+                                            <label for="inputEmail4" class="form-label">Project Name</label>
+                                              <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                            <input type="text" required class="form-control slug-title"
+                                                name="p_name" placeholder="Project Name" value="{{ amc_entry.p_name|default:'' }}" oninput="this.value = this.value.replace(/[^A-Za-z _,/-]/g, '');">
+                                        </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label class="form-label">AMC Include</label>
+                                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text">  <i class="fa-solid fa-file-signature"></i></span>
+                                          
+                                            <select name="amc_type" aria-label="Project Include" required
+                                                data-placeholder="Select a City..." id="citySelect"
+                                                class="form-select form-select-solid"
+                                                style="background-color: #ebebeb4a;">
+                                                <option value="">AMC Include...</option>
+                                                <option value="Domain" {% if amc_entry.amc_type == "Domain" %}selected{% endif %}>Domain</option>
+                                                <option value="Hosting" {% if amc_entry.amc_type == "Hosting" %}selected{% endif %}>Hosting</option>
+                                                <option value="Application" {% if amc_entry.amc_type == "Application" %}selected{% endif %}>Application</option>
+                                            </select>
+                                        </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label for="inputEmail4" class="form-label">AMC Percentage</label>
+                                              <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>
+                                            <input type="text" required class="form-control slug-title"
+                                                name="amc_percentage" placeholder="AMC Percentage" value="{{ amc_entry.amc_percentage|default:'' }}">
+                                        </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label for="inputEmail4" class="form-label">AMC price</label>
+                                              <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>
+                                            <input type="text" required class="form-control slug-title"
+                                                name="amc_amount" placeholder="Project Name" value="{{ amc_entry.amc_amount|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label for="inputEmail4" class="form-label">Server start-date</label>
+                                              <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>
+                                            <input type="date" required class="form-control slug-title"
+                                                name="server_sdate" placeholder="Project Name" value="{{ amc_entry.server_sdate|date:'Y-m-d'|default:'' }}" >
+                                        </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label for="inputEmail4" class="form-label">Server end-date</label>
+                                              <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>
+                                            <input type="date" required class="form-control slug-title"
+                                                name="server_edate" placeholder="Project Name" value="{{ amc_entry.server_edate|date:'Y-m-d'|default:'' }}">
+                                        </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label for="inputEmail4" class="form-label">Server price</label>
+                                              <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>
+                                            <input type="text" required class="form-control slug-title"
+                                                name="server_price" placeholder="Server price" value="{{ amc_entry.server_price|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        </div>
+                                        </div>
+                                        
+<!--                                        <div class="col-lg-6">-->
+<!--                                            <label for="inputEmail4" class="form-label">AMC Renewal date</label>-->
+<!--                                                  <div class="input-group clockpicker">-->
+<!--                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>-->
+<!--                                            <input type="date" required class="form-control slug-title"-->
+<!--                                                name="amc_redate" placeholder="Project Name" id="inputEmail4" value="{{ amc_entry.amc_redate|date:'Y-m-d'|default:'' }}" >-->
+<!--                                        </div>-->
+<!--                                         </div>-->
+<!--                                        <div class="col-lg-6">-->
+<!--                                            <label class="form-label">Project Include</label>-->
+<!--                                                <div class="input-group clockpicker">-->
+<!--                                              <span class="input-group-text"> <i class="fa-solid fa-list-check"></i></span>-->
+                                           
+<!--                                            <select name="project_include" aria-label="Project Include" required-->
+<!--                                                data-placeholder="Select a City..." id="citySelect"-->
+<!--                                                class="form-select form-select-solid"-->
+<!--                                                style="background-color: #ebebeb4a;">-->
+<!--                                                <option value="">Project Include...</option>-->
+<!--                                                <option value="APP" {% if amc_entry.project_include == "APP" %}selected{% endif %}>APP</option>-->
+<!--                                                <option value="WebApp" {% if amc_entry.project_include == "WebApp" %}selected{% endif %}>WebApp</option>-->
+<!--                                                <option value="Website" {% if amc_entry.project_include == "Website" %}selected{% endif %}>Website</option>-->
+<!--                                            </select>-->
+<!--                                        </div>-->
+<!--</div>-->
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Domain Type</label>
+                                                <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fa-solid fa-credit-card"></i></span>
+                                           
+                                            <select name="Domain_type" aria-label="Select Domain" required id="domainSelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                                <option value="">Select Domain</option>
+                                                <option value="Company" {% if amc_entry.Domain_type == "Company" %}selected{% endif %}>Company</option>
+                                                <option value="Client" {% if amc_entry.Domain_type == "Client" %}selected{% endif %}>Client</option>
+                                            </select>
+                                        </div>
+                                        </div>
+                                        <div id="domainOptions" class="col-lg-6 d-none">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="domainName" class="form-label">Domain Company Name</label>
+                                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"> <i class="fa-solid fa-server"></i></span>
+                                                    <input type="text" name="domain_company" class="form-control" placeholder="Enter Domain Company Name" value="{{ amc_entry.domain_company|default:'' }}" oninput="this.value = this.value.replace(/[^A-Za-z _,/-]/g, '');">
+                                                </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="expiry" class="form-label">Start Date</label>
+                                                      <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                    <input type="date" name="dom_startdate" class="form-control" placeholder="Enter Expiry Date" value="{{ amc_entry.dom_startdate|date:'Y-m-d'|default:'' }}">
+                                                </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="expiry" class="form-label">End Date</label>
+                                                      <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                    <input type="date" name="dom_redate" class="form-control" placeholder="Enter Expiry Date" value="{{ amc_entry.dom_redate|date:'Y-m-d'|default:'' }}">
+                                                </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="price" class="form-label">Price</label>
+                                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>
+                                                    <input type="text" name="dom_amount" class="form-control" placeholder="Enter price" value="{{ amc_entry.dom_amount|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!--<div class="col-lg-6">-->
+                                        <!--    <label class="form-label">Hosting/Server Type</label>-->
+                                        <!--     <div class="input-group clockpicker">-->
+                                        <!--      <span class="input-group-text"><i class="fa-solid fa-server"></i></span>-->
+                                        <!--    <select name="host_ser_type" aria-label="Project Include" required-->
+                                        <!--        data-placeholder="Select a City..." id="citySelect"-->
+                                        <!--        class="form-select form-select-solid"-->
+                                        <!--        style="background-color: #ebebeb4a;">-->
+                                        <!--        <option value="">Hosting/Server Type..</option>-->
+                                        <!--        <option value="Own Hosting/Server" {% if amc_entry.host_ser_type == "Own Hosting/Server" %}selected{% endif %}>Own Hosting/Server</option>-->
+                                        <!--        <option value="Client Hosting/Server" {% if amc_entry.host_ser_type == "Client Hosting/Server" %}selected{% endif %}>Client Hosting/Server</option>-->
+                                        <!--    </select>-->
+                                        <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-lg-6">-->
+                                        <!--    <label for="flexRadioYes" class="form-label">Hosting/Server price</label>-->
+                                        <!--    <div class="input-group clockpicker">-->
+                                        <!--      <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>-->
+                                        <!--    <input type="text" required class="form-control slug-title"-->
+                                        <!--        name="host_ser_price" placeholder="Rupee" id="h_price" value="{{ amc_entry.host_ser_price|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">-->
+                                        <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-lg-6">-->
+                                        <!--    <label for="flexRadioYes" class="form-label">Hosting/Server Renewal Date</label>-->
+                                        <!--          <div class="input-group clockpicker">-->
+                                        <!--<span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>-->
+                                        <!--    <input type="date" required class="form-control slug-title"-->
+                                        <!--        name="host_ser_redate" placeholder="Rupee" id="h_price" value="{{ amc_entry.host_ser_redate|date:'Y-m-d'|default:'' }}">-->
+                                        <!--</div>-->
+                                        <!--</div>-->
+                                        <!--<div class="col-lg-6">-->
+                                        <!--    <label for="inputEmail4" class="form-label">Hosting</label>-->
+                                        <!--    <div class="row">-->
+                                        <!--        <div class="col-lg-6">-->
+                                        <!--            <label for="flexRadioYes" class="form-label">Same As Domain</label>-->
+                                        <!--            <div style="display: flex; align-items: center;">-->
+                                        <!--                <p style="margin: 0; width: 30px;">No</p>-->
+                                        <!--                <label class="switch" style="margin: 0 10px;">-->
+                                        <!--                    <input type="checkbox" id="flexRadioYes" name="host_type" -->
+                                        <!--                        {% if amc_entry.host_type == "Same" %}checked{% endif %}-->
+                                        <!--                        onclick="toggleGstField()">-->
+                                        <!--                    <span class="slider"></span>-->
+                                        <!--                </label>-->
+                                        <!--                <p style="margin: 0; width: 30px;">Yes</p>-->
+                                        <!--            </div>-->
+                                        <!--        </div>-->
+                                        
+                                        <!--        <div class="col-lg-6">-->
+                                        <!--            <label for="h_price" class="form-label">Price</label>-->
+                                        <!--            <div class="input-group clockpicker">-->
+                                        <!--      <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>-->
+                                        <!--            <input type="text"  class="form-control slug-title"-->
+                                        <!--                name="host_amount" placeholder="Price" id="h_price" oninput="this.value = this.value.replace(/[^0-9]/g, '');"-->
+                                        <!--                value="{{ amc_entry.host_amount|default:'' }}">-->
+                                        <!--        </div>-->
+                                        <!--        </div>-->
+                                        <!--    </div>-->
+                                        <!--</div>-->
+
+
+                                        <!--<div class="col-lg-6">-->
+                                        <!--    <label for="inputEmail4" class="form-label">AMC</label>-->
+                                        <!--    <div class="row">-->
+                                        <!--        <div class="col-lg-12">-->
+                                        <!--            <label for="flexRadioYes" class="form-label">Rupee</label>-->
+                                        <!--            <input type="text" required class="form-control slug-title" oninput="this.value = this.value.replace(/[^0-9]/g, '');"-->
+                                        <!--                name="rupee" placeholder="Rupee" id="h_price" value="{{ amc_entry.amc_amount|default:'' }}">-->
+                                        <!--        </div>-->
+                                        <!--    </div>-->
+                                        <!--</div>-->
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                    <script>
+                                        function updateClientDetails() {
+                                        var selectedClient = document.getElementById('oldClientName').value;
+                                    
+                                        // You can replace the following with an AJAX request to fetch the client details dynamically
+                                        var clients = [
+                                            {% for client in client %}
+                                            {
+                                                clt_id: "{{ client.clt_id }}",
+                                                name: "{{ client.name }}",
+                                                // comp_name: "{{ client.comp_name }}",
+                                                email: "{{ client.email }}",
+                                                mobile: "{{ client.mobile }}",
+                                                address: "{{ client.address }}",
+                                                city: "{{ client.city }}",
+                                                state: "{{ client.state }}",
+                                                country: "{{ client.country }}"
+                                            },
+                                            {% endfor %}
+                                        ];
+                                        
+                                        var client = clients.find(c => c.clt_id === selectedClient);
+                                        
+                                        if (client) {
+                                            // Update fields based on selected client
+                                            document.getElementById('inputEmail4').value = client.email || '';
+                                            document.getElementById('name').value = client.name || '';
+                                            // document.getElementById('inputEmail4').disabled = !client.email;
+                                            document.getElementById('inputMobile').value = client.mobile || '';
+                                            document.getElementById('inputAddress').value = client.address || '';
+                                            document.getElementById('citySelect').value = client.city || '';
+                                            document.getElementById('stateInput').value = client.state || '';
+                                            document.getElementById('countryInput').value = client.country || '';
+                                        } else {
+                                            // Clear fields if no client is selected
+                                            document.getElementById('inputEmail4').value = '';
+                                            document.getElementById('name').value = '';
+                                            document.getElementById('inputMobile').value = '';
+                                            document.getElementById('inputAddress').value = '';
+                                            document.getElementById('citySelect').value = '';
+                                            document.getElementById('stateInput').value = '';
+                                            document.getElementById('countryInput').value = '';
+                                        }
+                                    }
+
+                                    </script>
+                                    
+                                    <script>
+                                        // This will disable the submit button when clicked and prevent multiple submissions.
+                                        document.querySelector('form').addEventListener('submit', function(event) {
+                                            // Disable the submit button
+                                            const submitButton = event.target.querySelector('button[type="submit"]');
+                                            submitButton.disabled = true;
+                                    
+                                            // Optionally, change the button text to indicate the form is being submitted
+                                            submitButton.innerText = 'Submitting...';
+                                    
+                                            // Prevent further form submissions by disabling the button
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $('#addamcForm').submit(function(e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        // Disable the submit button to prevent further clicks
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true);  // Disable the submit button
+        submitButton.text('Submitting...');    // Optional: Change the button text to indicate submission
+
+        // Prepare the form data
+        var formData = $(this).serialize();  
+
+        // Check if the form is for adding or editing by inspecting the action URL
+        var isEdit = $(this).attr('action').includes('edit_amc'); 
+
+        // Send the form data using AJAX
+        $.ajax({
+            url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Show success alert with SweetAlert for Add or Edit
+                    Swal.fire({
+                        icon: 'success',
+                        title: isEdit ? 'AMC Updated!' : 'AMC Added!',
+                        text: response.message,
+                    }).then(() => {
+                        if (isEdit) {
+                            window.location.href = "{% url 'AMC' %}"; 
+                        } else {
+                            window.location.href = "{% url 'add_amc' %}"; 
+                        }
+                    });
+                } else {
+                    // Show error alert if something goes wrong
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred, please try again.',
+                });
+            },
+            complete: function() {
+                // You can keep the button disabled if needed, or re-enable it if necessary
+                // submitButton.prop('disabled', false);  // Re-enable the button after the request completes
+                // submitButton.text(isEdit ? 'Update' : 'Submit');  // Reset the button text if necessary
+            }
+        });
+    });
+});
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get references to the city select, state input, and country input
+        const citySelect = document.getElementById('citySelect');
+        const stateInput = document.getElementById('stateInput');
+        const countryInput = document.getElementById('countryInput');
+        
+        // Listen for the change event on the city select
+        citySelect.addEventListener('change', function() {
+            // Get the selected city option
+            const selectedOption = citySelect.options[citySelect.selectedIndex];
+            
+            // Get the corresponding state and country from the data-state and data-country attributes
+            const selectedState = selectedOption.getAttribute('data-state');
+            const selectedCountry = selectedOption.getAttribute('data-country');
+            
+            // Update the state and country input fields
+            stateInput.value = selectedState;
+            countryInput.value = selectedCountry;
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const domainSelect = document.getElementById('domainSelect'); // Get the Domain Select dropdown
+    const domainOptions = document.getElementById('domainOptions'); // Get the container of domain-related fields
+    const companyFields = domainOptions.querySelectorAll('input'); // Get all input fields inside domainOptions
+    
+    // Function to handle the visibility and clearing of company-related fields
+    function toggleDomainFields() {
+        if (domainSelect.value === 'Company') {
+            // Show the domain options for Company
+            domainOptions.classList.remove('d-none');
+        } else {
+            // Hide the domain options for Company
+            domainOptions.classList.add('d-none');
+            // Clear the values of the fields related to the domain "Company"
+            companyFields.forEach(field => {
+                field.value = '';  // Clear the values in the input fields
+            });
+        }
+    }
+
+    // Call the toggle function initially to set the correct state
+    toggleDomainFields();
+
+    // Add event listener for when the domain is changed
+    domainSelect.addEventListener('change', function() {
+        toggleDomainFields();
+    });
+});
+</script>
+<script>
+
+    document.getElementById('domainSelect').addEventListener('change', function () {
+        const domainOptions = document.getElementById('domainOptions');
+
+        // Hide all options initially
+        domainOptions.classList.add('d-none');
+
+        // Show the appropriate options based on selection
+        if (this.value === 'Company') {
+            domainOptions.classList.remove('d-none');
+        }
+    });
+</script>
+<script>
+    document.getElementById('domainSelect').addEventListener('change', function() {
+        var domainOptions = document.getElementById('domainOptions');
+        if (this.value === 'Company') {
+            domainOptions.classList.remove('d-none');
+        } else {
+            domainOptions.classList.add('d-none');
+        }
+    });
+
+    // Trigger change event on page load to handle existing selections
+    document.getElementById('domainSelect').dispatchEvent(new Event('change'));
+</script>
+<!--search select start -->
+<script>
+$(document).ready(function () {
+
+  // Create custom dropdowns for every <select>
+  function create_custom_dropdowns() {
+    $('select').each(function () {
+      var $select = $(this);
+      if (!$select.next().hasClass('dropdown-select')) {
+        $select.after(
+          '<div class="dropdown-select wide ' + ($select.attr('class') || '') + '" tabindex="0">' +
+            '<span class="current"></span>' +
+            '<div class="list">' +
+              '<div class="dd-search">' +
+                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+              '</div>' +
+              '<ul></ul>' +
+              '<li class="no-results" style="display:none;">Not found</li>' +
+            '</div>' +
+          '</div>'
+        );
+
+        var $dropdown = $select.next('.dropdown-select');
+        var $ul = $dropdown.find('ul');
+        var $options = $select.find('option');
+        var $selected = $select.find('option:selected');
+
+        var displayText = $selected.data('display-text') || $selected.text();
+        $dropdown.find('.current').text(displayText);
+
+        $options.each(function () {
+          var $o = $(this);
+          var isSelected = $o.is(':selected') ? ' selected' : '';
+          var display = $o.data('display-text') || '';
+          $ul.append(
+            '<li class="option' + isSelected + '" data-value="' + $o.val() + '" data-display-text="' + display + '">' + $o.text() + '</li>'
+          );
+        });
+      }
+    });
+  }
+
+  // Search filter inside dropdown
+  window.filter = function (input) {
+    var $dd = $(input).closest('.dropdown-select');
+    var val = input.value.toLowerCase();
+    var $opts = $dd.find('ul > li.option');
+
+    $opts.each(function () {
+      var txt = $(this).text().toLowerCase();
+      $(this).toggle(txt.indexOf(val) > -1);
+    });
+
+    $dd.find('.no-results').toggle($opts.filter(':visible').length === 0);
+  };
+
+  // Toggle dropdown on click
+  $(document).on('click', '.dropdown-select', function (e) {
+    if ($(e.target).hasClass('dd-searchbox')) return;
+
+    $('.dropdown-select').not(this).removeClass('open');
+    $(this).toggleClass('open');
+
+    if ($(this).hasClass('open')) {
+      $(this).find('.option').attr('tabindex', 0);
+      $(this).find('.selected').focus();
+    } else {
+      $(this).find('.option').removeAttr('tabindex');
+      $(this).focus();
+    }
+  });
+
+  // Close dropdown when clicking outside
+  $(document).on('click', function (e) {
+    if ($(e.target).closest('.dropdown-select').length === 0) {
+      $('.dropdown-select').removeClass('open');
+      $('.dropdown-select .option').removeAttr('tabindex');
+    }
+    e.stopPropagation();
+  });
+
+  // Option click: set selected option
+  $(document).on('click', '.dropdown-select .option', function () {
+    var $opt = $(this),
+        txt = $opt.data('display-text') || $opt.text(),
+        val = $opt.data('value'),
+        $dd = $opt.closest('.dropdown-select'),
+        $sel = $dd.prev('select');
+
+    $dd.find('.selected').removeClass('selected');
+    $opt.addClass('selected');
+    $dd.find('.current').text(txt);
+    $sel.val(val).trigger('change');
+  });
+
+  // Keyboard navigation
+  $(document).on('keydown', '.dropdown-select', function (e) {
+    var $focused = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+    if (e.keyCode == 13) { // Enter
+      if ($(this).hasClass('open')) {
+        $focused.trigger('click');
+      } else {
+        $(this).trigger('click');
+      }
+      return false;
+    } else if (e.keyCode == 40) { // Down
+      if (!$(this).hasClass('open')) {
+        $(this).trigger('click');
+      } else {
+        $focused.nextAll(':visible').first().focus();
+      }
+      return false;
+    } else if (e.keyCode == 38) { // Up
+      if (!$(this).hasClass('open')) {
+        $(this).trigger('click');
+      } else {
+        $focused.prevAll(':visible').first().focus();
+      }
+      return false;
+    } else if (e.keyCode == 27) { // Escape
+      if ($(this).hasClass('open')) {
+        $(this).removeClass('open');
+      }
+      return false;
+    }
+  });
+
+  // Toggle domainOptions visibility based on #domainSelect value
+  function toggleDomainFields() {
+    if ($('#domainSelect').val() === 'Company') {
+      $('#domainOptions').removeClass('d-none');
+    } else {
+      $('#domainOptions').addClass('d-none');
+      $('#domainOptions').find('input, select').val('').trigger('change');
+    }
+  }
+  $('#domainSelect').on('change', toggleDomainFields);
+  toggleDomainFields(); // On page load
+
+  // Autofill company fields on clientSelect change
+  $('#clientSelect').on('change', function () {
+    var $opt = $(this).find('option:selected');
+    if ($opt.val()) {
+      $('#inputMail').val($opt.data('email') || '');
+      $('#mobileNumber').val($opt.data('contact_number') || '');
+      $('#inputAddress').val($opt.data('address') || '');
+      $('#inputGst').val($opt.data('gst') || '');
+      $('#inputState').val($opt.data('state') || '').trigger('change');
+    } else {
+      $('#domainOptions').find('input, select').val('').trigger('change');
+    }
+  });
+
+  // Log state change
+  $('#inputState').on('change', function () {
+    console.log('State manually changed to:', $(this).val());
+  });
+
+  // Finally create dropdowns
+  create_custom_dropdowns();
+});
+</script>
+<!--search select end -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+{% endblock %}

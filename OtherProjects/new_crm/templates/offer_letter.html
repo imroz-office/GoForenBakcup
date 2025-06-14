@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Offer Letter</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            background-color: gray;
+            padding: 0;
+            margin: 0;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            background-color: white;
+            margin: 20px auto;
+            padding: 40px 30mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            place-content:center;
+        }
+
+        p {
+            margin: 10px 0;
+            line-height: 1.6;
+            text-align:justify;
+        }
+
+        .signature {
+            margin-top: 50px;
+            text-align: right;
+        }
+
+        .print-button {
+            text-align: center;
+            margin-top: 30px;
+            position:fixed;
+            top:10px;
+            left:10px;
+        }
+
+        .print-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .date-input {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .print-button,
+            .date-input {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="date-input" style="background-color:white; padding:10px 10px;">
+        <label for="acceptance-date"><strong>Acceptance Date:</strong></label>
+        <input type="date" id="acceptance-date" onchange="updateAcceptanceDate()">
+    </div>
+
+    <div class="page">
+        <p style="text-align:right;">Date: <span id="today-date"></span></p>
+
+        <p><strong>{{ employee.name.title|default:"" }} {{ employee.middle_name.title|default:"" }} {{ employee.last_name.title|default:"" }}</strong>,<br>
+        {{ employee.address|default:"_________" }},<br>
+        {{ employee.city|default:"_________" }},<br>
+        {{ employee.country|default:"_________" }},
+        {{ employee.zip_code|default:"_________" }},<br>
+        </p>
+
+        <p><strong>Dear {{ employee.name.title|default:"" }} {{ employee.middle_name.title|default:"" }} {{ employee.last_name.title|default:"" }},</strong></p>
+
+        <p>Congratulations! We are pleased to confirm that you have been selected to work for our company <strong>{{ employee.company_name.title|default:"" }}</strong>. We are delighted to make you the following job offer.</p>
+
+        <p>The position we are offering you is that of <strong>{{ employee.role_name.title|default:"_________" }}</strong> at a monthly salary of <strong>Rs.{{ employee.gross_sal|default:"_________" }}</strong>. Your working hours will be from <strong>{{ employee.attendence_time|default:"" }}</strong>, Monday to Saturday.</p>
+
+        <p>We would like you to start work on <strong>{{ employee.join_date|date:"F j, Y"|default:"_________" }}</strong>. Please report to <strong>Mr. Shubham Singh</strong> for documentation and orientation. If this date is not acceptable, please contact us immediately.</p>
+
+        <p>Please sign the enclosed copy of this letter and return it to us by <strong><span id="acceptance-date-display">_________</span></strong> to indicate your acceptance of this offer.</p>
+
+        <p>We are confident you will make a significant contribution to the success of our organization and look forward to working with you.</p>
+
+        <p style="text-align:right;">Sincerely,</p>
+
+        <div class="signature">
+            <p style="text-align:right;"><strong>Authority Signature</strong></p>
+        </div>
+    </div>
+
+    <div class="print-button">
+        <button onclick="window.print()">🖨️ Print</button>
+    </div>
+
+    <script>
+        // Set today's date
+        const today = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('today-date').textContent = today.toLocaleDateString(undefined, options);
+
+        // Update acceptance date in the letter
+        function updateAcceptanceDate() {
+            const input = document.getElementById('acceptance-date');
+            const display = document.getElementById('acceptance-date-display');
+
+            if (input.value) {
+                const date = new Date(input.value);
+                display.textContent = date.toLocaleDateString(undefined, options);
+            } else {
+                display.textContent = "_________";
+            }
+        }
+    </script>
+</body>
+</html>

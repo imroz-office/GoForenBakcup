@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>{{ is_edit|yesno:"Edit Data,Add Data" }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+                <div class="ec-cat-list card card-default mb-24px">
+                    <div class="card-body">
+                        <div class="row ec-vendor-uploads">
+                            <div class="col-lg-12">
+                                <div class="ec-vendor-upload-detail">
+                                    <form id="addPendingForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_client_pro' products.id %}{% else %}{% url 'add_client_pro' %}{% endif %}" method="post">
+                                        {% csrf_token %}
+
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Select Client</label>
+                                             <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                            <select name="client_id" required class="form-select" style="background-color: #ebebeb4a;">
+                                                <option value="">Select Client</option>
+                                                {% for client in clients %}
+                                                    <option value="{{ client.clt_id }}" {% if products.client_id == client.clt_id %}selected{% endif %}>{{ client.comp_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                      </div>
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Select Project</label>
+                                             <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                            <select name="product" required class="form-select" style="background-color: #ebebeb4a;">
+                                                <option value="">Select Project</option>
+                                                {% for project in projects %}
+                                                    <option value="{{ project.pro_name }}" {% if products.product == project.pro_name %}selected{% endif %}>{{ project.pro_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                      </div>
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Amount</label>
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fa-solid fa-money-check"></i></span>
+                                            <input type="text" name="amount" required class="form-control" placeholder="Enter Amount" value="{{ products.amount|default:'' }}"  oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary">{{ is_edit|yesno:"Update,Submit" }}</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $('#addPendingForm').submit(function(e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        // Disable the submit button to prevent further clicks
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true);  // Disable the submit button
+        submitButton.text('Submitting...');    // Optional: Change the button text to indicate submission
+
+        // Prepare the form data
+        var formData = $(this).serialize();  
+
+        // Check if the form is for adding or editing by inspecting the action URL
+        var isEdit = $(this).attr('action').includes('edit_client_pro'); 
+
+        // Send the form data using AJAX
+        $.ajax({
+            url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Show success alert with SweetAlert for Add or Edit
+                    Swal.fire({
+                        icon: 'success',
+                        title: isEdit ? 'Client Project Updated!' : 'Client Project Added!',
+                        text: response.message,
+                    }).then(() => {
+                        window.location.href = "{% url 'client_project' %}";  // Redirect to the department page
+                    });
+                } else {
+                    // Show error alert if something goes wrong
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred, please try again.',
+                });
+            },
+            complete: function() {
+                // You can keep the button disabled if needed, or re-enable it if necessary
+                // submitButton.prop('disabled', false);  // Re-enable the button after the request completes
+                // submitButton.text(isEdit ? 'Update' : 'Submit');  // Reset the button text if necessary
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

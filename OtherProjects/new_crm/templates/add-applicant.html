@@ -1,0 +1,548 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+
+<div class="content-body">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="main-div">
+        <div class="breadcrumb-wrapper breadcrumb-contacts d-flex justify-content-between">
+            <div>
+              <h1>{{ is_edit|yesno:"Edit Applicant,Add Applicant" }}</h1>
+            </div>
+          <li><a href="{% url 'hiring_list' %}" class="btn btn-primary"><i class="fa-regular fa-address-book me-2"></i>View All</a></li>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xl-12 col-lg-12">
+        <div class="card card-default mb-24px">
+          <div class="card-body">
+            <!--<form id="adduserForm" class="row g-3" action="{% if is_edit %}{% url 'add_hiring' user.userId %}{% else %}{% url 'add_hiring' %}{% endif %}" method="post">-->
+            <form id="adduserForm" class="row g-3" action="https://shubhamsingh.in/new_crm/sit_career/" method="post">
+              {% csrf_token %}
+                <!-- add all the fields from the model here one by one and make select drop down for comapany and appling as and preferred technology -->
+            <!-- Hidden Field -->
+<!--<div class="col-lg-6" hidden>-->
+<!--  <label for="applied_from_company" class="form-label">Apply from Company</label>-->
+<!--  <input type="text" id="applied_from_company" name="applied_from_company" class="form-control" value="Success Innovative Technologies Pvt Ltd">-->
+<!--</div>-->
+  <input type="text"name="from_filling" class="form-control" value="NEW_CRM" hidden>
+
+<div class="col-lg-6">
+  <label for="applied_from_company" class="form-label">Apply from Company</label>
+  <!--<input type="text" id="applied_from_company" name="applied_from_company" class="form-control" value="Success Innovative Technologies Pvt Ltd">-->
+
+    <select name="applied_from_company" required  id="applied_from_company" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+        <option value="">Select a company name..</option>
+        {% for company in companies %}
+            <option value="{{ company.com_name }}" {% if user.company_name == company.com_name %}selected{% endif %}>{{ company.com_name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- Full Name -->
+<div class="col-lg-6">
+  <label for="name" class="form-label">Full Name<span class="text-danger"></span></label>
+  <input type="text" id="name" name="full_name" class="form-control" placeholder="Enter your full name" pattern="[A-Za-z\s]+"  onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+</div>
+
+<!-- Email -->
+<div class="col-lg-6">
+  <label for="email" class="form-label">Email Address<span class="text-danger"></span></label>
+  <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email address" >
+</div>
+
+<!-- Phone -->
+<div class="col-lg-6">
+  <label for="phone" class="form-label">Phone Number<span class="text-danger"></span></label>
+  <input type="tel" id="phone" name="mobile" class="form-control" placeholder="Enter your phone number" pattern="^\d{10}$" maxlength="10"  onkeypress="return /[0-9]/.test(event.key) && this.value.length < 10">
+</div>
+
+<!-- Education -->
+<div class="col-lg-6">
+  <label for="education" class="form-label">Education Qualification<span class="text-danger"></span></label>
+  <input type="text" id="education" name="qualification" class="form-control" placeholder="e.g. B.Tech in Computer Science" >
+</div>
+
+<!-- Preferred Technology -->
+<div class="col-lg-6">
+  <label for="technology" class="form-label">Preferred Technology<span class="text-danger"></span></label>
+  <select id="technology" name="preferred_technology" class="form-select" >
+    <option value="" disabled selected>Select a technology</option>
+    <option value="Backend">Backend</option>
+    <option value="Frontend">Frontend</option>
+  </select>
+</div>
+
+<!-- CV Upload -->
+<div class="col-lg-6">
+  <label for="cv" class="form-label">Upload Your CV<span class="text-danger"></span></label>
+  <input type="file" id="cv" name="uploaded_cv" class="form-control" accept=".pdf,.doc,.docx" >
+  <small class="form-text text-muted"> PDF, DOC, DOCX allowed. Max size 2MB.</small>
+</div>
+
+<!-- Applying As -->
+<div class="col-lg-6">
+  <label for="position" class="form-label">Applying As<span class="text-danger"></span></label>
+  <select id="position" name="applying_for" class="form-select"  onchange="toggleFields()">
+    <option value="" disabled selected>Select one</option>
+    <option value="intern">Intern</option>
+    <option value="employee">Employee</option>
+  </select>
+</div>
+
+<div class="col-lg-6">
+</div>
+
+<!-- Intern Fields -->
+<div id="internFields" class="col-lg-6" style="display: none;">
+  <div class="col-lg-12">
+    <label for="college" class="form-label">College Name</label>
+    <input type="text" id="college" name="clg_name" class="form-control" placeholder="Enter your college name">
+  </div>
+
+  <div class="col-lg-12">
+    <label for="duration" class="form-label">Internship Duration</label>
+    <select id="duration" name="internship_duration" class="form-select">
+      <option value="" disabled selected>Select duration</option>
+      <option value="3 Months Internship">3 Months Internship</option>
+      <option value="6 Months Internship">6 Months Internship</option>
+    </select>
+  </div>
+</div>
+
+<!-- Employee Fields -->
+<div id="employeeFields" class="col-lg-6" style="display: none;">
+  <div class="col-lg-12">
+    <label for="lastCompany" class="form-label">Last Company Name</label>
+    <input type="text" id="lastCompany" name="last_company" class="form-control" placeholder="Enter previous company name">
+  </div>
+
+  <div class="col-lg-12">
+    <label for="lastCTC" class="form-label">Last CTC</label>
+    <input type="text" id="lastCTC" name="last_CTC" class="form-control" placeholder="e.g. 400000" onkeypress="return /[0-9]/.test(event.key)">
+  </div>
+
+  <div class="col-lg-12">
+    <label for="expectedSalary" class="form-label">Expected Salary</label>
+    <input type="text" id="expectedSalary" name="expected_salary" class="form-control" placeholder="Enter your expected salary" onkeypress="return /[0-9]/.test(event.key)">
+  </div>
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<script>
+  function toggleFields() {
+    var position = document.getElementById("position").value;
+    document.getElementById("internFields").style.display = (position === "intern") ? "block" : "none";
+    document.getElementById("employeeFields").style.display = (position === "employee") ? "block" : "none";
+  }
+
+  document.getElementById('adduserForm').addEventListener('submit', function (e) {
+    const name = document.getElementById('name');
+    const phone = document.getElementById('phone');
+    const nameRegex = /^[A-Za-z\s]+$/;
+    const phoneRegex = /^\d{10}$/;
+
+    if (!nameRegex.test(name.value)) {
+      alert('Name must contain only letters and spaces.');
+      name.focus();
+      e.preventDefault();
+      return false;
+    }
+
+    if (!phoneRegex.test(phone.value)) {
+      alert('Phone number must be exactly 10 digits and only numeric.');
+      phone.focus();
+      e.preventDefault();
+      return false;
+    }
+  });
+</script>
+
+              <!-- Submit Button -->
+              <div class="col-lg-12">
+                <button type="submit" class="btn btn-primary">{{ is_edit|yesno:"Update,Submit" }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+  $('#adduserForm').on('submit', function (e) {
+    e.preventDefault();
+
+    const $form = $(this);
+    const $btn = $form.find('button[type="submit"]');
+
+    const formData = new FormData(this);  // Important for file uploads
+
+    $btn.prop('disabled', true).text('Submitting...');
+
+    $.ajax({
+      url: $form.attr('action'),
+      method: 'POST',
+      data: formData,
+      processData: false, // Important for FormData
+      contentType: false, // Important for FormData
+      success: function (response) {
+        if (response.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: response.message
+          }).then(() => {
+            window.location.href = "{% url 'hiring_list' %}";
+          });
+        } else {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Warning',
+            text: response.message || 'Submission failed. Please check your input.'
+          });
+        }
+      },
+      error: function () {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong. Please try again.'
+        });
+      },
+      complete: function () {
+        $btn.prop('disabled', false).text('{{ is_edit|yesno:"Update,Submit" }}');
+      }
+    });
+  });
+</script>
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

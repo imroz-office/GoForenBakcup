@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3">{{ task.emp_name }} Task Details</h1>
+                    <div>
+                        <a href="{% url 'task_view' task.assign_to %}" class="btn btn-primary me-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Task Details</h2>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <strong>Task ID:</strong> {{ task.taskId }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Task Type:</strong> {{ task.task_type }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Project Name:</strong> {{ task.task_name }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Department:</strong> {{ task.department }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Assign To:</strong> {{ assign_to_name }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Project Deadline Date:</strong> {{ task.dead_date|date:"d-m-Y" }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Description:</strong> {{ task.description }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Status:</strong> {{ task.status }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Completion Date:</strong> {{ task.complete_date|date:"d-m-Y" }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Count:</strong> {{ task.count }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Remarks:</strong> {{ task.remark }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Assigned By:</strong> {{ assign_by_name }}
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Assigned Date:</strong> {{ task.assign_date|date:"d-m-Y" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

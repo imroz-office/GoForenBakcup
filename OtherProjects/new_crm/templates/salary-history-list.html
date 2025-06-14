@@ -1,0 +1,778 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+{% if request.GET.success4 %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully Converted to Lead!',
+            text: 'The Lead record has been added.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the desired page after confirmation
+                window.location.href =  "{% url 'salary_history_list' %}";
+            }
+        });
+    });
+</script>
+{% endif %}
+<!--date range css start -->
+<style>
+
+    .daterangepicker .drp-buttons {
+    display: flex !important;
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<style>
+/* Chatbox (modal) */
+.chatbox1 {
+    width: 21.25rem;
+    height: 100vh;
+    position: fixed;
+    right: -31.25rem;  /* Initially offscreen */
+    top: 0;
+    z-index: 999;
+    background: #fff;
+    box-shadow: 0rem 0rem 1.875rem 0rem rgba(82, 63, 105, 0.15);
+    transition: all 0.8s ease-in-out;
+    overflow: hidden;  /* Prevent scrollbars */
+}
+
+/* Active class: Slide chatbox to the right */
+.chatbox1.active {
+    right: 0;
+    display: block;
+}
+
+/* Header and close button inside the chatbox */
+.chatbox1 .chatbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 17px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbox1 .chatbox-close1 {
+    cursor: pointer;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 1000;
+    width:12%;
+    margin: 2px 2px 2px 153px;
+}
+
+.custom-tab-1 {
+    padding: 10px 17px;
+    height: calc(100vh - 120px);  /* Subtract header and footer height */
+    overflow-y: auto;  /* Enable scroll for form */
+}
+.btn{
+    padding:0.438rem 1rem;
+}
+/* Form field styling */
+form {
+    margin: 0;
+}
+  #alert-container {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 1050;  /* Ensure the alert is above other content */
+      width: auto;
+  }
+
+</style> 
+
+
+<div class="content-body">
+	<div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="width:40%">
+                    <h1>Manage Salary Records</h1>
+                </div>
+            <div class="d-flex" style="display: flex; align-items: center; width:fit-content;">
+                {% if "1" in session_roleid or "6" in session_roleid %}
+               
+<div id="alert-container"></div>
+
+<script>
+document.getElementById('sendRemindersBtn').addEventListener('click', function() {
+    // Perform the AJAX request
+    fetch("{% url 'send_tomorrow_meeting_reminders' %}")
+        .then(response => response.json())
+        .then(data => {
+            // Create Bootstrap alert HTML
+            const alertClass = data.success ? "alert-success" : "alert-danger";
+            const alertMessage = data.success ? data.message : data.message;
+
+            const alertHtml = `
+                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                    ${alertMessage}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            `;
+
+            // Inject the alert into the DOM
+            const alertContainer = document.getElementById('alert-container');
+            alertContainer.innerHTML = alertHtml; // Replace previous messages
+
+            // Optionally, you can set a timer to remove the alert after a few seconds
+            setTimeout(function() {
+                const alert = alertContainer.querySelector('.alert');
+                if (alert) {
+                    alert.classList.remove('show');
+                }
+            }, 5000);  // Fade out after 5 seconds (optional)
+        })
+        .catch(error => {
+            // Handle errors
+            const alertHtml = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    An error occurred. Please try again.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            `;
+            const alertContainer = document.getElementById('alert-container');
+            alertContainer.innerHTML = alertHtml; // Replace previous messages
+        });
+});
+</script>{% endif %}
+
+                <a href="{% url 'salary_history' %}" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu" style="margin-right: 15px;background:green;border:1px solid green;">
+                    <i class="bi bi-plus-circle" style="font-size: 1rem;margin-right:7px"></i> Add 
+                </a>
+                
+
+                 <li type="button" class="btn btn-primary" id="showFormBtn1" style="margin-right: 15px;"><i class="bi bi-funnel-fill"></i>Filter</li>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!--FILTER CODE START  -->
+        <div id="reportForm1" style="display:none;">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'lead_list' %}" method="get"> 
+                                 {% csrf_token %}
+                                <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                         <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="date_range" value="{{ request.GET.date_range }}">
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                
+                                <div class="col-lg-4">
+                                            <label class="form-label">Employee</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                <select name="emp_id" required class="form-select" style="background-color: #ebebeb4a;">
+                                                    <option value="">Select employee...</option>
+                                                    {% for i in employees %}
+                                                        <option value="{{ i.emp_id }}" {% if lead.emp_id == i.emp_id %}selected{% endif %}>
+                                                            {{ i.name }} {{ i.middle_name }} {{ i.last_name }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Salary</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                                                <input type="number" name="salary" required class="form-control"
+                                                       placeholder="Enter Salary" value="{{ lead.salary }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Increment Date</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                                <input type="date" name="increment_date" required class="form-control"
+                                                       value="{{ lead.increment_date|date:'Y-m-d' }}">
+                                            </div>
+                                        </div>
+
+                               
+                                 <div style="display:flex;justify-content:end">
+                                     <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="submit" name="download" value="excel" id="downloadExcel" class="btn btn-primary" style="width:100%">
+                                            Download Excel
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="submit" class="btn btn-primary" id="submitFilter" style="width:100%">Submit</button>
+                                    </div> 
+                                    <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="button" id="resetButton" class="btn btn-primary" onclick="resetForm();" style="width:100%">Reset</button>
+                                    </div>
+                                </div>  
+                                
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+  document.getElementById('showFormBtn1').addEventListener('click', function() {
+    var form = document.getElementById('reportForm1');
+    // If hidden (or first time), fade in
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+      form.animate(
+        [
+          { opacity: 0, transform: 'translateY(-10px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+    } 
+    // Otherwise, fade out then hide
+    else {
+      var anim = form.animate(
+        [
+          { opacity: 1, transform: 'translateY(0)' },
+          { opacity: 0, transform: 'translateY(-10px)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in',
+          fill: 'forwards'
+        }
+      );
+      anim.onfinish = function() {
+        form.style.display = 'none';
+      };
+    }
+  });
+</script>
+<!--FILTER CODE END  -->
+
+<div class="col-xl-12 active-p" >
+			<div class="tab-content" id="pills-tabContent">
+				<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+					<div class="card" >
+					    <div class="card-body px-0">
+						    <div class="table-responsive active-projects user-tbl  dt-filter">
+    							<table id="user-tbl" class="display table">
+    								<thead>
+    									<tr>
+    										<th>S. No.</th>
+    										<th>Name</th>
+    										<th>salary</th>
+    										<th>Increment Date</th>
+    										<th>Action</th>
+    									</tr>
+    								</thead>
+    								<tbody>
+    								    {% for i in data %}
+    									<tr>
+    										<td>{{ forloop.counter }}</td>
+    										<td>{{ i.name }}</td>
+    										<td>{{ i.salary }}</td>
+                                            <td>{{ i.increment_date|date:"d M Y" }}</td>
+                                            <td>
+                                                <div class="d-flex  gap-1 justify-content-end">
+                                                    <!--<a href="#" class="btn btn-info btn-xs shadow" title="View">-->
+                                                    <!--    <i class="fa fa-eye"></i>-->
+                                                    <!--</a>-->
+                                                    <a href="{% url 'edit_salary_history' i.id %}" class="btn btn-primary btn-xs shadow" title="Edit">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                                                    <a href="javascript:void(0);" onclick="confirmDelete(event, '{{ i.id }}')" class="btn btn-danger btn-xs shadow" title="Delete">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+    								    {% endfor %}
+    								</tbody>
+    							</table>
+                            </form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+			
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    function confirmDelete(event, leadId) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This record will be permanently deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteLead(leadId);
+            }
+        });
+    }
+
+    function deleteLead(leadId) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/new_crm/delete_salary_history/${leadId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: `The record "${data.name}" has been deleted successfully.`,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: data.error || 'An error occurred while deleting the record.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Delete Error:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong while deleting the record.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+</script>
+
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+<!--filter script end -->
+
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+
+{% endblock %}

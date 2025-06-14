@@ -1,0 +1,1305 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+
+<style>
+	.form-select {
+		display: block;
+		padding: 10px 15px;
+		width: 100%;
+
+		-moz-padding-start: calc(0.75rem - 3px);
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #888888;
+		background-color: #F3F0EC;
+		background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+		background-repeat: no-repeat;
+		background-position: right 0.75rem center;
+		background-size: 16px 12px;
+		border: 1px solid #E6E6E6;
+		border-radius: 6px;
+		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+		appearance: none;
+	}
+		.card{
+	    height:auto;
+	}
+</style>
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>{{ is_edit|yesno:"Edit Receipt Voucher,Receipt Voucher" }}</h1>
+						<!--<p class="breadcrumbs"><span><a href="/sit_crm/dashboard/">Home</a></span>-->
+						<!--	<span><i class="mdi mdi-chevron-right"></i></span>Master-->
+						<!--</p>-->
+					</div>
+					<div>
+					    <!--<a href="{% url 'receipt_voucher' %}" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+         <!--                         <i class="bi bi-person-fill" style="font-size: 1rem;"></i>View Voucher-->
+         <!--               </a>-->
+						<!--<a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+						<!--	<i class="bi bi-funnel-fill"></i> Filter-->
+						<!--</a>-->
+					</div>
+				</div>
+			</div>
+		</div>
+
+<div class="row">
+	<div class="col-xl-12 col-lg-12">
+		<div class="ec-cat-list card card-default mb-24px">
+			<div class="card-body">
+				<div class="row ec-vendor-uploads">
+					<!--<h4>{{ is_edit|yesno:"Edit Payment Voucher,Add Payment Voucher" }}</h4>-->
+					<br><br>
+					<div class="col-lg-12">
+						<div class="ec-vendor-upload-detail">
+							<form id=""  class="form row g-3" action="{% url 'add_receipt' %}" method="post">
+								{% csrf_token %}
+								
+								<div class="col-lg-6">
+									<label for="inputRemark" class="form-label">Select Company</label>
+									<div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+									<select name="clt_id" aria-label="Unit Measure" required data-placeholder="Unit Measure" class="form-select form-select-solid" style="background-color: #ebebeb4a;" >
+                                        <option value="">Select Company</option>
+                                        {% for c in data %}
+                                        <option value="{{ c.clt_id }}" {% if entries.clt_id == c.clt_id %}selected{% endif %}>{{ c.comp_name }}</option>
+                                        {% endfor %}
+                                    </select>
+								</div>
+								</div>
+								<div class="col-lg-12">
+									<button type="submit" class="btn btn-primary">Submit</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<h4>{{ is_edit|yesno:"Edit Receipt Voucher,Add Receipt Voucher" }}</h4>
+							<br><br>
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+									<form id="addreceiptForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_receipt' entries.rv_id %}{% else %}{% url 'create_receipt_voucher' %}{% endif %}" method="post">
+										{% csrf_token %}
+										
+										<div class="col-md-6">
+                                            <label class="form-label">Ledger Type</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                <select name="transaction_type"  class="form-select form-select-solid" id="ledgerTypeSelect">
+                                                    <option value="">Select a Type...</option>
+                                                    <!--<option value="Credited" {% if client.transaction_type == "Credited" %}selected{% endif %}>Credited</option>-->
+                                                    <option value="Debited" {% if entries.transaction_type == "Debited" %}selected{% endif %}>Debited</option>
+                                                    <!--<option value="Expense" {% if client.transaction_type == "Expense" %}selected{% endif %}>Expense</option>-->
+                                                    <!--<option value="Salary Account" {% if client.transaction_type == "Salary Account" %}selected{% endif %}>Salary Account</option>-->
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <input type="hidden" class="form-control slug-title" name="clt_id" value="{{ entries.clt_id }}">
+                                        <input type="hidden" class="form-control slug-title" name="name" value="{{ entries.name }}">
+                                        <input type="hidden" class="form-control slug-title" name="comp_name" value="{{ entries.comp_name }}">
+                                        <input type="hidden" class="form-control slug-title" name="mobile" value="{{ entries.mobile }}">
+                                        <input type="hidden" class="form-control slug-title" name="address" value="{{ entries.address }}">
+                                        <input type="hidden" class="form-control slug-title" name="gst_no" value="{{ entries.gst_number }}">
+                                    
+                                        <!-- Amount -->
+                                        <div class="col-md-6 ledger-field" id="amountField">
+                                            <label class="form-label">Amount</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                                <input type="text"  class="form-control slug-title" name="Amount" placeholder="Enter Amount">
+                                            </div>
+                                        </div>
+                                    
+                                        <!-- Particular -->
+                                        <div class="col-md-6 ledger-field" id="particularField">
+                                            <label class="form-label">Particular</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                                <input type="text"  class="form-control slug-title" name="Particular1" placeholder="Enter Particular">
+                                            </div>
+                                        </div>
+                                    
+                                        <!-- Invoice -->
+                                        <div class="col-md-6 ledger-field" id="invoiceField">
+                                            <label class="form-label">Invoice Number</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                                <input type="text" class="form-control slug-title" name="Invoice" placeholder="Invoice Number" value="{{ entries.inv_number }}"> 
+                                            </div>
+                                        </div>
+                                    
+                                        <!-- Middle Block -->
+                                        <div class="col-lg-12 ledger-field" id="middle_block_container">
+                                            <div id="fields-container">
+                                            {% if is_edit and payment_entries %}
+                                                {% for entry in payment_entries %}
+                                                <div class="field-group" id="middle_block">
+                                                    <div class="col-lg-12" style="display:flex;flex-wrap:wrap">
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">Select Particular</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text"><i class="fa-solid fa-list-check"></i></span>
+                                                                <select name="perticular[]" class="form-select form-select-solid" >
+                                                                    <option value="">Select a Particular...</option>
+                                                                    {% for p in products %}
+                                                                    <option value="{{ p.pro_name }}" {% if entry.perticular == p.pro_name %}selected{% endif %}
+                                                                        data-hsncode="{{ p.hsn_code }}" data-gstper="{{ p.gst_no }}" {% if entry.perticular == p.pro_name %}selected{% endif %}>{{ p.pro_name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">HSN</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text">GST</span>
+                                                                <input type="text" class="form-control" name="hsn[]" value="{{ entry.hsn }}" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">GST%</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text">GST</span>
+                                                                <input type="text" class="form-control" name="gst_per[]" value="{{ entry.gst_per }}" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">Quantity</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text">GST</span>
+                                                                <input type="text" class="form-control" name="quantity[]" value="{{ entry.quantity }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">Price</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>
+                                                                <input type="text" class="form-control" name="price[]" value="{{ entry.price }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                </div>
+                                                
+                                                {% endfor %}
+                                            {% else %}
+                                            <div class="field-group" id="middle_block">
+                                                    <div class="col-lg-12" style="display:flex;flex-wrap:wrap">
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">Select Particular</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text"><i class="fa-solid fa-list-check"></i></span>
+                                                                <select name="perticular[]" class="form-select form-select-solid" >
+                                                                    <option value="">Select a Particular...</option>
+                                                                    {% for p in products %}
+                                                                    <option value="{{ p.pro_name }}" {% if entry.perticular == p.pro_name %}selected{% endif %}
+                                                                        data-hsncode="{{ p.hsn_code }}" data-gstper="{{ p.gst_no }}">{{ p.pro_name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">HSN</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text">GST</span>
+                                                                <input type="text" class="form-control" name="hsn[]" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">GST%</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text">GST</span>
+                                                                <input type="text" class="form-control" name="gst_per[]" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">Quantity</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text">GST</span>
+                                                                <input type="text" class="form-control" name="quantity[]" >
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6" style="padding:10px">
+                                                            <label class="form-label">Price</label>
+                                                            <div class="input-group clockpicker">
+                                                                <span class="input-group-text"><i class="fa-solid fa-money-bill-1"></i></span>
+                                                                <input type="text" class="form-control" name="price[]" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="col-lg-12" id="plus">
+                                            <button type="button" id="add-fields" class="btn btn-primary">+</button>
+                                            <button type="button" id="remove-fields" class="btn btn-danger" hidden>-</button>
+                                        </div>
+                                    
+                                        <!-- Payment Mode -->
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Mode of Payment</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-cart-shopping"></i></span>
+                                                <select name="payment_mode" required id="paymentModeSelect" class="form-select form-select-solid" onchange="handlePaymentModeChange()">
+                                                    
+                                                    <option value="">Select Payment Mode</option>
+                                                    <option value="Offline" {% if entries.payment_mode == 'Offline' %}selected{% endif %}>Offline</option>
+                                                    <option value="Online" {% if entries.payment_mode == 'Online' %}selected{% endif %}>Online</option>
+                                                    <option value="Cheque" {% if entries.payment_mode == 'Cheque' %}selected{% endif %}>Cheque</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    
+                                        <!-- Online Options -->
+                                        <div id="onlineOptions" class="col-lg-6 d-none">
+                                            <label class="form-label">Select Online Payment Method</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-regular fa-credit-card"></i></span>
+                                                <select name="online_payment_method" class="form-select">
+                                                    <option value="">Select Payment Method</option>
+                                                    <option value="GPay" {% if entries.online_payment_method == 'GPay' %}selected{% endif %}>GPay</option>
+                                                    <option value="PhonePay" {% if entries.online_payment_method == 'PhonePay' %}selected{% endif %}>PhonePay</option>
+                                                    <option value="Paytm" {% if entries.online_payment_method == 'Paytm' %}selected{% endif %}>Paytm</option>
+                                                    <option value="Razorpay" {% if entries.online_payment_method == 'Razorpay' %}selected{% endif %}>Razorpay</option>
+                                                    <option value="Federal Bank" {% if entries.online_payment_method == 'Federal Bank' %}selected{% endif %}>Federal Bank</option>
+                                                    <option value="ICICI Bank" {% if entries.online_payment_method == 'ICICI Bank' %}selected{% endif %}>ICICI Bank</option>
+                                                    <option value="Jupiter" {% if entries.online_payment_method == 'Jupiter' %}selected{% endif %}>Jupiter</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    
+                                        <!-- Cheque Options -->
+                                        <div id="chequeOptions" class="col-lg-6 d-none">
+                                            <label class="form-label">Bank Name</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                                <input type="text" name="bank_name" class="form-control" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');" value="{{ entries.bank_name|default:'' }}">
+                                            </div>
+                                            <label class="form-label">Cheque No</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-money-check"></i></span>
+                                                <input type="text" name="cheque_no" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '');" value="{{ entries.cheque_no|default:'' }}">
+                                            </div>
+                                            <label class="form-label">Date of Cheque</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                <input type="date" name="cheque_date" class="form-control" value="{{ entries.cheque_date|date:'Y-m-d'|default:'' }}">
+                                            </div>
+                                            <label class="form-label">Amount</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-money-check"></i></span>
+                                                <input type="text" name="cheque_amount" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '');" value="{{ entries.cheque_amount|default:'' }}">
+                                            </div>
+                                        </div>
+                                    
+                                        <!-- Payment Date -->
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Payment Date</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                <input type="date" required class="form-control slug-title" name="payment_date" value="{{ entries.payment_date|date:'Y-m-d'|default:'' }}">
+                                            </div>
+                                        </div>
+
+										<div class="col-lg-12">
+											<button type="submit" class="btn btn-primary">{% if is_edit %}Update{% else %}Submit{% endif %}</button>
+										</div>
+									</form>
+									<script>
+                                        // This will disable the submit button when clicked and prevent multiple submissions.
+                                        document.querySelector('form').addEventListener('submit', function(event) {
+                                            // Disable the submit button
+                                            const submitButton = event.target.querySelector('button[type="submit"]');
+                                            submitButton.disabled = true;
+                                    
+                                            // Optionally, change the button text to indicate the form is being submitted
+                                            submitButton.innerText = 'Submitting...';
+                                    
+                                            // Prevent further form submissions by disabling the button
+                                        });
+                                    </script>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		<!--<div class="row">-->
+  <!--      	<div class="col-xl-12 col-lg-12">-->
+  <!--      		<div class="ec-cat-list card card-default mb-24px">-->
+  <!--      			<div class="card-body">-->
+  <!--      				<div class="row ec-vendor-uploads">-->
+        					<!--<h4>{{ is_edit|yesno:"Edit Payment Voucher,Add Payment Voucher" }}</h4>-->
+  <!--      					<br><br>-->
+  <!--      					<div class="col-lg-12">-->
+  <!--      						<div class="ec-vendor-upload-detail">-->
+  <!--      							<h2>Ledger Details</h2>-->
+  <!--                                  <p><strong>Company Name:</strong> {{ entries.comp_name }}</p>-->
+  <!--                                  <p><strong>Name:</strong> {{ entries.name }}</p>-->
+  <!--                                  <p><strong>Email:</strong> {{ entries.email }}</p>-->
+  <!--                                  <p><strong>Mobile:</strong> {{ entries.mobile }}</p>-->
+  <!--                                  <p><strong>GST number:</strong> {{ entries.gst_number }}</p>-->
+  <!--                                  <p><strong>Address:</strong> {{ entries.address }}</p>-->
+  <!--                                  <p><strong>Ledger Type:</strong> {{ entries.transaction_type }}</p>-->
+                                    
+  <!--                                  <h3>Invoices</h3>-->
+  <!--                                  <table class="table">-->
+  <!--                                      <tr>-->
+  <!--                                          <th>Invoice Number</th><th>Date</th><th>Perticular</th><th>Total</th>-->
+  <!--                                      </tr>-->
+  <!--                                      {% for inv in invoices %} -->
+  <!--                                      <tr>-->
+  <!--                                          <td>{{ inv.invNumber }}</td>-->
+  <!--                                          <td>{{ inv.date|date:'d-m-Y' }}</td>-->
+  <!--                                          <td>{{ inv.productName }}</td>-->
+  <!--                                          <td>{{ inv.grandAmount }}</td>-->
+  <!--                                      </tr>-->
+  <!--                                      {% empty %}-->
+  <!--                                      <tr><td colspan="3">No invoices found.</td></tr>-->
+  <!--                                      {% endfor %}-->
+  <!--                                  </table>-->
+                                    
+  <!--                                  <h3>Payment Vouchers</h3>-->
+  <!--                                  <table class="table">-->
+  <!--                                      <tr>-->
+  <!--                                          <th>Voucher Number</th><th>Date</th><th>Particular</th><th>Quantity</th><th>Total</th><th>Total Amount</th><th>Mode of payment</th><th>Added By</th>-->
+  <!--                                      </tr>-->
+  <!--                                      {% for pv in payment_vouchers %}-->
+  <!--                                      <tr>-->
+  <!--                                          <td>{{ pv.vouch_num }}</td>-->
+  <!--                                          <td>{{ pv.payment_date|date:'d-m-Y' }}</td>-->
+  <!--                                          <td>{{ pv.perticular }}</td>-->
+  <!--                                          <td>{{ pv.quantity }}</td>-->
+  <!--                                          <td>{{ pv.total }}</td>-->
+  <!--                                          <td>{{ pv.total_amount }}</td>-->
+  <!--                                          <td>{{ pv.payment_mode }}</td>-->
+  <!--                                          <td>{{ pv.add_by_name }}</td>-->
+  <!--                                      </tr>-->
+  <!--                                      {% empty %}-->
+  <!--                                      <tr><td colspan="3">No payment vouchers found.</td></tr>-->
+  <!--                                      {% endfor %}-->
+  <!--                                  </table>-->
+                                    
+  <!--                                  <h3>Receipt Vouchers</h3>-->
+  <!--                                  <table class="table">-->
+  <!--                                      <tr>-->
+  <!--                                          <th>Voucher Number</th><th>Date</th><th>Particular</th><th>Quantity</th><th>Total</th><th>Total Amount</th><th>Mode of payment</th><th>Added By</th>-->
+  <!--                                      </tr>-->
+  <!--                                      {% for rv in receive_vouchers %}-->
+  <!--                                      <tr>-->
+  <!--                                          <td>{{ rv.vouch_num }}</td>-->
+  <!--                                          <td>{{ rv.payment_date|date:'d-m-Y' }}</td>-->
+  <!--                                          <td>{{ rv.perticular }}</td>-->
+  <!--                                          <td>{{ rv.quantity }}</td>-->
+  <!--                                          <td>{{ rv.total }}</td>-->
+  <!--                                          <td>{{ rv.total_amount }}</td>-->
+  <!--                                          <td>{{ rv.payment_mode }}</td>-->
+  <!--                                          <td>{{ rv.add_by_name }}</td>-->
+  <!--                                      </tr>-->
+  <!--                                      {% empty %}-->
+  <!--                                      <tr><td colspan="3">No receive vouchers found.</td></tr>-->
+  <!--                                      {% endfor %}-->
+  <!--                                  </table>-->
+  <!--      						</div>-->
+  <!--      					</div>-->
+  <!--      				</div>-->
+  <!--      			</div>-->
+  <!--      		</div>-->
+  <!--      	</div>-->
+  <!--      </div>-->
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+                       
+         <style>
+/* Container card style - subtle glow */
+.card.h-auto {
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+  border: none;
+  background-color: #fff;
+}
+
+/* Tabs - Rounded with smooth color transition */
+.custom-tab-1 .nav-tabs {
+  border-bottom: none;
+  display: flex;
+  gap: 14px;
+  padding-left: 12px;
+}
+
+.custom-tab-1 .nav-tabs .nav-link {
+  border: none;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  color: #444;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  box-shadow: 0 4px 8px rgba(199, 210, 254, 0.4);
+  transition: all 0s ease;
+}
+
+.custom-tab-1 .nav-tabs .nav-link:hover {
+  background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 100%);
+  color: white;
+box-shadow: 0 6px 14px rgba(34, 43, 64, 0.7);
+
+
+}
+
+.custom-tab-1 .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #222b40 0%, #3b4c73 100%);
+
+  color: white;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.9);
+}
+
+/* Table - card style rows with gradient and shadow */
+.table.table-bordered {
+  border-collapse: separate;
+  border-spacing: 0 16px; /* space between rows */
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+}
+
+.table.table-bordered tr {
+  background: linear-gradient(135deg, #fef9ff 0%, #ede9fe 100%);
+  box-shadow: 0 6px 18px rgba(156, 163, 175, 0.12);
+  border-radius: 14px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: table-row; /* keep table behavior */
+}
+
+.table.table-bordered tr:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+}
+
+.table.table-bordered td {
+  padding: 14px 26px;
+  border: none !important;
+  vertical-align: middle;
+  color: #3730a3;
+  font-weight: 600;
+  background: transparent;
+  border-radius: 14px;
+}
+
+.table.table-bordered tr td:first-child {
+  width: 35%;
+  color: #222b40c7;
+  font-weight: 700;
+}
+
+.table.table-bordered tr td:last-child {
+  color: #1e1b4b;
+  font-weight: 500;
+}
+
+/* Modal - softer round corners and shadows */
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(79, 70, 229, 0.25);
+  border: none;
+}
+
+.modal-header {
+  background: #eef2ff;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  font-weight: 700;
+  color: #4338ca;
+}
+
+.modal-footer {
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+}
+
+.modal-body textarea.form-control {
+  border-radius: 14px;
+  border: 1.5px solid #a5b4fc;
+  font-size: 15px;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+
+.modal-body textarea.form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 10px #6366f1;
+}
+</style>
+  <div class="card h-auto">
+                            <div class="card-body">
+                                <div class="profile-tab">
+                                    <div class="custom-tab-1">
+                                        <ul class="nav nav-tabs">
+                                            <li class="nav-item"><a href="#my-posts" data-bs-toggle="tab" class="nav-link active show">Ledger Details</a>
+                                            </li>
+                                            <li class="nav-item"><a href="#about-me" data-bs-toggle="tab" class="nav-link">Invoices</a>
+                                            </li>
+                                            <li class="nav-item"><a href="#profile-settings" data-bs-toggle="tab" class="nav-link">Payment Vouchers</a>
+                                            </li>
+                                            <li class="nav-item"><a href="#receive-voucher" data-bs-toggle="tab" class="nav-link">Receipt Vouchers</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                      
+                        <div id="my-posts" class="tab-pane fade active show" style="margin-top:25px">
+                            <table class="table table-bordered">
+                                    <tr><td><strong>Company Name:</strong></td><td> {{ entries.comp_name }}</td></tr>
+                                      <tr><td><strong>Name:</strong></td> <td>{{ entries.name }}</td></tr>
+                                      <tr><td><strong>Email:</strong></td> <td>{{ entries.email }}</td></tr>
+                                      <tr><td><strong>Mobile:</strong></td><td> {{ entries.mobile }}</td></tr>
+                                      <tr><td><strong>GST number:</strong></td><td> {{ entries.gst_number }}</td></tr>
+                                      <tr><td><strong>Address:</strong></td><td> {{ entries.address }}</td></tr>
+                                      <tr><td><strong>Ledger Type:</strong> </td><td>{{ entries.transaction_type }}</td></tr>
+                                     </table>
+</div>
+                     
+                                        <div id="about-me" class="tab-pane fade" style="margin-top:25px">
+                                  
+   <table class="table table-bordered">
+                                        <tr>
+                                            <td>Invoice Number</td><td>Date</td><td>Perticular</td><td>Total</td>
+                                        </tr>
+                                        {% for inv in invoices %} 
+                                        <tr>
+                                            <td>{{ inv.invNumber }}</td>
+                                            <td>{{ inv.date|date:'d-m-Y' }}</td>
+                                            <td>{{ inv.productName }}</td>
+                                            <td>{{ inv.grandAmount }}</td>
+                                       </tr>
+                                        {% empty %}
+                                      <td colspan="3">No invoices found.</td></tr>
+                                        {% endfor %}
+                                    </table>
+</div>
+
+
+                                            
+                                            
+ 
+                        
+                        <div id="profile-settings" class="tab-pane fade" style="margin-top:25px">
+ <table class="table table-bordered">
+                                        <tr>
+                                            <th>Voucher Number</th><th>Date</th><th>Particular</th><th>Quantity</th><th>Total</th><th>Total Amount</th><th>Mode of payment</th><th>Added By</th>
+                                        </tr>
+                                        {% for pv in payment_vouchers %}
+                                        <tr>
+                                            <td>{{ pv.vouch_num }}</td>
+                                            <td>{{ pv.payment_date|date:'d-m-Y' }}</td>
+                                            <td>{{ pv.perticular }}</td>
+                                            <td>{{ pv.quantity }}</td>
+                                            <td>{{ pv.total }}</td>
+                                            <td>{{ pv.total_amount }}</td>
+                                            <td>{{ pv.payment_mode }}</td>
+                                            <td>{{ pv.add_by_name }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="3">No payment vouchers found.</td></tr>
+                                        {% endfor %}
+                                    </table>
+</div>
+
+                                                                    <div id="receive-voucher" class="tab-pane fade" style="margin-top:25px">
+ <table class="table table-bordered">
+                                        <tr>
+                                            <th>Voucher Number</th><th>Date</th><th>Particular</th><th>Quantity</th><th>Total</th><th>Total Amount</th><th>Mode of payment</th><th>Added By</th>
+                                        </tr>
+                                        {% for rv in receive_vouchers %}
+                                        <tr>
+                                            <td>{{ rv.vouch_num }}</td>
+                                            <td>{{ rv.payment_date|date:'d-m-Y' }}</td>
+                                            <td>{{ rv.perticular }}</td>
+                                            <td>{{ rv.quantity }}</td>
+                                            <td>{{ rv.total }}</td>
+                                            <td>{{ rv.total_amount }}</td>
+                                            <td>{{ rv.payment_mode }}</td>
+                                            <td>{{ rv.add_by_name }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="3">No receive vouchers found.</td></tr>
+                                        {% endfor %}
+                                    </table>
+</div>
+                                                 
+                     
+                                        </div>
+                                    </div>
+									<!-- Modal -->
+									<div class="modal fade" id="replyModal">
+										<div class="modal-dialog modal-dialog-centered" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title">Post Reply</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+												</div>
+												<div class="modal-body">
+													<form>
+														<textarea class="form-control h-50" rows="4">Message</textarea>
+													</form>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close</button>
+													<button type="button" class="btn btn-primary">Reply</button>
+												</div>
+											</div>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+
+<script>
+document.getElementById('addreceiptForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default form submission
+    
+    const submitButton = this.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting...';
+
+    const formData = new FormData(this);
+    var isEdit = $(this).attr('action').includes('edit_receipt'); 
+
+    fetch(this.action, {
+        method: this.method,
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            Swal.fire({
+                title: 'Success!',
+                text: data.message,
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+            if (isEdit) {
+            window.location.href = "{% if entries.clt_id %}{% url 'account_view_client' entries.clt_id %}{% else %}/fallback-url/{% endif %}"; 
+            } else {
+            window.location.href = "{% url 'add_receipt' %}"; 
+            }            });
+        } else {
+            Swal.fire({
+                title: 'Error!',
+                text: data.message,
+                icon: 'error',
+                confirmButtonText: 'Try Again'
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            title: 'Oops!',
+            text: 'Something went wrong. Please try again later.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    });
+});
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ledgerSelect = document.getElementById('ledgerTypeSelect');
+    const invoiceField = document.getElementById('invoiceField');
+    const middleBlock = document.getElementById('middle_block_container');
+    const plusContainer = document.getElementById('plus');
+    const particularField = document.getElementById('particularField');
+    const amountField = document.getElementById('amountField');
+
+    function toggleFields() {
+        const selected = ledgerSelect.value;
+
+        // Hide all fields initially
+        invoiceField.style.display = 'none';
+        middleBlock.style.display = 'none';
+        plusContainer.style.display = 'none';
+        particularField.style.display = 'none';
+        amountField.style.display = 'none';
+
+        // Show based on selected type
+        if (selected === 'Credited' || selected === 'Debited') {
+            invoiceField.style.display = 'block';
+            middleBlock.style.display = 'block';
+            plusContainer.style.display = 'block'; // Show plus/minus buttons
+        } else if (selected === 'Expense' || selected === 'Salary Account') {
+            particularField.style.display = 'block';
+            amountField.style.display = 'block';
+            plusContainer.style.display = 'none'; // Hide plus/minus buttons
+        }
+    }
+
+    // Initial setup
+    toggleFields();
+
+    // On change
+    ledgerSelect.addEventListener('change', toggleFields);
+});
+</script>
+
+
+<script>
+function handlePaymentModeChange() {
+    const selectedMode = document.getElementById('paymentModeSelect').value;
+    const onlineOptions = document.getElementById('onlineOptions');
+    const chequeOptions = document.getElementById('chequeOptions');
+
+    onlineOptions.classList.add('d-none');
+    chequeOptions.classList.add('d-none');
+
+    if (selectedMode === 'Online') {
+        onlineOptions.classList.remove('d-none');
+        clearChequeFields();
+    } else if (selectedMode === 'Cheque') {
+        chequeOptions.classList.remove('d-none');
+        clearOnlineFields();
+    } else {
+        clearOnlineFields();
+        clearChequeFields();
+    }
+}
+
+function clearOnlineFields() {
+    const onlinePaymentMethod = document.querySelector('select[name="online_payment_method"]');
+    if (onlinePaymentMethod) onlinePaymentMethod.value = '';
+}
+
+function clearChequeFields() {
+    ['bank_name', 'cheque_no', 'cheque_date', 'cheque_amount'].forEach(name => {
+        const field = document.querySelector(`input[name="${name}"]`);
+        if (field) field.value = '';
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    handlePaymentModeChange();
+});
+</script>
+
+<!--<script>-->
+<!--document.addEventListener("DOMContentLoaded", function () {-->
+<!--    const addBtn = document.getElementById("add-fields");-->
+<!--    const removeBtn = document.getElementById("remove-fields");-->
+<!--    const fieldsContainer = document.getElementById("fields-container");-->
+<!--    let fieldCount = 1;-->
+
+<!--    function handleParticularChange(event) {-->
+<!--        const selectedOption = event.target.options[event.target.selectedIndex];-->
+<!--        const hsn = selectedOption.getAttribute('data-hsncode');-->
+<!--        const gst = selectedOption.getAttribute('data-gstper');-->
+<!--        const group = event.target.closest('.field-group');-->
+<!--        group.querySelector('input[name="hsn[]"]').value = hsn || '';-->
+<!--        group.querySelector('input[name="gst_per[]"]').value = gst || '';-->
+<!--    }-->
+
+<!--    addBtn.addEventListener("click", function () {-->
+<!--        if (fieldCount) {-->
+<!--            const clone = fieldsContainer.querySelector(".field-group").cloneNode(true);-->
+<!--            clone.querySelectorAll("input, select").forEach(el => el.value = "");-->
+<!--            const newSelect = clone.querySelector("select[name='perticular[]']");-->
+<!--            newSelect.addEventListener("change", handleParticularChange);-->
+<!--            fieldsContainer.appendChild(clone);-->
+<!--            fieldCount++;-->
+<!--            removeBtn.hidden = false;-->
+<!--        } else {-->
+<!--            Swal.fire({-->
+<!--                icon: 'warning',-->
+<!--                title: 'Maximum Limit Reached',-->
+<!--                text: 'You can only add a maximum of 3 items.',-->
+<!--                confirmButtonText: 'OK',-->
+<!--                showCloseButton: true-->
+<!--            });-->
+<!--        }-->
+<!--    });-->
+
+<!--    removeBtn.addEventListener("click", function () {-->
+<!--        if (fieldCount > 1) {-->
+<!--            fieldsContainer.removeChild(fieldsContainer.lastElementChild);-->
+<!--            fieldCount--;-->
+<!--            if (fieldCount === 1) removeBtn.hidden = true;-->
+<!--        }-->
+<!--    });-->
+
+<!--    fieldsContainer.querySelectorAll("select[name='perticular[]']").forEach(select => {-->
+<!--        select.addEventListener("change", handleParticularChange);-->
+        <!--handleParticularChange({ target: select }); // Set initial values-->
+<!--    });-->
+<!--});-->
+<!--</script>-->
+
+<!--search select start -->
+<script>
+(function($){
+  // ————— 1. CUSTOM DROPDOWNS —————
+  function create_custom_dropdowns() {
+    $('select').each(function(){
+      const $select = $(this);
+      if ($select.next('.dropdown-select').length) return;
+      
+      $select.after(
+        '<div class="dropdown-select wide '+ ($select.attr('class')||'') +'" tabindex="0">'+
+          '<span class="current"></span>'+
+          '<div class="list">'+
+            '<div class="dd-search">'+
+              '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">'+
+            '</div>'+
+            '<ul></ul>'+
+            '<li class="no-results" style="display:none;">Not found</li>'+
+          '</div>'+
+        '</div>'
+      );
+      
+      const $dropdown = $select.next('.dropdown-select'),
+            $ul       = $dropdown.find('ul'),
+            $current  = $dropdown.find('.current'),
+            $options  = $select.find('option'),
+            $selOpt   = $select.find('option:selected');
+
+      $current.text( $selOpt.data('display-text') || $selOpt.text() );
+
+      $options.each(function(){
+        const $o       = $(this),
+              txt      = $o.text(),
+              val      = $o.val(),
+              disp     = $o.data('display-text')||'',
+              state    = $o.data('state')||'',
+              country  = $o.data('country')||'',
+              selClass = $o.is(':selected')?' selected':'';
+        $ul.append(
+          '<li class="option'+selClass+'" '+
+            'data-value="'+val+'" '+
+            'data-display-text="'+disp+'" '+
+            'data-state="'+state+'" '+
+            'data-country="'+country+'">'+
+            txt+
+          '</li>'
+        );
+      });
+    });
+  }
+
+  window.filter = function(input){
+    const $dd   = $(input).closest('.dropdown-select'),
+          val   = input.value.toLowerCase(),
+          $opts = $dd.find('ul > li.option');
+    $opts.each(function(){
+      $(this).toggle( $(this).text().toLowerCase().indexOf(val)>-1 );
+    });
+    $dd.find('.no-results').toggle( $opts.filter(':visible').length === 0 );
+  };
+
+  // dropdown open/close & keyboard nav
+  $(document)
+    .on('click', '.dropdown-select', function(e){
+      if ($(e.target).hasClass('dd-searchbox')) return;
+      $('.dropdown-select').not(this).removeClass('open');
+      $(this).toggleClass('open')
+             .find('.option').attr('tabindex',0)
+             .filter('.selected').focus();
+      e.stopPropagation();
+    })
+    .on('click', function(e){
+      if (!$(e.target).closest('.dropdown-select').length) {
+        $('.dropdown-select').removeClass('open')
+          .find('.option').removeAttr('tabindex');
+      }
+    })
+    .on('keydown', '.dropdown-select', function(e){
+      const $dd      = $(this),
+            $visible = $dd.find('.option:visible'),
+            idx      = $visible.index( $visible.filter(':focus') ) >= 0
+                     ? $visible.index( $visible.filter(':focus') )
+                     : $visible.index( $visible.filter('.selected') );
+      switch(e.which){
+        case 13: // Enter
+          if ($dd.hasClass('open')) $visible.eq(idx).trigger('click');
+          else $dd.trigger('click');
+          return false;
+        case 40: // Down
+          if (!$dd.hasClass('open')) $dd.trigger('click');
+          else $visible.eq(idx+1).focus();
+          return false;
+        case 38: // Up
+          if (!$dd.hasClass('open')) $dd.trigger('click');
+          else $visible.eq(idx-1).focus();
+          return false;
+        case 27: // Esc
+          $dd.removeClass('open');
+          return false;
+      }
+    })
+    .on('click', '.dropdown-select .option', function(){
+      const $opt = $(this),
+            data = {
+              value:   $opt.data('value'),
+              display: $opt.data('display-text')||$opt.text(),
+              state:   $opt.data('state'),
+              country: $opt.data('country')
+            },
+            $dd   = $opt.closest('.dropdown-select'),
+            $orig = $dd.prev('select');
+
+      // mark and label
+      $opt.addClass('selected').siblings().removeClass('selected');
+      $dd.find('.current').text(data.display);
+
+      // push to real <select> & trigger change
+      $orig.val(data.value).trigger('change');
+
+      // handle special selects
+      if ($orig.attr('id')==='citySelect') {
+        $('#stateInput').val(data.state);
+        $('#countryInput').val(data.country);
+      } else if ($orig.attr('id')==='paymentModeSelect') {
+        // payment-mode UI toggle happens below on change event
+      }
+    });
+
+
+  // ————— 2. LEDGER TYPE TOGGLE —————
+  function toggleFields(){
+    const sel = $('#ledgerTypeSelect').val();
+    $('#invoiceField, #middle_block_container, #plus, #particularField, #amountField').hide();
+    if (sel==='Credited' || sel==='Debited') {
+      $('#invoiceField, #middle_block_container, #plus').show();
+    } else if (sel==='Expense' || sel==='Salary Account') {
+      $('#particularField, #amountField').show();
+    }
+  }
+  $('#ledgerTypeSelect').on('change', toggleFields);
+
+
+  // ————— 3. PAYMENT MODE TOGGLE —————
+  function handlePaymentModeChange() {
+    const selectedMode = $('#paymentModeSelect').val();
+    $('#onlineOptions, #chequeOptions').addClass('d-none');
+    if (selectedMode==='Online') {
+      $('#onlineOptions').removeClass('d-none');
+      clearChequeFields();
+    } else if (selectedMode==='Cheque') {
+      $('#chequeOptions').removeClass('d-none');
+      clearOnlineFields();
+    } else {
+      clearOnlineFields();
+      clearChequeFields();
+    }
+  }
+  function clearOnlineFields(){
+    $('select[name="online_payment_method"]').val('');
+  }
+  function clearChequeFields(){
+    ['bank_name','cheque_no','cheque_date','cheque_amount'].forEach(name=>{
+      $(`input[name="${name}"]`).val('');
+    });
+  }
+  $('#paymentModeSelect').on('change', handlePaymentModeChange);
+
+
+  // ————— 4. DYNAMIC PARTICULAR FIELDS —————
+  const $add    = $('#add-fields'),
+        $remove = $('#remove-fields'),
+        $cont   = $('#fields-container');
+  let fieldCount = $cont.children('.field-group').length;
+
+  function handleParticularChange(e){
+    const $sel   = $(e.target),
+          $opt   = $sel.find('option:selected'),
+          hsn    = $opt.data('hsncode'),
+          gst    = $opt.data('gstper'),
+          $group = $sel.closest('.field-group');
+    $group.find('input[name="hsn[]"]').val(hsn||'');
+    $group.find('input[name="gst_per[]"]').val(gst||'');
+  }
+
+  $add.on('click', function(){
+    if (fieldCount >= 3) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Max 3 items only',
+        confirmButtonText: 'OK'
+      });
+    }
+    const $clone = $cont.children('.field-group').first().clone();
+    $clone.find('input, select').val('');
+    $clone.find('.dropdown-select').remove();     // strip old UI
+    $cont.append($clone);
+    fieldCount++;
+    $remove.prop('hidden', false);
+
+    create_custom_dropdowns();                     // rebuild for new select
+    $clone.find('select[name="perticular[]"]')
+          .on('change', handleParticularChange)
+          .trigger('change');
+  });
+
+  $remove.on('click', function(){
+    if (fieldCount>1){
+      $cont.children('.field-group').last().remove();
+      fieldCount--;
+      if (fieldCount===1) $remove.prop('hidden', true);
+    }
+  });
+
+
+  // ————— INIT ON READY —————
+  $(document).ready(function(){
+    create_custom_dropdowns();
+    toggleFields();
+    handlePaymentModeChange();
+    $('#fields-container').find('select[name="perticular[]"]')
+      .on('change', handleParticularChange)
+      .trigger('change');
+  });
+
+})(jQuery);
+</script>
+<!--search select end -->
+{% endblock %}

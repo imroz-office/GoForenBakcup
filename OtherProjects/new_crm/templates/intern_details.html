@@ -1,0 +1,1103 @@
+{% extends "base.html" %}
+{% load static %}
+{% block start %}
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!--date range css start -->
+<style>
+    .daterangepicker .drp-buttons {
+    display: flex !important; 
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+	<div class="container-fluid">
+        <div id="reportForm"  style="">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="ec-cat-list card card-default mb-24px">
+                        <div class="card-body">
+                            <div class="row ec-vendor-uploads">
+                                <div class="col-lg-12">
+                                    <div class="ec-vendor-upload-detail">
+                                        <form class="form row g-3" id="addtaskForm" action="{% url 'details_count_intern' %}" method="post">
+                                            {% csrf_token %}
+                                            
+                                              <div class="col-lg-4">
+                                                <div class="example">
+                                                    <p class="mb-1">Date Range With Time</p>
+                                                     <div class="input-group clockpicker">
+                                                    <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                    <input type="text" class="form-control input-daterange-timepicker" id="iddaterange" name="fromDate" />
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <!--<div class="col-lg-3">-->
+                                            <!--    <label for="inputRemark" class="form-label">From Date</label>-->
+                                            <!--    <div class="input-group clockpicker">-->
+                                            <!--        <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+                                            <!--        <input required type="date" class="form-control slug-title" name="from_date">-->
+                                            <!--    </div>-->
+                                            <!--</div>-->
+                                            <!--<div class="col-lg-3">-->
+                                            <!--    <label for="inputRemark" class="form-label">To Date</label>-->
+                                            <!--    <div class="input-group clockpicker">-->
+                                            <!--        <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+                                            <!--        <input required type="date" class="form-control slug-title" name="to_date">-->
+                                            <!--    </div>-->
+                                            <!--</div>-->
+                                            <input hidden name="emp_id" value="{{ data.emp_id }}" >  
+                                            <div class="col-lg-3" >
+                                                <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
+                                                <button type="submit" name="action" value="download" class="btn btn-danger">download</button>
+                                                <button type="reset" class="btn btn-secondary">Clear</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+        <div>
+<!--<script>-->
+<!--document.getElementById('addtaskForm').addEventListener('submit', function(e) {-->
+<!--    const dateRangeValue = document.getElementById('iddaterange').value;-->
+    <!--console.log("Submitted Date Range:", dateRangeValue);  // prints in browser console-->
+    <!--alert("Date Range: " + dateRangeValue); // optional popup for quick visibility-->
+<!--});-->
+<!--</script>-->
+
+{% if from_date %}
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <div class="ec-cat-list card card-default mb-24px">
+            <div class="card-body">
+                <div class="row ec-vendor-uploads">
+                    <div class="col-lg-12">
+                        <div class="ec-vendor-upload-detail">
+                            <h3>Attendance Details for {{ data.name }} {{ data.middle_name|default:"" }} {{ data.last_name|default:"" }}</h3>
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th>From Date</th>
+                                        <td>{{ from_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>To Date</th>
+                                        <td>{{ to_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Days</th>
+                                        <td>{{ total_month_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Sundays</th>
+                                        <td>{{ sunday_attendances }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Holiday</th>
+                                        <td>{{ holiday_count }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Days Worked</th>
+                                        <td>{{ total_days_worked }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Full Days</th>
+                                        <td>{{ full_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Half Days</th>
+                                        <td>{{ half_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Late Punches (after 9:00 AM)</th>
+                                        <td>{{ late_punches }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Early Punches (before 6:00 PM)</th>
+                                        <td>{{ early_punches }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Leaves</th>
+                                        <td>{{ leave_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Rejected Leaves Taken</th>
+                                        <td>{{ rejected_double_leave_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Rejected Halfs Taken</th>
+                                        <td>{{ rejected_double_half_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Exception leaves</th>
+                                        <td>{{ exception_leaves }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th><strong>Total Leaves (with penalty leaves)</strong></th>
+                                        <td>{{ final_leaves }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Overtime</th>
+                                        <td>
+                                            {% if overtime_hours or overtime_remaining_minutes %}
+                                                {{ overtime_hours }} hours {{ overtime_remaining_minutes }} minutes
+                                            {% else %}
+                                                0
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total of all breaks</th>
+                                        <td>{{m_total_break_str}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total of office Hours</th>
+                                        <td>{{total_month_worked_hours}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total of office Hours excluding breaks</th>
+                                        <td>{{pure_month_work_str}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div>
+<!--<div class="row">-->
+<!--    <div class="col-xl-12 col-lg-12">-->
+<!--        <div class="ec-cat-list card card-default mb-24px">-->
+<!--            <div class="card-body">-->
+<!--                <div class="row ec-vendor-uploads">-->
+<!--                    <div class="col-lg-12">-->
+<!--                        <div class="ec-vendor-upload-detail">-->
+<!--                            <h3>Salary Details for {{ data.name }} {{ data.middle_name|default:"" }} {{ data.last_name|default:"" }}</h3>-->
+<!--                            <table class="table">-->
+<!--                                <tbody>-->
+<!--                                    <tr>-->
+<!--                                        <th>Employee Salary</th>-->
+<!--                                        <td>{{ emp_salary }}</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <th>Paid Days</th>-->
+<!--                                        <td>{{ paid_days }}</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <th>Paid days Amount</th>-->
+<!--                                        <td>{{ amount }}</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <th>Advance Amount</th>-->
+<!--                                        <td>{{ adv_amount }}</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <th>Tax</th>-->
+<!--                                        <td>{{ tax }}</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <th>After Deductions</th>-->
+<!--                                        <td>{{ after_deductions }}</td>-->
+<!--                                    </tr>-->
+<!--                                </tbody>-->
+<!--                            </table>-->
+<!--                        </div> -->
+<!--                    </div> -->
+<!--                </div> -->
+<!--            </div> -->
+<!--        </div> -->
+<!--    </div> -->
+<!--</div>-->
+{% endif %}
+ <style>
+/* Container card style - subtle glow */
+.card.h-auto {
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+  border: none;
+  background-color: #fff;
+}
+
+/* Tabs - Rounded with smooth color transition */
+.custom-tab-1 .nav-tabs {
+  border-bottom: none;
+  display: flex;
+  gap: 14px;
+  padding-left: 12px;
+}
+
+.custom-tab-1 .nav-tabs .nav-link {
+  border: none;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  color: #444;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  box-shadow: 0 4px 8px rgba(199, 210, 254, 0.4);
+  transition: all 0s ease;
+}
+
+.custom-tab-1 .nav-tabs .nav-link:hover {
+  background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 100%);
+  color: white;
+box-shadow: 0 6px 14px rgba(34, 43, 64, 0.7);
+
+
+}
+
+.custom-tab-1 .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #222b40 0%, #3b4c73 100%);
+
+  color: white;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.9);
+}
+
+/* Table - card style rows with gradient and shadow */
+.table.table-bordered {
+  border-collapse: separate;
+  border-spacing: 0 16px; /* space between rows */
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+}
+
+.table.table-bordered tr {
+  background: linear-gradient(135deg, #fef9ff 0%, #ede9fe 100%);
+  box-shadow: 0 6px 18px rgba(156, 163, 175, 0.12);
+  border-radius: 14px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: table-row; /* keep table behavior */
+}
+
+.table.table-bordered tr:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+}
+
+.table.table-bordered td {
+  padding: 14px 26px;
+  border: none !important;
+  vertical-align: middle;
+  color: #3730a3;
+  font-weight: 600;
+  background: transparent;
+  border-radius: 14px;
+}
+
+.table.table-bordered tr td:first-child {
+  width: 35%;
+  color: #222b40c7;
+  font-weight: 700;
+}
+
+.table.table-bordered tr td:last-child {
+  color: #1e1b4b;
+  font-weight: 500;
+}
+
+/* Modal - softer round corners and shadows */
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(79, 70, 229, 0.25);
+  border: none;
+}
+
+.modal-header {
+  background: #eef2ff;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  font-weight: 700;
+  color: #4338ca;
+}
+
+.modal-footer {
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+}
+
+.modal-body textarea.form-control {
+  border-radius: 14px;
+  border: 1.5px solid #a5b4fc;
+  font-size: 15px;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+
+.modal-body textarea.form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 10px #6366f1;
+}
+</style>
+{% if from_date %}
+    <!--<a class="btn btn-primary mb-4" href="{% url 'salary_slip_' %}" target="_blank">Salary Slip</a>-->
+{% endif %}
+
+    <a class="btn btn-primary mb-4" onclick="showSection('p_details')">Profile Details</a>
+    <a class="btn btn-primary mb-4" onclick="showSection('details')">View Attendance Entries</a>
+    <a class="btn btn-primary mb-4" onclick="showSection('leave_id')">View Leave details</a>
+    <a class="btn btn-primary mb-4" onclick="showSection('break_id')">View Break details</a>
+    <a class="btn btn-primary mb-4" onclick="showSection('task')">View Task details</a>
+    <a class="btn btn-primary mb-4" onclick="showSection('report')">View daily Report details</a>
+
+        <div id="p_details" style="display:block;">
+    <div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <div class="ec-cat-list card card-default mb-24px">
+            <div class="card-body">
+                <div class="row ec-vendor-uploads">
+                    <div class="col-lg-12">
+                        <div class="ec-vendor-upload-detail">
+<h3>Profile Details for {{ data.name }} {{ data.middle_name|default:"" }} {{ data.last_name|default:"" }}</h3>
+
+<table class="table table-bordered">
+    <tbody>
+        <!-- Existing Attendance Fields -->
+        <tr><td><strong>Full Name</strong></td><td>{{ data.name }} {{ data.middle_name }} {{ data.last_name }}</td></tr>
+        <tr><td><strong>College Name</strong></td><td>{{ data.college_name }}</td></tr>
+        <tr><td><strong>Head</strong></td><td>{{ Head_name }}</td></tr>
+        <!-- ... your current attendance rows ... -->
+
+        <!-- Additional Employee Info -->
+        <tr><td><strong>Date of Birth</strong></td><td>{{ data.date_of_birth|date:"d-m-Y" }}</td></tr>
+        <tr><td><strong>Gender</strong></td><td>{{ data.gender }}</td></tr>
+        <tr><td><strong>Marital Status</strong></td><td>{{ data.marital_status }}</td></tr>
+        <tr><td><strong>Phone Number</strong></td><td>{{ data.ph_no }}</td></tr>
+        <tr><td><strong>Email</strong></td><td>{{ data.email }}</td></tr>
+        <tr><td><strong>Emergency Contact Person</strong></td><td>{{ data.emer_cont_pers }}</td></tr>
+        <tr><td><strong>Emergency Contact No</th><td>{{ data.emer_cont_ph_no }}</td></tr>
+        <tr><td><strong>Address</strong></td><td>{{ data.address }}, {{ data.city }}, {{ data.state }}, {{ data.country }} - {{ data.zip_code }}</td></tr>
+        
+        <tr><td><strong>Attendence Time</strong></td><td>{{ data.attendence_time }}</td></tr>
+        <tr><td><strong>Intern ID</strong></td><td>{{ data.intern_id_custom }}</td></tr>
+        <tr><td><strong>Join Date</strong></td><td>{{ data.join_date|date:"d-m-Y" }}</td></tr>
+        <tr><td><strong>Termination Date</strong></td><td>{{ data.termi_date|date:"d-m-Y" }}</td></tr> 
+        <tr><td><strong>Employee Type</strong></td><td>{{ data.emp_type.title }}</td></tr>
+        <tr><td><strong>Employee Role</strong></td><td>{{ data.role_name }}</td></tr>
+        <tr><td><strong>Company</strong></td><td>{{ data.company_name }}</td></tr>
+        
+        <tr><td><strong>Med Benifit</strong></td><td>{{ data.med_benifit }}</td></tr>
+        <tr><td><strong>Family Benifit</strong></td><td>{{ data.family_benifit }}</td></tr>
+        <tr><td><strong>Transport Benifit</strong></td><td>{{ data.transport_benifit }}</td></tr>
+        <tr><td><strong>Other Benifit</strong></td><td>{{ data.other_benifit }}</td></tr>
+
+        <!-- Bank Details -->
+        
+        <tr><td><strong>Stipend</strong></td><td>{{ data.stipend }}</td></tr>
+        {% if stipend == "YES" %}
+        <tr><td><strong>Gross Salary</strong></td><td>{{ data.gross_sal }}</td></tr>
+        <tr><td><strong>Account Number</strong></td><td>{{ data.acc_num }}</td></tr>
+        <tr><td><strong>Account Holder</strong></td><td>{{ data.acc_holder_name }}</td></tr>
+        <tr><td><strong>Bank Name</strong></td><td>{{ data.bank_name }}</td></tr>
+        <tr><td><strong>IFSC Code</strong></td><td>{{ data.ifsc_code }}</td></tr>
+        <tr><td><strong>Branch Address</strong></td><td>{{ data.branch_add }}</td></tr>
+        {% endif %}
+        <!-- Document Links -->
+        <tr>
+            <td><strong>Aadhaar</strong></td>
+            <td>{% if data.aadhar_pdf %}<a href="https://shubhamsingh.in/new_crm/{{ data.aadhar_pdf.url }}" target="_blank">View</a>{% else %}N/A{% endif %}</td>
+        </tr>
+        <tr>
+            <td><strong>PAN</strong></td>
+            <td>{% if data.pan_pdf %}<a href="https://shubhamsingh.in/new_crm/{{ data.pan_pdf.url }}" target="_blank">View</a>{% else %}N/A{% endif %}</td>
+        </tr>
+        <!--<tr>-->
+        <!--    <th>Joining Letter</th>-->
+        <!--    <td>{% if data.joining_letter %}<a href="https://shubhamsingh.in/new_crm/{{ data.joining_letter.url }}" target="_blank">View</a>{% else %}N/A{% endif %}</td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+        <!--    <th>Bank Statement</th>-->
+        <!--    <td>{% if data.bank_statement %}<a href="https://shubhamsingh.in/new_crm/{{ data.bank_statement.url }}" target="_blank">View</a>{% else %}N/A{% endif %}</td>-->
+        <!--</tr>-->
+        <tr>
+            <td><strong>Photo</strong></td>
+            <td>{% if data.photo %}<img src="https://shubhamsingh.in/new_crm/{{ data.photo.url }}" alt="Employee Photo" width="100">{% else %}N/A{% endif %}</td>
+        </tr>
+    </tbody>
+</table>
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div>
+</div>
+        <div id="details" style="display:none;">
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="ec-cat-list card card-default mb-24px">
+                        <div class="card-body">
+                            <div class="row ec-vendor-uploads">
+                                <div class="col-lg-12">
+                                    <div class="ec-vendor-upload-detail">
+                                        <h3>All Attendance Entries</h3>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td><strong>Date</strong></td>
+                                                    <td><strong>Punch In</strong></td>
+                                                    <td><strong>Punch Out</strong></td>
+                                                    <td><strong>Worked hours</strong></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for attendance in attendances %}
+                                                <tr>
+                                                    <td>{{ attendance.date }}</td>
+                                                    <td>{{ attendance.punch_in }}</td>
+                                                    <td>{{ attendance.punch_out }}</td>
+                                                    <td>{{ attendance.worked_hours }}</td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="3">No attendance records found for the selected date range.</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div> 
+                                </div> 
+                            </div> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+        <div class="row" id="leave_id" style="display:none;">
+    <div class="col-xl-12 col-lg-12">
+        <div class="ec-cat-list card card-default mb-24px">
+            <div class="card-body">
+                <div class="row ec-vendor-uploads">
+                    <div class="col-lg-12">
+                        <div class="ec-vendor-upload-detail">
+                            <h3>Leave Details for {{ data.name }} {{ data.middle_name|default:"" }} {{ data.last_name|default:"" }}</h3>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td><strong>Leave Type</strong></td>
+                                        <td><strong>Leave start</strong></td>
+                                        <td><strong>Leave end</strong></td>
+                                        <td><strong>Reason</strong></td>
+                                        <td><strong>Status</strong></td>
+                                        <!--<th>Duration</th>-->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for l in leaves_data %}
+                                    <tr>
+                                        <td>{{ l.leave_type }}</td>
+                                        <td>{{ l.app_start_date }}</td>
+                                        <td>{{ l.app_end_date }}</td>
+                                        <td>{{ l.reason }}</td>
+                                        <td>{{ l.status }}</td>
+                                        <!--<td>{{ l.days }}</td>-->
+                                    </tr>
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div>
+        <div class="row" id="break_id" style="display:none;">
+    <div class="col-xl-12 col-lg-12">
+        <div class="ec-cat-list card card-default mb-24px">
+            <div class="card-body">
+                <div class="row ec-vendor-uploads">
+                    <div class="col-lg-12">
+                        <div class="ec-vendor-upload-detail">
+                            <h3>Break Details for {{ data.name }} {{ data.middle_name|default:"" }} {{ data.last_name|default:"" }}</h3>
+                            <!--<table class="table">-->
+                            <!--    <thead>-->
+                            <!--        <tr>-->
+                            <!--            <th>date</th>-->
+                            <!--            <th>Total Punches</th>-->
+                            <!--            <th>Breaks</th>-->
+                            <!--            <th>Lunch Break</th>-->
+                            <!--        </tr>-->
+                            <!--    </thead>-->
+                            <!--    <tbody>-->
+                            <!--        {% for break in breaks %}-->
+                            <!--            <tr>-->
+                            <!--                <td>{{ break.date }}</td>-->
+                            <!--                <td>{{ break.punch_count }}</td>-->
+                            <!--                <td>{{ break.break_1 }} | {{ break.break_2 }} | {{ break.break_3 }}</td>-->
+                                            <!--<td>{{ break.total_punches }}</td>-->
+                                            <!--<td>{{ break.break_1 }} | {{ break.break_2 }} | {{ break.break_3 }}</td>-->
+                                            <!--<td>{{ break.lunch_break }}</td>-->
+                            <!--            </tr>-->
+                            <!--        {% endfor %}-->
+                            <!--    </tbody>-->
+                            <!--</table>-->
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td><strong>Date</strong></td>
+                                        <td><strong>Total Punches</strong></td>
+                                        <td><strong>Breaks</strong></td>
+                                        <td><strong>Lunch Break</strong></td>
+                                        <td><strong>Total Break Duration</strong></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for break in breaks %}
+                                        <tr>
+                                            <td>{{ break.date }}</td>
+                                            <td>{{ break.punch_count }}</td>
+                                            <td>
+                                                {% for b in break.breaks %}
+                                                    <div>{{ b.pair }} {% if b.duration %}({{ b.duration }}){% endif %}</div>
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% if break.lunch_break %}
+                                                    {{ break.lunch_break.pair }} ({{ break.lunch_break.duration }})
+                                                {% else %}
+                                                    No lunch
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ break.total_break_duration }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div>  
+        <div id="task" style="display:none;">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="ec-cat-list card card-default mb-24px">
+                        <div class="card-body">
+                            <div class="row ec-vendor-uploads">
+                                <div class="col-lg-12">
+                                    <div class="ec-vendor-upload-detail">
+                                        <h3>All Task Details</h3>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td><strong>Total Tasks</strong></td>
+                                                    <td><strong>Completed Tasks</strong></td>
+                                                    <td><strong>Pending Tasks</strong></td>
+                                                    <td><strong>Revised Tasks</strong></td>
+                                                    <td><strong>total delay</strong></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>{{ total_task }}</td>
+                                                    <td>{{complete_task}}</td>
+                                                    <td>{{pending_task}}</td>
+                                                    <td>{{revised_task}}</td>
+                                                    <td>{{task_delay}} days</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <br>
+                                        <hr>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td><strong>Task Type</strong></td>
+                                                    <td><strong>Task Date</strong></td>
+                                                    <td><strong>Complete Date</strong></td>
+                                                    <td><strong>Task Name</strong></td>
+                                                    <td><strong>Task status</strong></td>
+                                                    <td><strong>Tasks Description</strong></td>
+                                                    <td><strong>delay</strong></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for task in tasks %}
+                                                <tr>
+                                                    <td>{{task.task_type}}</td>
+                                                    <td>{{task.assign_date}}</td>
+                                                    <td>{{task.complete_date}}</td>
+                                                    <td>{{task.task_name}}</td>
+                                                    <td>{{task.status}}</td>
+                                                    <td>{{task.description}}</td>
+                                                    <td>{{task.delay_count}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div> 
+                                </div> 
+                            </div> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+        <div id="report" style="display:none;">
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="ec-cat-list card card-default mb-24px">
+                <div class="card-body">
+                    <div class="row ec-vendor-uploads">
+                        <div class="col-lg-12">
+                            <div class="ec-vendor-upload-detail">
+
+                                <!-- New Missing LEP Report Summary Table -->
+                                <h4>Missing LEP Report Summary</h4>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <td><strong>Description</strong></td>
+                                            <td><strong>Count</strong></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Half Missing Reports</td>
+                                            <td>{{ half_missing_reports }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>NO. of days (Half Missing Reports)</td>
+                                            <td>{{ days_half_report }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>NO. of days (Complete Reports)</td>
+                                            <td>{{ days_full_report }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>No. of days (NO report at all excluding Sunday)</td>
+                                            <td>{{ full_missing_reports }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>NO. of Sundays (No Reports)</td>
+                                            <td>{{ sunday_count }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div>
+
+    </div>
+</div>
+</div>
+{% if messages %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% for message in messages %}
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ message }}',
+            });
+        {% endfor %}
+    </script>
+{% endif %}
+
+<script>
+function showSection(sectionId) {
+    const sectionIds = [
+        'p_details',
+        'details',
+        'leave_id',
+        'break_id',
+        'task',
+        'report'
+    ];
+
+    sectionIds.forEach(id => {
+        document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
+    });
+}
+</script>
+
+
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+<!--filter script end -->
+
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

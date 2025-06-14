@@ -1,0 +1,1033 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts"
+                    style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h3>{{client.comp_name}}</h3>
+                    </div>
+                    <div>
+                        <a href="{% url 'account_client' %}" class="btn btn-primary me-2"><i class="fa-solid fa-backward" style="margin-right:7px"></i>Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+       <style>
+/* Container card style - subtle glow */
+.card.h-auto {
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+  border: none;
+  background-color: #fff;
+}
+
+/* Tabs - Rounded with smooth color transition */
+.custom-tab-1 .nav-tabs {
+  border-bottom: none;
+  display: flex;
+  gap: 14px;
+  padding-left: 12px;
+}
+
+.custom-tab-1 .nav-tabs .nav-link {
+  border: none;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  color: #444;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  box-shadow: 0 4px 8px rgba(199, 210, 254, 0.4);
+  transition: all 0s ease;
+}
+
+.custom-tab-1 .nav-tabs .nav-link:hover {
+  background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 100%);
+  color: white;
+box-shadow: 0 6px 14px rgba(34, 43, 64, 0.7);
+
+
+}
+
+.custom-tab-1 .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #222b40 0%, #3b4c73 100%);
+
+  color: white;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.9);
+}
+
+/* Table - card style rows with gradient and shadow */
+.table.table-bordered {
+  border-collapse: separate;
+  border-spacing: 0 16px; /* space between rows */
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+}
+
+.table.table-bordered tr {
+  background: linear-gradient(135deg, #fef9ff 0%, #ede9fe 100%);
+  box-shadow: 0 6px 18px rgba(156, 163, 175, 0.12);
+  border-radius: 14px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: table-row; /* keep table behavior */
+}
+
+.table.table-bordered tr:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+}
+
+.table.table-bordered td {
+  padding: 14px 26px;
+  border: none !important;
+  vertical-align: middle;
+  color: #3730a3;
+  font-weight: 600;
+  background: transparent;
+  border-radius: 14px;
+}
+
+.table.table-bordered tr td:first-child {
+  width: 35%;
+  color: #222b40c7;
+  font-weight: 700;
+}
+
+.table.table-bordered tr td:last-child {
+  color: #1e1b4b;
+  font-weight: 500;
+}
+
+/* Modal - softer round corners and shadows */
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(79, 70, 229, 0.25);
+  border: none;
+}
+
+.modal-header {
+  background: #eef2ff;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  font-weight: 700;
+  color: #4338ca;
+}
+
+.modal-footer {
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+}
+
+.modal-body textarea.form-control {
+  border-radius: 14px;
+  border: 1.5px solid #a5b4fc;
+  font-size: 15px;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+
+.modal-body textarea.form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 10px #6366f1;
+}
+</style>
+
+<!--<div class="col-12 active-p">-->
+<!--    <div class="card">-->
+<!--        <div class="card-body">-->
+<!--            <h2 class="h5 mb-3">Client Details</h2> -->
+<!--            <div class="list-group">-->
+                <!-- Buttons -->
+<!--                <div style="margin-bottom:10px">-->
+<!--                    <button type="button" class="btn btn-primary" style="font-size: 12px; padding: 10px 20px;" onclick="showClientSection('company')">Company Details</button>-->
+<!--                    <button type="button" class="btn btn-primary" style="font-size: 12px; padding: 10px 20px;" onclick="showClientSection('address')">Personal Details</button>-->
+<!--                    <button type="button" class="btn btn-primary" style="font-size: 12px; padding: 10px 20px;" onclick="showClientSection('other')">Account Ledger</button>-->
+<!--                </div>-->
+
+                <!-- Company Details Section -->
+<!--                <div id="company" class="section-group">-->
+<!--                    <div class="list-group-item"><strong>Ledger Type :</strong> {{ client.transaction_type }}</div>-->
+<!--                    <div class="list-group-item"><strong>Company Name :</strong> {{ client.comp_name }}</div>-->
+<!--                   <div class="list-group-item"><strong>Address :</strong> {{ client.address }}</div>-->
+<!--                    <div class="list-group-item"><strong>Area :</strong> {{ client.area }}</div>-->
+<!--                    <div class="list-group-item"><strong>City :</strong> {{ client.city }}</div>-->
+<!--                    <div class="list-group-item"><strong>State :</strong> {{ client.state }}</div>-->
+<!--                    <div class="list-group-item"><strong>Country :</strong> {{ client.country }}</div>-->
+<!--                     {% if client.gst_number %}-->
+<!--                    <div class="list-group-item"><strong>GST No :</strong> {{ client.gst_number }}</div>-->
+<!--                    {% endif %}-->
+<!--                     {% if client.pan_card %}-->
+<!--                    <div class="list-group-item"><strong>PanCard number :</strong> {{ client.pan_card }}</div>-->
+<!--                    {% endif %}-->
+<!--                     <div class="list-group-item"><strong>Billing Address :</strong> {{ client.billing_add }}</div>-->
+<!--                    <div class="list-group-item"><strong>Billing & Shipping Address Same :</strong> {{ client.same_as_billing }}</div>-->
+<!--                    {% if client.shipping_add %}-->
+<!--                    <div class="list-group-item"><strong>Shipping Address :</strong> {{ client.shipping_add }}</div>-->
+<!--                    {% endif %}-->
+<!--                </div>-->
+
+                <!-- Address Details Section -->
+<!--                <div id="address" class="section-group">-->
+<!--                     <div class="list-group-item"><strong>Client Name :</strong> {{ client.name }}</div>-->
+<!--                    <div class="list-group-item"><strong>Mobile Number :</strong> {{ client.mobile }}</div>-->
+<!--                    <div class="list-group-item"><strong>Email :</strong> {{ client.email }}</div>-->
+                    
+                    
+                    
+<!--                </div>-->
+
+                <!-- Other Section -->
+<!--                <div id="other" class="section-group">-->
+<!--                  <table class="table">-->
+<!--                                        <tr>-->
+<!--                                            <th>Invoice Number</th><th>Date</th><th>Perticular</th><th>Total</th>-->
+<!--                                        </tr>-->
+<!--                                        {% for inv in invoice_data %} -->
+<!--                                        <tr>-->
+<!--                                            <td>{{ inv.invNumber }}</td>-->
+<!--                                            <td>{{ inv.date|date:'d-m-Y' }}</td>-->
+<!--                                            <td>{{ inv.productName }}</td>-->
+<!--                                            <td>{{ inv.grandAmount }}</td>-->
+<!--                                        </tr>-->
+<!--                                        {% empty %}-->
+<!--                                        <tr><td colspan="3">No invoices found.</td></tr>-->
+<!--                                        {% endfor %}-->
+<!--                                    </table>-->
+                                    
+<!--                                    <h3>Payment Vouchers</h3>-->
+<!--                                    <table class="table">-->
+<!--                                        <tr>-->
+<!--                                            <th>Voucher Number</th><th>Date</th><th>Particular</th><th>Quantity</th><th>Total</th><th>Total Amount</th><th>Mode of payment</th><th>Added By</th><th>PDF</th><th>Action</th>-->
+<!--                                        </tr>-->
+<!--                                        {% for pv in payment_data %}-->
+<!--                                        <tr>-->
+<!--                                            <td>{{ pv.vouch_num }}</td>-->
+<!--                                            <td>{{ pv.payment_date|date:'d-m-Y' }}</td>-->
+<!--                                            <td>{{ pv.perticular }}</td>-->
+<!--                                            <td>{{ pv.quantity }}</td>-->
+<!--                                            <td>{{ pv.total }}</td>-->
+<!--                                            <td>{{ pv.total_amount }}</td>-->
+<!--                                            <td>{{ pv.payment_mode }}</td>-->
+<!--                                            <td>{{ pv.add_by_name }}</td>-->
+<!--                                            <td>-->
+<!--												<div>-->
+<!--													<a style="background-color: #34c997; color: #fff;padding: 2px 10px 2px 10px;border-radius: 10px;"-->
+<!--														target="_blank"-->
+<!--														href="{% url 'payment_voucher_pdf' pv_id=pv.pv_id %}">PDF</a>-->
+<!--												</div>-->
+<!--											</td>-->
+<!--                                            <td><a class="dropdown-item" href="{% url 'edit_payment' pv.pv_id %}">Edit</a></td>-->
+<!--                                        </tr>-->
+<!--                                        {% empty %}-->
+<!--                                        <tr><td colspan="3">No payment vouchers found.</td></tr>-->
+<!--                                        {% endfor %}-->
+<!--                                    </table>-->
+                                    
+<!--                                    <h3>Receipt Vouchers</h3>-->
+<!--                                    <table class="table">-->
+<!--                                        <tr>-->
+<!--                                            <th>Voucher Number</th><th>Date</th><th>Particular</th><th>Quantity</th><th>Total</th><th>Total Amount</th><th>Mode of payment</th><th>Added By</th><th>PDF</th><th>Action</th>-->
+<!--                                        </tr>-->
+<!--                                        {% for rv in receipt_data %}-->
+<!--                                        <tr>-->
+<!--                                            <td>{{ rv.vouch_num }}</td>-->
+<!--                                            <td>{{ rv.payment_date|date:'d-m-Y' }}</td>-->
+<!--                                            <td>{{ rv.perticular }}</td>-->
+<!--                                            <td>{{ rv.quantity }}</td>-->
+<!--                                            <td>{{ rv.total }}</td>-->
+<!--                                            <td>{{ rv.total_amount }}</td>-->
+<!--                                            <td>{{ rv.payment_mode }}</td>-->
+<!--                                            <td>{{ rv.add_by_name }}</td>-->
+<!--                                            <td>-->
+<!--												<div>-->
+<!--													<a style="background-color: #34c997; color: #fff;padding: 2px 10px 2px 10px;border-radius: 10px;"-->
+<!--														target="_blank"-->
+<!--														href="{% url 'receipt_voucher_pdf' rv_id=rv.rv_id %}">PDF</a>-->
+<!--												</div>-->
+<!--											</td>-->
+<!--                                            <td><a class="dropdown-item" href="{% url 'edit_receipt' rv.rv_id %}">Edit</a></td>-->
+<!--                                        </tr>-->
+<!--                                        {% empty %}-->
+<!--                                        <tr><td colspan="3">No Receipt vouchers found.</td></tr>-->
+<!--                                        {% endfor %}-->
+<!--                                    </table>-->
+                   
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+
+  <div class="card h-auto" style="margin-top:20px">
+                            <div class="card-body">
+                                <div class="profile-tab">
+                                    <div class="custom-tab-1">
+                                        <ul class="nav nav-tabs">
+                                            <li class="nav-item"><a href="#my-posts" data-bs-toggle="tab" class="nav-link active show">Company Details</a>
+                                            </li>
+                                            <li class="nav-item"><a href="#about-me" data-bs-toggle="tab" class="nav-link">Personal details</a>
+                                            </li>
+                                            <li class="nav-item"><a href="#profile-settings" data-bs-toggle="tab" class="nav-link">Account Ledger</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                      
+                        <div id="my-posts" class="tab-pane fade active show" style="margin-top:25px">
+  <table class="table table-bordered">
+    <tr>
+      <td><strong>Ledger Type :</strong></td>
+      <td>{{ client.transaction_type }}</td>
+    </tr>
+    
+    <tr>
+      <td><strong>Company Name :</strong></td>
+      <td>{{ client.comp_name }}</td>
+    </tr>
+      <tr>
+      <td><strong>Address :</strong></td>
+      <td>{{ client.address }}</td>
+    </tr>
+      <tr>
+      <td><strong>Area :</strong></td>
+      <td>{{ client.area }}</td>
+    </tr>
+    <tr>
+      <td><strong>City :</strong></td>
+      <td>{{ client.city }}</td>
+    </tr>
+    <tr>
+      <td><strong>State :</strong></td>
+      <td>{{ client.state }}</td>
+    </tr>
+    <tr>
+      <td><strong>Country :</strong></td>
+      <td>{{ client.country }}</td>
+    </tr>
+    {% if client.gst_number %}
+    <tr>
+      <td><strong>GST No :</strong></td>
+      <td>{{ client.gst_number  }}</td>
+    </tr>
+     {% endif %}
+      {% if client.pan_card %}
+    <tr>
+      <td><strong>PanCard number :</strong></td>
+      <td>{{ client.pan_card }}</td>
+    </tr>
+     {% endif %}
+    <tr>
+      <td><strong>Billing Address :</strong></td>
+      <td>{{ client.billing_add  }}</td>
+    </tr>
+    <tr>
+      <td><strong>Billing & Shipping Address Same :</strong></td>
+      <td>{{ client.same_as_billing  }}</td>
+    </tr>
+       {% if client.shipping_add %}
+    <tr>
+     
+      <td><strong>Shipping Address :</strong></td>
+      <td>{{ client.shipping_add  }}</td>
+    </tr>
+    {% endif %}
+  </table>
+</div>
+                     
+                                            
+                                            <div id="about-me" class="tab-pane fade" style="margin-top:25px">
+  <table class="table table-bordered">
+
+    <tr><td><strong>Client Name :</strong></td><td>{{ client.name }}</td></tr>
+    <tr><td><strong>Mobile Number :</strong></td><td>{{ client.mobile }}</td></tr>
+    <tr><td><strong>Email :</strong></td><td>{{ client.email }}</td></tr>
+    
+  </table>
+</div>
+
+                                            
+                                            
+ 
+                        
+                        <div id="profile-settings" class="tab-pane fade" style="margin-top:25px;overflow-x: auto; width: 100%;">
+     <table class="table  table-bordered" >
+                                            <tr>
+                                                <th>Invoice Date</th><th>Invoice Number</th><th>Company Name</th><th>Client Name</th><th>Perticular</th><th>Amount</th><th>Pdf</th><th>Action</th>
+                                            </tr>
+                                            {% for inv in invoice_data %} 
+                                            <tr>
+                                                <td>{{ inv.date|date:'d-m-Y' }}</td>
+                                                <td>{{ inv.invNumber }}</td>
+                                                <td>{{ inv.clientName }}</td>
+                                                <td>{{ inv.clientName }}</td>
+                                                <td>{{ inv.productName }}</td>
+                                                <td>{{ inv.grandAmount }}</td>
+                                                <td>
+    												<a style="background-color: #34c997; color: #fff;padding: 2px 10px 2px 10px;border-radius: 10px;" target="_blank" href="{% url 'invoice_pdf' invNumber=inv.invNumber %}" >PDF</a>
+    												<a style="background-color: #34c997; color: #fff;padding: 2px 10px 2px 10px;border-radius: 10px;" target="_blank" href="{% url 'invoice_pdf_share' invNumber=inv.invNumber %}" >SHARE</a>
+    											</td>
+    											<td>
+    											    <a  href="{% url 'edit_invoice' inv.inv_id %}" class="btn btn-primary btn-xs shadow" title="Edit">Edit</a>
+    											    <a href="javascript:void(0);" class="dropdown-item" onclick="confirmDelete2(event, '{{ inv.inv_id }}')">Delete</a>
+    											</td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr><td colspan="3">No invoices found.</td></tr>
+                                            {% endfor %}
+                                        </table>
+                                    
+                                    <h3>Payment Vouchers</h3>
+                                    <table class="table  table-bordered">
+                                        <tr>
+                                            <th>Voucher Number</th><th>Date</th><th>Particular</th><th>Quantity</th><th>Total</th><th>Total Amount</th><th>Mode of payment</th><th>Added By</th><th>PDF</th><th>Action</th>
+                                        </tr>
+                                        {% for pv in payment_data %}
+                                        <tr>
+                                            <td>{{ pv.vouch_num }}</td>
+                                            <td>{{ pv.payment_date|date:'d-m-Y' }}</td>
+                                            <td>{{ pv.perticular }}</td>
+                                            <td>{{ pv.quantity }}</td>
+                                            <td>{{ pv.total }}</td>
+                                            <td>{{ pv.total_amount }}</td>
+                                            <td>{{ pv.payment_mode }}</td>
+                                            <td>{{ pv.add_by_name }}</td>
+                                            <td>
+												<div>
+													<a style="background-color: #34c997; color: #fff;padding: 2px 10px 2px 10px;border-radius: 10px;"
+														target="_blank"
+														href="{% url 'payment_voucher_pdf' pv_id=pv.pv_id %}">PDF</a>
+												</div>
+											</td>
+                                            <!--<td><a class="dropdown-item" href="{% url 'edit_payment' pv.pv_id %}">Edit</a>-->
+                                            <!--<a class="dropdown-item" href="{% url 'view_payment' pv.pv_id %}">View</a>-->
+                                            <!--<a href="javascript:void(0);" class="dropdown-item" onclick="confirmDelete(event, '{{ pv.pv_id }}')">Delete</a></td>-->
+                                            
+                                            
+                                                 <td>
+                                                          <div class="d-flex  gap-1 justify-content-end">
+                                                            
+                                                        
+                                                                <!-- View button (eye icon) -->
+                                                                <a  href="{% url 'view_payment' pv.pv_id %}"
+                                                                   class="btn btn-info btn-xs shadow" title="View">
+                                                                    <i class="fa fa-eye"></i>
+                                                                </a>
+                                                        
+                                                              
+                                                                    <!-- Edit button (pencil icon) -->
+                                                                    <a  href="{% url 'edit_payment' pv.pv_id %}"
+                                                                       class="btn btn-primary btn-xs shadow" title="Edit">
+                                                                        <i class="fa fa-pencil"></i>
+                                                                    </a>
+
+                                                                    <!-- Delete button (trash icon) -->
+                                                                    <a href="javascript:void(0);"
+                                                                      onclick="confirmDelete(event, '{{ pv.pv_id }}')"
+                                                                       class="btn btn-danger btn-xs shadow" title="Delete">
+                                                                        <i class="fa fa-trash"></i>
+                                                                   </a>
+                                                              
+                                                            </div>
+                                                        </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="3">No payment vouchers found.</td></tr>
+                                        {% endfor %}
+                                    </table>
+                                    
+                                    <h3>Receipt Vouchers</h3>
+                                    <table class="table  table-bordered">
+                                        <tr>
+                                            <th>Voucher Number</th><th>Date</th><th>Particular</th><th>Quantity</th><th>Total</th><th>Total Amount</th><th>Mode of payment</th><th>Added By</th><th>PDF</th><th>Action</th>
+                                        </tr>
+                                        {% for rv in receipt_data %}
+                                        <tr>
+                                            <td>{{ rv.vouch_num }}</td>
+                                            <td>{{ rv.payment_date|date:'d-m-Y' }}</td>
+                                            <td>{{ rv.perticular }}</td>
+                                            <td>{{ rv.quantity }}</td>
+                                            <td>{{ rv.total }}</td>
+                                            <td>{{ rv.total_amount }}</td>
+                                            <td>{{ rv.payment_mode }}</td>
+                                            <td>{{ rv.add_by_name }}</td>
+                                            <td>
+												<div>
+													<a style="background-color: #34c997; color: #fff;padding: 2px 10px 2px 10px;border-radius: 10px;"
+														target="_blank"
+														href="{% url 'receipt_voucher_pdf' rv_id=rv.rv_id %}">PDF</a>
+												</div>
+											</td>
+            <!--                                <td><a class="dropdown-item" href="{% url 'edit_receipt' rv.rv_id %}">Edit</a>-->
+            <!--                                    <a class="dropdown-item" href="{% url 'view_client_receipt_voucher' rv.rv_id %}">View</a>-->
+												<!--<a href="javascript:void(0);" class="dropdown-item" onclick="confirmDelete1(event, '{{ rv.rv_id }}')">Delete</a></td>-->
+												
+												       <td>
+                                                          <div class="d-flex  gap-1 justify-content-end">
+                                                            
+                                                        
+                                                                <!-- View button (eye icon) -->
+                                                                <a  href="{% url 'view_client_receipt_voucher' rv.rv_id %}"
+                                                                   class="btn btn-info btn-xs shadow" title="View">
+                                                                    <i class="fa fa-eye"></i>
+                                                                </a>
+                                                        
+                                                              
+                                                                    <!-- Edit button (pencil icon) -->
+                                                                    <a   href="{% url 'edit_receipt' rv.rv_id %}"
+                                                                       class="btn btn-primary btn-xs shadow" title="Edit">
+                                                                        <i class="fa fa-pencil"></i>
+                                                                    </a>
+
+                                                                    <!-- Delete button (trash icon) -->
+                                                                    <a href="javascript:void(0);"
+                                                                     onclick="confirmDelete1(event, '{{ rv.rv_id }}')"
+                                                                       class="btn btn-danger btn-xs shadow" title="Delete">
+                                                                        <i class="fa fa-trash"></i>
+                                                                   </a>
+                                                              
+                                                            </div>
+                                                        </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr><td colspan="3">No Receipt vouchers found.</td></tr>
+                                        {% endfor %}
+                                    </table>
+  
+</div>
+
+                                            
+                                                 
+                     
+                                        </div>
+                                    </div>
+									<!-- Modal -->
+									<div class="modal fade" id="replyModal">
+										<div class="modal-dialog modal-dialog-centered" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title">Post Reply</h5>
+													<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+												</div>
+												<div class="modal-body">
+													<form>
+														<textarea class="form-control h-50" rows="4">Message</textarea>
+													</form>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close</button>
+													<button type="button" class="btn btn-primary">Reply</button>
+												</div>
+											</div>
+										</div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    function confirmDelete2(event, inv_id) {
+    event.preventDefault();  // Prevent the default action (which might be triggering the link directly)
+
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this Invoice?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send an AJAX request to delete the receipt voucher
+            $.ajax({
+                url: "{% url 'delete_invoice' inv_id=0 %}".replace('0', inv_id),  // Dynamically set the URL
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    'inv_id': inv_id  // Send the voucher ID to delete
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'The Invoice "' + response.name + '" has been deleted.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
+<script>
+    function confirmDelete1(event, rv_id) {
+    event.preventDefault();  // Prevent the default action (which might be triggering the link directly)
+
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this voucher?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send an AJAX request to delete the receipt voucher
+            $.ajax({
+                url: "{% url 'delete_receipt_voucher' rv_id=0 %}".replace('0', rv_id),  // Dynamically set the URL
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    'rv_id': rv_id  // Send the voucher ID to delete
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'The voucher "' + response.name + '" has been deleted.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
+<script>
+    function confirmDelete(event, pv_id) {
+    event.preventDefault();  // Prevent the default action (which might be triggering the link directly)
+
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this voucher?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send an AJAX request to delete the payment voucher
+            $.ajax({
+                url: "{% url 'delete_payment_voucher' pv_id=0 %}".replace('0', pv_id),  // Dynamically set the URL
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    'pv_id': pv_id  // Send the voucher ID to delete
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'The voucher "' + response.name + '" has been deleted.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
+<script>
+    function showClientSection(sectionId) {
+        const sections = document.querySelectorAll('.section-group');
+        sections.forEach(section => section.style.display = 'none');
+
+        const target = document.getElementById(sectionId);
+        if (target) {
+            target.style.display = 'block';
+        }
+    }
+
+    // Show "Company Details" section by default
+    window.onload = function () {
+        showClientSection('company');
+    };
+</script>
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

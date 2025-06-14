@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts"
+                    style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>{{data.name}} Details</h1>
+                    </div>
+                    <div>
+                        <a href="{% url 'request_call' %}" class="btn btn-primary me-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 active-p" >
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Lead Details</h2> 
+                    <div class="list-group">
+                        {% if data.name %}
+                        <div class="list-group-item">
+                            <strong>Name :</strong> {{ data.name }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if data.email %}
+                        <div class="list-group-item">
+                            <strong>Email :</strong> {{ data.email }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if data.mobile %}
+                        <div class="list-group-item">
+                            <strong>Mobile :</strong> {{ data.mobile }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if data.city %}
+                        <div class="list-group-item">
+                            <strong>City :</strong> {{ data.city }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if data.state %}
+                        <div class="list-group-item">
+                            <strong>State :</strong> {{ data.state }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if data.team_help %}
+                        <div class="list-group-item">
+                            <strong>How can our team help you? :</strong> {{ data.team_help }}
+                        </div>
+                        {% endif %}
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

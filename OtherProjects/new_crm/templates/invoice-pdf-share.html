@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Invoice</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <input type='button' id='btn' value="Print" onclick="window.print()">
+    <a type="button"
+        href="https://api.whatsapp.com/send?phone={{ phoneno }}&text={{ request.build_absolute_uri|urlencode }}"
+        class="whatsApp" target="_blank">
+        Share
+    </a>
+    <style>
+        @media print {
+
+            #printMe,
+            #printMe * {
+                visibility: visible;
+            }
+
+            #printMe {
+                position: absolute;
+                left: 0;
+                top: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        .invoice-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 900px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+            height: 1040px;
+            background-size: 100% 100%;
+        }
+    </style>
+    <div id='printMe'>
+        {% if company_name == "SUCCESS INNOVATIVE TECHNOLOGIES PRIVATE LIMITED" %}
+        <div class="invoice-container"
+            style=" background-image:url('https://shubhamsingh.in/new_crm/assets/images/Letterped/letter.png');background-repeat: no-repeat;">
+            <div style="padding: 120px 5px 5px 5px;">
+
+            </div>
+            {% endif %}
+
+            {% if company_name == "Imperial Webmarketers LLP"%}
+            <div class="invoice-container"
+                style=" background-image:url('https://shubhamsingh.in/new_crm/assets/images/Letterped/imat.png');background-repeat: no-repeat;">
+                <div style="padding: 120px 5px 5px 5px;">
+
+                </div>
+                {% endif %}
+
+                {% if company_name == "U-TURN DIGITAL MEDIA LLP"%}
+                <div class="invoice-container"
+                    style=" background-image:url('https://shubhamsingh.in/new_crm/assets/images/Letterped/U-TURN.png');background-repeat: no-repeat;">
+                    <div style="padding: 120px 5px 5px 5px;">
+
+                    </div>
+                    {% endif %}
+                    <style>
+                        * {
+                            box-sizing: border-box;
+                            margin: 0;
+                            padding: 0;
+                        }
+
+                        body {
+                            font-family: Arial, sans-serif;
+                            font-size: smaller;
+                            line-height: 1.6;
+                            padding: 20px;
+                            background: #f4f4f4;
+                        }
+
+
+
+                        header {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+
+                        .logo {
+                            width: 100px;
+                        }
+
+                        .invoice-details {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 20px;
+                        }
+
+                        .details-left,
+                        .details-right {
+                            width: 48%;
+                        }
+
+
+
+
+                        .invoice-details p {
+                            margin-bottom: 1px;
+                        }
+
+                        .invoice-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 20px;
+                        }
+
+                        .invoice-table th,
+                        .invoice-table td {
+                            border: 1px solid #ddd;
+                            padding: 1px;
+                            text-align: left;
+                        }
+
+                        .invoice-table th {
+                            background-color: #f2f2f2;
+                        }
+
+                        .summary p {
+                            margin-bottom: 1px;
+                            font-weight: bold;
+                        }
+
+                        footer {
+                            text-align: center;
+                            margin-top: 20px;
+                        }
+
+                        @media (max-width: 600px) {
+                            .invoice-container {
+                                padding: 10px;
+                            }
+
+                            .invoice-details {
+                                flex-direction: column;
+                            }
+
+                            .details-left,
+                            .details-right {
+                                width: 100%;
+                            }
+
+                            .invoice-table th,
+                            .invoice-table td {
+                                font-size: 14px;
+                                padding: 6px;
+                            }
+                        }
+
+
+                        .invoice-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-bottom: 20px;
+                            font-size: 10px;
+                        }
+                    </style>
+                    <header>
+                        <!-- <img src="swiggy-logo.png" alt="Swiggy Logo" class="logo"> -->
+                        <h1>TAX INVOICE</h1>
+                        <p><strong>Company GST No.:</strong> {{company_contact.gst_no}}</p>
+                        <!--<H2>{{user_compney}}</H2>   -->
+                    </header>
+
+                    <div class="invoice-details">
+                        <div class="details-left">
+                            <!--<p><strong>Company Name:</strong> {{c_comp_name}}</p>-->
+                            <!--<p><strong>Invoice To:</strong> {{ clientname }}</p>-->
+                            <!--<p><strong>Client Address:</strong> {{ address }}</p>-->
+                            <!--<p><strong>State:</strong> {{state}}</p>-->
+                            <!--<p><strong>GST No.:</strong> {{gst_no}}</p>-->
+                            <!--<p><strong>HSN Code:</strong> {{HSN_code}}</p>-->
+                            <p><strong>Client Details:</strong></p>
+                            <p>{{ client_details.name }}</p>
+                            <p>{{ client_details.address }}</p>
+                            <p>{{ client_details.state }}</p>
+                            <p>{{ client_details.gst_no }}</p>
+                        </div>
+                        <div class="details-right">
+                            <p><strong>Date of Invoice:</strong> {{invoice_date|date:"d-m-Y"}}</p>
+                            <p><strong>Invoice No:</strong> {{invoice_no}}</p>
+                            <p><strong>Due:</strong> </p>
+                            <!--<p><strong>Invoice No:</strong> {{vouch_num}}</p>-->
+                            <!--<p><strong>Invoice issued by:</strong>{{company_name}}</p>-->
+                            <!--<p><strong>Company GST No.:</strong> {{c_gst_no}}</p>-->
+                            <!--<p><strong>Address:</strong> {{c_address}}, {{c_area}}, {{c_city}}, {{c_pincode}}, {{c_state}}, {{c_country}}</p>-->
+                            <!--<p><strong>Place of Supply:</strong> {{c_state}}</p>-->
+                        </div>
+                    </div>
+
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>Sr No</th>
+                                <th>PARTICULAR</th>
+                                <th>HSN</th>
+                                <th>UNIT</th>
+                                <!--<th>QTY</th>-->
+                                <th>UNIT PRICE</th>
+                                <th>TAXABLE AMT.</th>
+                                <th>GST%</th>
+                                <th>GST AMOUNT</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            {% for i in data %}
+                            <tr>
+            
+                                <td>{{forloop.counter}}</td>
+                                <td>{{i.productName}}</td>
+                                <td>{{i.hsn}}</td>
+                                <!--<td>{{i.quantity}}</td>-->
+                                <td>{{i.unitOfMeasure}}</td>
+                                <td>{{i.rate}}</td>
+                                <td>{{i.taxableAmount}}</td>
+                                <td>{{i.gstPercentage}}</td>
+                                <td>{{i.gstAmount}}</td>
+                                <td>{{i.totalAmount}}</td>
+            
+                            </tr>
+                            {% endfor %}
+                            {% for _ in blank_rows %}
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <!--<td>&nbsp;</td>-->
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+
+                    <div class="summary">
+                        <div class="row" style="display: flex;">
+                            <div style="width:80%;">
+                                <p><strong>NOTE :</strong></p>
+                            </div>
+                            <div style="width:30%; text-align: end;">
+                                <table class="invoice-table">
+                                    <p><strong>TAXABLE TOTAL:</strong> {{tax_total}}</p>
+                                    <tbody>
+                                        {% if cgst > 0 %}
+                                        <tr>
+                                            <td><strong>CGST:</strong></td>
+                                            <td>&nbsp;{{cgst}}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if sgst > 0 %}
+                                        <tr>
+                                            <td><strong>SGST/UTGST:</strong></td>
+                                            <td>&nbsp;{{sgst}}</td>
+                                        </tr>
+                                        {% endif %}
+                                        {% if igst > 0 %}
+                                        <tr>
+                                            <td><strong>IGST:</strong></td>
+                                            <td>{{igst}}</td>
+                                        </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- <p><strong>Invoice total in words:</strong> Two Hundred Eighty Five Rupees Seventy Three Paise Only</p> -->
+                    </div>
+                    <p style="text-align: end;"><strong>INVOICE TOTAL:</strong> {{grand_total}}</p>
+                    <table class="invoice-table">
+                        <tbody>
+                            <!--<tr>-->
+                            <!--    <td style="width: 50%;">-->
+                            <!--        Invoice total in words:-->
+                            <!--    </td>-->
+                            <!--    <td style="text-align: end;">-->
+                            <!--        {{total_in_words}}-->
+                            <!--    </td>-->
+                            <!--</tr>-->
+                            <tr>
+                            <tr>
+                                <td colspan="2" style="text-align: left;">
+                                    <p><strong>BANK DETAILS</strong></p>
+                                    <p><strong>BANK NAME:</strong> {{company_contact.bank_name}}</p>
+                                    <p><strong>ACCOUNT NO.:</strong> {{company_contact.acc_no}}</p>
+                                    <p><strong>IFSC CODE:</strong> {{company_contact.ifsc_code}}</p>
+                                    <p><strong>BRANCH NAME:</strong> {{company_contact.branch_name}}</p>
+                                </td>
+                            </tr>
+                            <td>Authorized Signature</td>
+                            <td style="text-align: center;">
+                                Digitally Signed by <br>{{company_name}}<br>
+                                
+                            </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>
+
+
+
+
+</body>
+
+</html>

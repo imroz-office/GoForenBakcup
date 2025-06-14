@@ -1,0 +1,817 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>{{ is_edit|yesno:"Edit User,Add User" }} {% if user.emp_type == "intern" %}( Intern ){% endif %}</h1>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <a href="{% url 'User' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-regular fa-address-book" style="margin-right:7px"></i>User list</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+                <div class="ec-cat-list card card-default mb-24px">
+                    <div class="card-body">
+                        <form id="adduserForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_user' user.userId %}{% else %}{% url 'add_user' %}{% endif %}" method="post">
+                            {% csrf_token %}
+                           
+                            <div class="col-lg-6" >
+                                 <label for="inputName" class="form-label">First Name<span style="color:red;">*</span></label>
+                                 <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                
+                                <input type="text" required class="form-control" name="name" placeholder="Enter First Name" id="inputName" value="{{ user.name|default:'' }}">
+                            </div>
+                            </div>
+                            
+                            <div class="col-lg-6" >
+                                 <label for="inputName" class="form-label">Middle Name</label>
+                                 <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                
+                                <input type="text" class="form-control" name="middle_name" placeholder="Enter Middle Name" id="inputName" value="{{ user.middle_name|default:'' }}">
+                            </div>
+                            </div>
+                            
+                            <div class="col-lg-6" >
+                                 <label for="inputName" class="form-label">Last Name</label>
+                                 <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                
+                                <input type="text" class="form-control" name="last_name" placeholder="Enter Last Name" id="inputName" value="{{ user.last_name|default:'' }}">
+                            </div>
+                            </div>
+                            
+                                
+                             <div class="col-lg-6">
+                                <label for="inputEmail" class="form-label">Email</label>
+                                 <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                
+                               
+                                <input type="email" class="form-control" name="email" placeholder="Enter Email" id="inputEmail" value="{{ user.email|default:'' }}">
+                            </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <label for="inputMobile" class="form-label">Mobile Number<span style="color:red;">*</span></label>
+                                 <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                
+                                <input type="tel" required maxlength="10" minlength="10"  oninput="this.value = this.value.replace(/[^0-9]/g, '');" class="form-control" name="mobilenumber" placeholder="Enter Mobile Number" id="inputMobile" value="{{ user.mobile|default:'' }}">
+                            </div>
+                            </div>
+                            	
+                            <div class="col-lg-6">
+                                <label for="inputPassword" class="form-label">Password<span style="color:red;">*</span></label>
+                                   <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                
+                                <input type="text" required class="form-control" name="password" placeholder="Enter Password" id="inputPassword" value="{{ user.password|default:'' }}">
+                                <!-- Add a toggle for password visibility -->
+                            </div>
+                            </div>
+
+                            <div class="col-md-6"> 
+                                <label class="form-label">Select Company Name<span style="color:red;">*</span></label>
+                                <div style="display:flex;">
+                                    <div class="input-group clockpicker" >
+                                        <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    
+                                    <select name="company_name" required  id="company-select" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select a company name..</option>
+                                        {% for company in compney_list %}
+                                            <option value="{{ company.com_name }}" {% if user.company_name == company.com_name %}selected{% endif %}>{{ company.com_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                </div>
+                            </div>   
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Select a Head<span style="color:red;">*</span></label>
+                                <div style="display:flex;">
+                                  <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-user-secret"></i></span>
+                                   
+                                <select name="head"   id="automatic-selection" required class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                    {% if user.head_id %}
+                                        <option value="{{ user.head_id }}" selected>{{ h_name }}</option> <!-- Mark this option as selected -->
+                                    {% else %}
+                                        <option value="">Select a Head..</option>
+                                    {% endif %}
+                                    {% for u in users %}
+                                        <option value="{{ u.userId }}" {% if u.userId == user.head_id %}selected{% endif %}>{{ u.name }}</option>
+                                    {% endfor %}
+                                </select>
+                             </div>
+                                </div>
+                            </div>
+
+                            <!--<div class="col-md-6">-->
+                            <!--    <label class="form-label">Select a Department</label>-->
+                            <!--    <div class="row" id="departments-container">-->
+                                    <!-- Departments will be loaded dynamically here -->
+                            <!--    </div>-->
+                            <!--</div>-->
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Select a Department</label>
+                                
+                                <!-- Select All Checkbox -->
+                                <div class="row">
+                                    <div class="col-md-12 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-checkbox" type="checkbox" id="select-all-departments">
+                                            <label class="form-checkbox" for="select-all-departments"><strong>Select All Departments</strong></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <!-- Departments will be dynamically inserted here -->
+                                <div class="row" id="departments-container"></div>
+                            </div>
+                            
+                            <!--<div class="col-md-6">-->
+                            <!--    <label class="form-label">Select Roles</label>-->
+                            <!--    <div class="row">-->
+                            <!--        {% for role in roles %}-->
+                            <!--            <div class="col-md-4 mb-2">-->
+                            <!--                <div class="form-check" style="padding-left: 0;">-->
+                            <!--                    <input class="form-checkbox" type="checkbox" name="roles" id="role-{{ role.roleId }}" value="{{ role.roleId }}" {% if role.roleId in user_roles %}checked{% endif %}>-->
+                            
+                            <!--                    <label class="form-checkbox" for="role-{{ role.roleId }}">{{ role.role }}</label>-->
+                            <!--                </div>-->
+                            <!--            </div>-->
+                            <!--        {% endfor %}-->
+                            <!--    </div>-->
+                            <!--</div>-->
+                            {% if not user.emp_type == "intern" %}
+                            <div class="col-md-6">
+    <label class="form-label">Select Roles<span style="color:red;">*</span></label>
+    <div class="row">
+        <!-- Select All checkbox -->
+        <div class="col-md-12 mb-2">
+            <div class="form-check" style="padding-left: 0;">
+                <input class="form-checkbox" type="checkbox" id="select-all-roles">
+                <label class="form-checkbox" for="select-all-roles"><strong>Select All</strong></label>
+            </div>
+        </div>
+
+        <!-- Role checkboxes -->
+        {% for role in roles %}
+            <div class="col-md-4 mb-2">
+                <div class="form-check" style="padding-left: 0;">
+                    <input class="form-checkbox role-checkbox" type="checkbox" name="roles" id="role-{{ role.roleId }}" value="{{ role.roleId }}" {% if role.roleId in user_roles %}checked{% endif %}>
+                    <label class="form-checkbox" for="role-{{ role.roleId }}">{{ role.role }}</label>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+                            {% endif %}
+
+<!-- JavaScript to handle Select All -->
+<script>
+    document.getElementById('select-all-roles').addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('.role-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+
+    // Optional: Auto-check/uncheck "Select All" if all/none are selected
+    const roleCheckboxes = document.querySelectorAll('.role-checkbox');
+    roleCheckboxes.forEach(cb => {
+        cb.addEventListener('change', () => {
+            const allChecked = [...roleCheckboxes].every(box => box.checked);
+            const anyChecked = [...roleCheckboxes].some(box => box.checked);
+            document.getElementById('select-all-roles').checked = allChecked;
+        });
+    });
+</script>
+                           
+                            
+                                <!--<div class="col-xl-6">-->
+                                <!--<label class="form-label">Select a Department</label>-->
+
+                                <!--   <select class="select2-with-label-multiple js-states" multiple="multiple">-->
+                                <!--         <option value="" selected>Select a Department</option>-->
+                                <!--        <option value="AL">Alabama</option>-->
+                                <!--        <option value="WY">Wyoming</option>-->
+                                <!--    </select>-->
+                                
+                             
+                                <!--</div>   -->
+                                
+                                     
+                                <!--<div class="col-xl-6">-->
+                                <!--    <label class="form-label">Select Roles</label>-->
+                                <!--    <select class="yum-select2-with-label-multiple js-states" multiple="multiple" name="roles">-->
+                                <!--        {% for role in roles %}-->
+                                <!--        <option value="{{ role.roleId }}" -->
+                                <!--            {% if role.roleId|stringformat:"s" in user_roles %}-->
+                                <!--                selected-->
+                                <!--            {% endif %}>-->
+                                <!--            {{ role.role }}-->
+                                <!--        </option>-->
+                                <!--        {% endfor %}-->
+                                <!--    </select>-->
+                                <!--</div>-->
+                                
+                            <div class="col-lg-12">
+                                <button type="submit" class="btn btn-primary">{{ is_edit|yesno:"Update,Submit" }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $('#adduserForm').submit(function(e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        // Disable the submit button to prevent further clicks
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true);  // Disable the submit button
+        submitButton.text('Submitting...');    // Optional: Change the button text to indicate submission
+
+        // Prepare the form data
+        var formData = $(this).serialize();  
+
+        // Check if the form is for adding or editing by inspecting the action URL
+        var isEdit = $(this).attr('action').includes('edit_user'); 
+
+        // Send the form data using AJAX
+        $.ajax({
+            url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Show success alert with SweetAlert for Add or Edit
+                    Swal.fire({
+                        icon: 'success',
+                        title: isEdit ? 'User Updated!' : 'User Added!',
+                        text: response.message,
+                    }).then(() => {
+                        window.location.href = "{% url 'User' %}";  // Redirect to the department page
+                    });
+                } else {
+                    // Show error alert if something goes wrong
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred, please try again.',
+                });
+            },
+            complete: function() {
+            }
+        });
+    });
+});
+</script>
+
+<script type="text/javascript">
+document.getElementById('company-select').addEventListener('change', function () {
+    var companyName = this.value;
+
+    // Clear department checkboxes
+    const departmentsContainer = document.getElementById('departments-container');
+    departmentsContainer.innerHTML = '';
+
+    if (companyName) {
+        fetch(`https://shubhamsingh.in/new_crm/get_departments_by_company/?company_name=${encodeURIComponent(companyName)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.departments && data.departments.length > 0) {
+                    let departmentCheckboxesHtml = '';
+                    data.departments.forEach(department => {
+                        let isChecked = '';
+                        {% for selected_department in user_departments %}
+                            if (department.dp_id == '{{ selected_department }}') {
+                                isChecked = 'checked';
+                            }
+                        {% endfor %}
+
+                        departmentCheckboxesHtml += `
+                            <div class="col-md-3 mb-2">
+                                <div class="form-check">
+                                    <input class="form-checkbox department-checkbox" type="checkbox" name="departments" id="department-${department.dp_id}" value="${department.dp_id}" ${isChecked}>
+                                    <label class="form-checkbox" for="department-${department.dp_id}">${department.dep_name}</label>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    departmentsContainer.innerHTML = departmentCheckboxesHtml;
+
+                    // Add Select All logic
+                    attachDepartmentSelectAllLogic();
+                    updateSelectAllCheckbox();
+                } else {
+                    departmentsContainer.innerHTML = '<p>No departments found for this company.</p>';
+                }
+            })
+            .catch(error => console.error('Error fetching departments:', error));
+    }
+});
+
+// Select All checkbox logic
+function attachDepartmentSelectAllLogic() {
+    const selectAllCheckbox = document.getElementById('select-all-departments');
+    const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
+
+    selectAllCheckbox.addEventListener('change', function () {
+        departmentCheckboxes.forEach(cb => cb.checked = this.checked);
+    });
+
+    departmentCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelectAllCheckbox);
+    });
+}
+
+function updateSelectAllCheckbox() {
+    const departmentCheckboxes = document.querySelectorAll('.department-checkbox');
+    const selectAllCheckbox = document.getElementById('select-all-departments');
+    const allChecked = [...departmentCheckboxes].length > 0 && [...departmentCheckboxes].every(cb => cb.checked);
+    selectAllCheckbox.checked = allChecked;
+}
+
+// Trigger on load if editing
+window.addEventListener('load', function () {
+    const companySelect = document.getElementById('company-select');
+    if (companySelect.value) {
+        companySelect.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+
+
+<!--search select start -->
+<script>
+$(document).ready(function () {
+    // 1. Create custom dropdowns
+    create_custom_dropdowns();
+
+    // 2. Re-initialize custom dropdown whenever a new <select> is added (if you dynamically add selects)
+    //    (Not strictly needed here, but good practice)
+    $(document).on('DOMNodeInserted', 'select', function() {
+        create_custom_dropdowns();
+    });
+
+    // 3. Department-fetch logic: listen for real <select> change
+    $('#company-select').on('change', function () {
+        var companyName = this.value;
+        var $departmentsContainer = $('#departments-container');
+        $departmentsContainer.empty();
+
+        if (!companyName) return;
+
+        fetch(`https://shubhamsingh.in/new_crm/get_departments_by_company/?company_name=${encodeURIComponent(companyName)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.departments && data.departments.length) {
+                    var html = '';
+                    data.departments.forEach(dep => {
+                        var checked = '';
+                        {% for selected_department in user_departments %}
+                        if (dep.dp_id == '{{ selected_department }}') checked = 'checked';
+                        {% endfor %}
+                        html += `
+                        <div class="col-md-3 mb-2">
+                          <div class="form-check">
+                            <input class="form-checkbox department-checkbox"
+                                   type="checkbox"
+                                   name="departments"
+                                   id="department-${dep.dp_id}"
+                                   value="${dep.dp_id}"
+                                   ${checked}>
+                            <label class="form-checkbox" for="department-${dep.dp_id}">
+                              ${dep.dep_name}
+                            </label>
+                          </div>
+                        </div>`;
+                    });
+                    $departmentsContainer.html(html);
+                    attachDepartmentSelectAllLogic();
+                    updateSelectAllCheckbox();
+                } else {
+                    $departmentsContainer.html('<p>No departments found for this company.</p>');
+                }
+            })
+            .catch(err => console.error('Error fetching departments:', err));
+    });
+
+    // 4. On page load, trigger fetch if company already selected
+    if ($('#company-select').val()) {
+        $('#company-select').trigger('change');
+    }
+});
+
+// ---------- your custom dropdown code ----------
+
+function create_custom_dropdowns() {
+    $('select').each(function () {
+        var $select = $(this);
+        if ($select.next().hasClass('dropdown-select')) return;
+
+        // build wrapper
+        $select.after(
+            `<div class="dropdown-select wide ${$select.attr('class') || ''}" tabindex="0">
+                <span class="current"></span>
+                <div class="list">
+                  <div class="dd-search">
+                    <input autocomplete="off" onkeyup="filter(this)"
+                           class="dd-searchbox" type="text"
+                           placeholder="Search…">
+                  </div>
+                  <ul></ul>
+                  <li class="no-results" style="display:none;">Not found</li>
+                </div>
+             </div>`
+        );
+
+        var $dropdown = $select.next();
+        var $options = $select.find('option');
+        var $selected = $select.find('option:selected');
+
+        $dropdown.find('.current').text($selected.data('display-text') || $selected.text());
+
+        $options.each(function () {
+            var $o = $(this);
+            var disp = $o.data('display-text') || '';
+            $dropdown.find('ul').append(
+                `<li class="option ${$o.is(':selected') ? 'selected' : ''}"
+                     data-value="${$o.val()}"
+                     data-display-text="${disp}">
+                   ${$o.text()}
+                 </li>`
+            );
+        });
+    });
+}
+
+function filter(input) {
+    var $dd = $(input).closest('.dropdown-select');
+    var val = input.value.toLowerCase();
+    var $opts = $dd.find('ul > li.option');
+
+    $opts.each(function () {
+        var txt = $(this).text().toLowerCase();
+        $(this).toggle(txt.indexOf(val) > -1);
+    });
+    $dd.find('.no-results').toggle($opts.filter(':visible').length === 0);
+}
+
+$(document).on('click', '.dropdown-select', function (e) {
+    if ($(e.target).is('.dd-searchbox')) return;
+    $('.dropdown-select').not(this).removeClass('open');
+    $(this).toggleClass('open');
+    if ($(this).hasClass('open')) {
+        $(this).find('.option').attr('tabindex', 0);
+        $(this).find('.selected').focus();
+    } else {
+        $(this).find('.option').removeAttr('tabindex');
+        $(this).focus();
+    }
+});
+
+// close when clicking outside
+$(document).on('click', function (e) {
+    if (!$(e.target).closest('.dropdown-select').length) {
+        $('.dropdown-select').removeClass('open')
+                              .find('.option').removeAttr('tabindex');
+    }
+    e.stopPropagation();
+});
+
+$(document).on('click', '.dropdown-select .option', function () {
+    var $opt = $(this);
+    var $wrap = $opt.closest('.dropdown-select');
+    $wrap.find('.selected').removeClass('selected');
+    $opt.addClass('selected');
+    var text = $opt.data('display-text') || $opt.text();
+    $wrap.find('.current').text(text);
+
+    // update the real <select> and fire change
+    var val = $opt.data('value');
+    $wrap.prev('select').val(val).trigger('change');
+});
+
+$(document).on('keydown', '.dropdown-select', function (e) {
+    var $this = $(this);
+    var $focused = $this.find('.list .option:focus').first()
+                 || $this.find('.list .option.selected').first();
+
+    switch (e.keyCode) {
+        case 13: // Enter
+            if ($this.hasClass('open')) {
+                $focused.trigger('click');
+            } else {
+                $this.trigger('click');
+            }
+            return false;
+        case 40: // Down
+            if (!$this.hasClass('open')) {
+                $this.trigger('click');
+            } else {
+                $focused.nextAll(':visible').first().focus();
+            }
+            return false;
+        case 38: // Up
+            if (!$this.hasClass('open')) {
+                $this.trigger('click');
+            } else {
+                $focused.prevAll(':visible').first().focus();
+            }
+            return false;
+        case 27: // Esc
+            if ($this.hasClass('open')) {
+                $this.removeClass('open');
+            }
+            return false;
+    }
+});
+
+// ---------- Select All logic (unchanged) ----------
+
+function attachDepartmentSelectAllLogic() {
+    const $selectAll = $('#select-all-departments');
+    const updateAll = () => $('.department-checkbox').prop('checked', $selectAll.prop('checked'));
+    $selectAll.off('change').on('change', updateAll);
+    $('.department-checkbox').off('change').on('change', updateSelectAllCheckbox);
+}
+
+function updateSelectAllCheckbox() {
+    const $all = $('.department-checkbox');
+    const allChecked = $all.length && $all.toArray().every(cb => cb.checked);
+    $('#select-all-departments').prop('checked', allChecked);
+}
+</script>
+
+<!--search select end -->
+<!--<script type="text/javascript">-->
+<!--document.addEventListener("DOMContentLoaded", function() {-->
+<!--    document.querySelector('[name="company_name"]').addEventListener('change', function() {-->
+<!--        var companyName = this.value; -->
+<!--        console.log("Selected company name:", companyName);-->
+
+<!--        document.getElementById('departments-container').innerHTML = '';-->
+
+<!--        if (companyName) {-->
+<!--            console.log(`Fetching departments for: ${companyName}`);-->
+
+<!--            fetch(`https://shubhamsingh.in/new_crm/get_departments/?company_name=${encodeURIComponent(companyName)}`)-->
+<!--                .then(response => {-->
+<!--                    if (!response.ok) {-->
+<!--                        throw new Error('Network response was not ok');-->
+<!--                    }-->
+<!--                    return response.json();-->
+<!--                })-->
+<!--                .then(data => {-->
+<!--                    console.log("Departments Data:", data); -->
+
+<!--                    var departmentsContainer = document.getElementById('departments-container');-->
+<!--                    if (data.departments && data.departments.length > 0) {-->
+<!--                        data.departments.forEach(department => {-->
+<!--                            var departmentCheckbox = `-->
+<!--                                <div class="col-md-3 mb-2">-->
+<!--                                    <div class="form-check">-->
+<!--                                        <input class="form-checkbox" type="checkbox" name="departments" id="department-${department.dp_id}" value="${department.dp_id}">-->
+<!--                                        <label class="form-checkbox" for="department-${department.dp_id}">${department.dep_name}</label>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            `;-->
+<!--                            departmentsContainer.innerHTML += departmentCheckbox;-->
+<!--                        });-->
+<!--                    } else {-->
+<!--                        console.log("No departments found for this company");-->
+<!--                        departmentsContainer.innerHTML = '<p>No departments found for this company.</p>';-->
+<!--                    }-->
+<!--                })-->
+<!--                .catch(error => {-->
+<!--                    console.error('Error fetching departments:', error);-->
+<!--                });-->
+<!--        } else {-->
+<!--            console.log("No company selected");-->
+<!--        }-->
+<!--    });-->
+<!--});-->
+
+<!--</script>-->
+{% endblock %}

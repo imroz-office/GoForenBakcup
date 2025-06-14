@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts"
+                    style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>{{ jeweller_data.full_name }}-Customer Details</h1>
+                    </div>
+                    <div>
+                        <a href="{% url 'puresaas_renewal' %}" class="btn btn-primary me-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 active-p">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Customer Details</h2>
+                    <div class="list-group">
+                        {% if jeweller_data.full_name %}
+                        <div class="list-group-item">
+                            <strong>Full Name :</strong> {{ jeweller_data.full_name }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.last_name %}
+                        <div class="list-group-item">
+                            <strong>Last Name :</strong> {{ jeweller_data.last_name }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.username %}
+                        <div class="list-group-item">
+                            <strong>Username :</strong> {{ jeweller_data.username }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.password %}
+                        <div class="list-group-item">
+                            <strong>Password :</strong> {{ jeweller_data.password }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.mobile %}
+                        <div class="list-group-item">
+                            <strong>Mobile :</strong> {{ jeweller_data.mobile }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.home_address1 %}
+                        <div class="list-group-item">
+                            <strong>Home Address Line 1 :</strong> {{ jeweller_data.home_address1 }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.home_address2 %}
+                        <div class="list-group-item">
+                            <strong>Home Address Line 2 :</strong> {{ jeweller_data.home_address2 }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.home_address3 %}
+                        <div class="list-group-item">
+                            <strong>Home Address Line 3 :</strong> {{ jeweller_data.home_address3 }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.home_pincode %}
+                        <div class="list-group-item">
+                            <strong>Home Pincode :</strong> {{ jeweller_data.home_pincode }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.home_city %}
+                        <div class="list-group-item">
+                            <strong>Home City :</strong> {{ jeweller_data.home_city }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.home_state %}
+                        <div class="list-group-item">
+                            <strong>Home State :</strong> {{ jeweller_data.home_state }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.home_country %}
+                        <div class="list-group-item">
+                            <strong>Home Country :</strong> {{ jeweller_data.home_country }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.date %}
+                        <div class="list-group-item">
+                            <strong>Date :</strong> {{ jeweller_data.date|date:'d-m-Y' }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.email %}
+                        <div class="list-group-item">
+                            <strong>Email :</strong> {{ jeweller_data.email }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_full_name %}
+                        <div class="list-group-item">
+                            <strong>Billing Full Name :</strong> {{ jeweller_data.bill_full_name }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_last_name %}
+                        <div class="list-group-item">
+                            <strong>Billing Last Name :</strong> {{ jeweller_data.bill_last_name }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_user_name %}
+                        <div class="list-group-item">
+                            <strong>Billing Username :</strong> {{ jeweller_data.bill_user_name }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_address1 %}
+                        <div class="list-group-item">
+                            <strong>Billing Address Line 1 :</strong> {{ jeweller_data.bill_address1 }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_address2 %}
+                        <div class="list-group-item">
+                            <strong>Billing Address Line 2 :</strong> {{ jeweller_data.bill_address2 }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_city %}
+                        <div class="list-group-item">
+                            <strong>Billing City :</strong> {{ jeweller_data.bill_city }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_state %}
+                        <div class="list-group-item">
+                            <strong>Billing State :</strong> {{ jeweller_data.bill_state }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_country %}
+                        <div class="list-group-item">
+                            <strong>Billing Country :</strong> {{ jeweller_data.bill_country }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_mobile %}
+                        <div class="list-group-item">
+                            <strong>Billing Mobile :</strong> {{ jeweller_data.bill_mobile }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.bill_pincode %}
+                        <div class="list-group-item">
+                            <strong>Billing Pincode :</strong> {{ jeweller_data.bill_pincode }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.pass_or %}
+                        <div class="list-group-item">
+                            <strong>Pass/Order :</strong> {{ jeweller_data.pass_or }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.status %}
+                        <div class="list-group-item">
+                            <strong>Status :</strong> {{ jeweller_data.status }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.purchase %}
+                        <div class="list-group-item">
+                            <strong>Purchase :</strong> {{ jeweller_data.purchase }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.language %}
+                        <div class="list-group-item">
+                            <strong>Language :</strong> {{ jeweller_data.language }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.country_code %}
+                        <div class="list-group-item">
+                            <strong>Country Code :</strong> {{ jeweller_data.country_code }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.whatsapp %}
+                        <div class="list-group-item">
+                            <strong>WhatsApp :</strong> {{ jeweller_data.whatsapp }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.otp %}
+                        <div class="list-group-item">
+                            <strong>OTP :</strong> {{ jeweller_data.otp }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.plan_s_date %}
+                        <div class="list-group-item">
+                            <strong>Plan Start Date :</strong> {{ jeweller_data.plan_s_date|date:'d-m-Y' }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.plan_e_date %}
+                        <div class="list-group-item">
+                            <strong>Plan End Date :</strong> {{ jeweller_data.plan_e_date|date:'d-m-Y' }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.coupoun_code %}
+                        <div class="list-group-item">
+                            <strong>Coupon Code :</strong> {{ jeweller_data.coupoun_code }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.gst_no %}
+                        <div class="list-group-item">
+                            <strong>GST Number :</strong> {{ jeweller_data.gst_no }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.firm_name %}
+                        <div class="list-group-item">
+                            <strong>Firm Name :</strong> {{ jeweller_data.firm_name }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.owner_name %}
+                        <div class="list-group-item">
+                            <strong>Owner Name :</strong> {{ jeweller_data.owner_name }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if jeweller_data.package %}
+                        <div class="list-group-item">
+                            <strong>Package :</strong> {{ jeweller_data.package }}
+                        </div>
+                        {% endif %}
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,522 @@
+<!-- templates/letter-leasting.html -->
+{% extends "base.html" %}
+{% load static %}  
+
+{% block start %}
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+
+
+<div class="content-body">
+    <div class="container-fluid">
+<div class="row mb-4">
+    <div class="col-12 d-flex gap-4 align-items-center">
+        <label class="form-label mb-0">Select Type:</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="person_type" id="employee_radio" value="employee" checked>
+            <label class="form-check-label" for="employee_radio">Employee</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="person_type" id="intern_radio" value="intern">
+            <label class="form-check-label" for="intern_radio">Intern</label>
+        </div>
+    </div>
+</div>
+
+        <!-- Employees -->
+        <div class="row" id="employee_card">
+            <div class="col-xl-12">
+                <div class="card card-default mb-24px">
+                    <div class="card-body">
+                        <h4>Generate and Download Letters (Employees)</h4>
+                        <br>
+                        <div class="col-lg-12">
+                            <div class="col-6">
+                                <label for="employee" class="form-label">Employee</label>
+                                <div class="input-group clockpicker">
+                                    <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>
+                                    <select name="employee_id" id="employee" class="form-select form-select-solid" required>
+                                        <option value="">Select an Employee</option>
+                                        {% for i in employees %}
+                                            <option value="{{ i.emp_id }}">{{ i.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="ec-vendor-upload-detail d-flex gap-4 mt-4">
+                                <form id="emp_experience_form" method="get" data-base="/new_crm/download_experience_letter/" action="/new_crm/download_experience_letter/" target="_blank">
+                                    <button type="submit" class="btn btn-primary">Download Experience Letter</button>
+                                </form>
+                                
+                                <form id="emp_appointment_form" method="get" data-base="/new_crm/download_appointment_letter/" action="/new_crm/download_appointment_letter/" target="_blank">
+                                    <button type="submit" class="btn btn-secondary">Download Appointment Letter</button>
+                                </form>
+                                
+                                <form id="emp_offer_form" method="get" data-base="/new_crm/download_offer_letter/" action="/new_crm/download_offer_letter/" target="_blank">
+                                    <button type="submit" class="btn btn-success">Download Offer Letter</button>
+                                </form>
+                                
+                                <form id="emp_bond_form" method="get" data-base="/new_crm/download_bond_letter/" action="/new_crm/download_bond_letter/" target="_blank">
+                                    <button type="submit" class="btn btn-danger">Download Bond Letter</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interns -->
+        <div class="row" id="intern_card">
+            <div class="col-xl-12">
+                <div class="card card-default mb-24px">
+                    <div class="card-body">
+                        <h4>Generate and Download Letters (Interns)</h4>
+                        <br>
+                        <div class="col-lg-12">
+                            <div class="col-6">
+                                <label for="intern_select" class="form-label">Select Intern</label>
+                                <div class="input-group clockpicker">
+                                    <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>
+                                    <select name="intern_id" id="intern" class="form-select form-select-solid" required>
+                                        <option value="">Select an Intern</option>
+                                        {% for i in interns %}
+                                            <option value="{{ i.emp_id }}">{{ i.name|default:"" }} {{ i.middle_name|default:"" }} {{ i.last_name|default:"" }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="ec-vendor-upload-detail d-flex gap-4 mt-4">
+                                <form id="intern_experience_form" method="get" data-base="/new_crm/download_intern_experience_letter/" action="/new_crm/download_intern_experience_letter/" target="_blank">
+                                    <button type="submit" class="btn btn-primary">Download Experience Letter</button>
+                                </form>
+                                
+                                <form id="intern_appointment_form" method="get" data-base="/new_crm/download_intern_appointment_letter/" action="/new_crm/download_intern_appointment_letter/" target="_blank">
+                                    <button type="submit" class="btn btn-secondary">Download Appointment Letter</button>
+                                </form>
+                                
+                                <!--<form id="intern_offer_form" method="get" data-base="/new_crm/download_intern_offer_letter/" action="/new_crm/download_intern_offer_letter/" target="_blank">-->
+                                <!--    <button type="submit" class="btn btn-success">Download Offer Letter</button>-->
+                                <!--</form>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const employeeRadio = document.getElementById("employee_radio");
+        const internRadio = document.getElementById("intern_radio");
+        const employeeCard = document.getElementById("employee_card");
+        const internCard = document.getElementById("intern_card");
+
+        function toggleSections() {
+            if (employeeRadio.checked) {
+                employeeCard.style.display = "block";
+                internCard.style.display = "none";
+            } else {
+                employeeCard.style.display = "none";
+                internCard.style.display = "block";
+            }
+        }
+
+        // Attach event listeners
+        employeeRadio.addEventListener("change", toggleSections);
+        internRadio.addEventListener("change", toggleSections);
+
+        // Initial call
+        toggleSections();
+    });
+</script>
+
+
+<!--search select start -->
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        // Initialize dropdowns
+        create_custom_dropdowns();
+
+        // Form submit validation
+        $('form').on('submit', function (e) {
+            const action = $(this).attr('action') || '';
+            const emp = $('#employee').val();
+            const intern = $('#intern').val();
+
+            if (
+                (action.includes('download_experience_letter') && !emp) ||
+                (action.includes('download_appointment_letter') && !emp) ||
+                (action.includes('download_offer_letter') && !emp) ||
+                (action.includes('download_bond_letter') && !emp) ||
+                (action.includes('download_intern_experience_letter') && !intern) ||
+                (action.includes('download_intern_appointment_letter') && !intern) ||
+                (action.includes('download_intern_offer_letter') && !intern)
+            ) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Please select an Employee or Intern',
+                    text: 'You must select before downloading the file.',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+                return false;
+            }
+        });
+
+        // employee dropdown change
+        $(document).on('change', '#employee', function () {
+            const empId = $(this).val();
+            $('form').each(function () {
+                const $form = $(this);
+                let action = $form.attr('action') || '';
+                if (action.includes('download_experience_letter')) {
+                    action = `/new_crm/download_experience_letter/${empId}/`;
+                } else if (action.includes('download_appointment_letter')) {
+                    action = `/new_crm/download_appointment_letter/${empId}/`;
+                } else if (action.includes('download_offer_letter')) {
+                    action = `/new_crm/download_offer_letter/${empId}/`;
+                } else if (action.includes('download_bond_letter')) {
+                    action = `/new_crm/download_bond_letter/${empId}/`;
+                }
+                $form.attr('action', action);
+            });
+        });
+
+        // intern dropdown change
+        $(document).on('change', '#intern', function () {
+            const empId = $(this).val();
+            $('form').each(function () {
+                const $form = $(this);
+                let action = $form.attr('action') || '';
+                if (action.includes('download_intern_experience_letter')) {
+                    action = `/new_crm/download_intern_experience_letter/${empId}/`;
+                } else if (action.includes('download_intern_appointment_letter')) {
+                    action = `/new_crm/download_intern_appointment_letter/${empId}/`;
+                } else if (action.includes('download_intern_offer_letter')) {
+                    action = `/new_crm/download_intern_offer_letter/${empId}/`;
+                }
+                $form.attr('action', action);
+            });
+        });
+    });
+</script>
+
+
+
+<!--search select end -->
+{% endblock %}
+

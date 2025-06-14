@@ -1,0 +1,960 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>{{ is_edit|yesno:"Edit Ledger,Add Ledger" }}</h1>
+					</div>
+					  <div>
+                        <a href="{% url 'account_client' %}" class="btn btn-primary me-2"><i class="fa-solid fa-backward" style="margin-right:7px"></i>Back</a>
+                    </div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<h4>{{ is_edit|yesno:"Edit Ledger,Add Ledger" }}</h4>
+							<br><br>
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+									<form id="addclientForm" class="form row g-3" action="{% if is_edit %}{% url 'account_edit_client' client.clt_id %}{% else %}{% url 'account_add_client' %}{% endif %}" method="post">
+									    {% csrf_token %}
+									    
+									    <div class="col-md-6">
+                                            <label class="form-label">Ledger Type</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                <select name="transaction_type" required aria-label="Select a Service" data-placeholder="Select a Service..." class="form-select form-select-solid" id="ledgerTypeSelect">
+                                                    <option value="">Select a Type...</option>
+                                                    <option value="Credited" {% if client.transaction_type == "Credited" %}selected{% endif %}>Credited</option>
+                                                    <option value="Debited" {% if client.transaction_type == "Debited" %}selected{% endif %}>Debited</option>
+                                                    <option value="Expense" {% if client.transaction_type == "Expense" %}selected{% endif %}>Expense</option>
+                                                    <option value="Salary Account" {% if client.transaction_type == "Salary Account" %}selected{% endif %}>Salary Account</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="col-md-6" id="employeeNameField" style="display: none;">
+                                            <label class="form-label">Employee Name</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                <!--<input type="text" class="form-control slug-title" name="user_id"  id="inputEmail4">-->
+                                                
+                                                <select name="user_id"  aria-label="Select a Service" data-placeholder="Select a Service..." class="form-select form-select-solid" id="">
+                                                    <option value="">Select a Type...</option>
+                                                    {% for i in emp_data %}
+                                                        <option value="{{ i.userId }}" {% if client.user_id == i.userId %}selected{% endif %}>{{ i.name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+										
+										<div class="col-md-6" id="comfield">
+											<label for="inputEmail4" class="form-label">Company Name</label>
+											<div class="input-group clockpicker">
+                                            <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                   
+											<input type="text" class="form-control slug-title" name="comp_name" placeholder="Company Name" id="inputEmail4" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');" value="{{ client.comp_name|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-md-6" id="namefield">
+											<label for="inputEmail4" class="form-label">Name</label>
+											<div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                 
+											<input type="text" class="form-control slug-title" name="name" placeholder="Client Name" id="inputEmail4" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');" value="{{ client.name|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-md-6"  id="mobilefield">
+											<label for="inputEmail4" class="form-label">Mobile Number</label>
+											   <div class="input-group clockpicker">
+                                            <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                 
+											<input type="text" maxlength="10" minlength="10" pattern="[0-9]*" class="form-control slug-title" name="mobile" placeholder="Mobile Number" id="mobileNumber" value="{{ client.mobile|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+										</div>
+										</div>
+										
+										<div class="col-md-6"  id="emailfield">
+											<label for="inputEmail4" class="form-label">Email</label>
+											   <div class="input-group clockpicker">
+                                                 <span class="input-group-text">@</span>
+                                 
+											<input type="email" class="form-control slug-title" name="email"
+												placeholder="Email" id="inputEmail4" value="{{ client.email|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-md-6"  id="addfield">
+											<label for="inputEmail4" class="form-label">Address</label>
+											
+											   <div class="input-group clockpicker">
+                                                 <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                 
+											<input type="text" class="form-control slug-title" name="address" placeholder="Client Address" id="inputEmail4" value="{{ client.address|default:'' }}">
+										</div>
+										</div>
+							
+										<div class="col-md-6" id="areafield">
+											<label for="inputEmail4" class="form-label">Area</label>
+											   <div class="input-group clockpicker">
+                                             <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
+                                 
+											<input type="text" class="form-control slug-title" name="area" placeholder="Client Area" id="inputEmail4" value="{{ client.area|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-md-6"  id="cityfield">
+											<label class="form-label">Select City</label>
+											   <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                 
+											<select name="city" aria-label="Select a City" id="citySelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                                <option value="{{ client.city|default:'Select City' }}">{{ client.city|default:'Select City' }}</option>
+                                                {% for city in cites %}
+                                                    <option value="{{ city.city }}" data-state="{{ city.state }}" data-country="{{ city.country }}">{{ city.city }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            </div>
+										</div>
+										
+										<div class="col-md-6" id="statefield">
+											<label for="inputEmail4" class="form-label">State</label>
+											   <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                                                             
+											<input type="text" class="form-control slug-title" name="state" placeholder="State" id="stateInput" readonly value="{{ client.state|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-md-6" id="countryfield">
+											<label for="inputEmail4" class="form-label">Country</label>
+											<div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                                
+											<input type="text" class="form-control slug-title" name="country"  placeholder="Country" id="countryInput" readonly value="{{ client.country|default:'' }}">
+										</div>
+										</div>
+										
+                                        <!-- Billing Address -->
+                                        <div class="col-md-6"  id="billfield">
+                                            <label for="billingAddress" class="form-label">Billing Address</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                                <input type="text" class="form-control slug-title" name="billing_add" placeholder="Billing Address" id="billingAddress" value="{{ client.billing_add|default:'' }}">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Same as Billing Switch -->
+                                        <div class="col-md-6 mt-3" id="shipfield">
+                                            <label class="form-label d-block">Is the shipping address the same as the billing address?</label>
+                                        
+                                            <!-- Hidden input to ensure "No" is always sent if unchecked -->
+                                            <input type="hidden" name="same_as_billing" value="No">
+                                        
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="shippingSwitch" name="same_as_billing" value="Yes"
+                                                       {% if client.same_as_billing == "Yes" or not client.same_as_billing %}checked{% endif %}>
+                                                <label class="form-check-label" for="shippingSwitch">Yes / No</label>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Shipping Address -->
+                                        <div class="col-md-6"
+                                             id="shippingAddressContainer"
+                                             style="{% if client.same_as_billing == 'No' %}display: block;{% else %}display: none;{% endif %}">
+                                            <label for="shippingAddress" class="form-label">Shipping Address</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                                <input type="text" class="form-control slug-title" name="shipping_add" placeholder="Shipping Address"
+                                                       id="shippingAddress" value="{{ client.shipping_add|default:'' }}">
+                                            </div>
+                                        </div>
+                                        
+										<div class="col-md-6" id="panfield">
+											<label for="inputEmail4" class="form-label">PanCard number</label>
+											<div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                                
+											<input type="text" class="form-control slug-title" name="pan_card" placeholder="PanCard number" id="inputEmail4" value="{{ client.pan_card|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-md-6" id="gstcheckfield">
+                                            <label for="gstToggle" class="form-label">Do you have a GST number?</label>
+                                            <div style="display: flex; align-items: center;">
+                                                <p style="margin: 0; width: 30px;">No</p>
+                                                <label class="switch" style="margin: 0 10px;">
+                                                    <input type="checkbox" id="flexRadioYes" name="hostingoption" onclick="toggleGstField()"
+                                                           {% if client.gst_number %} checked {% endif %}>
+                                                    <span class="slider"></span>
+                                                </label>
+                                                <p style="margin: 0; width: 30px;">Yes</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6" id="gstField" style="{% if client.gst_number %} display: block; {% else %} display: none; {% endif %}">
+                                            <label for="inputGST" class="form-label">GST number</label>
+                                            <div class="input-group clockpicker">
+                                              <span class="input-group-text">GST</span>
+                                                
+                                            <input type="text" class="form-control slug-title" name="gst_number" placeholder="GST Number" id="inputGST" value="{{ client.gst_number|default:'' }}">
+                                        </div>
+                                        </div>
+										<div class="col-lg-12">
+											<button type="submit" class="btn btn-primary">{{ is_edit|yesno:"Update,Submit" }}</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const switchInput = document.getElementById('shippingSwitch');
+        const shippingContainer = document.getElementById('shippingAddressContainer');
+        const shippingInput = document.getElementById('shippingAddress');
+
+        function toggleShipping() {
+            if (switchInput.checked) {
+                // Hide and clear the shipping address if user selects "Yes"
+                shippingContainer.style.display = 'none';
+                shippingInput.value = '';
+            } else {
+                // Show the shipping address field
+                shippingContainer.style.display = 'block';
+            }
+        }
+
+        // Set initial state
+        toggleShipping();
+
+        // Handle user toggle
+        switchInput.addEventListener('change', toggleShipping);
+    });
+</script>
+<script>
+function toggleGstField() {
+    const gstField = document.getElementById('gstField');
+    const toggle = document.getElementById('flexRadioYes');
+
+    if (toggle.checked) {
+        gstField.style.display = 'block'; // Show the input field
+    } else {
+        gstField.style.display = 'none'; // Hide the input field
+    }
+}
+
+// Call the function to set the initial state based on the backend data
+document.addEventListener('DOMContentLoaded', toggleGstField);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+//     $(document).ready(function() {
+//     $('#addclientForm').submit(function(e) {
+//         e.preventDefault();  // Prevent the default form submission
+
+//         // Disable the submit button to prevent further clicks
+//         var submitButton = $(this).find('button[type="submit"]');
+//         submitButton.prop('disabled', true);  // Disable the submit button
+//         submitButton.text('Submitting...');    // Optional: Change the button text to indicate submission
+
+//         // Prepare the form data
+//         var formData = $(this).serialize();  
+
+//         // Check if the form is for adding or editing by inspecting the action URL
+//         var isEdit = $(this).attr('action').includes('account_edit_client'); 
+
+//         // Send the form data using AJAX
+//         $.ajax({
+//             url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+//             type: "POST",
+//             data: formData,
+//             success: function(response) {
+//                 if (response.status === 'success') {
+//                     // Show success alert with SweetAlert for Add or Edit
+//                     Swal.fire({
+//                         icon: 'success',
+//                         title: isEdit ? 'Client Updated!' : 'Client Added!',
+//                         text: response.message,
+//                     }).then(() => {
+//                         if (isEdit) {
+//                             window.location.href = "{% url 'account_client' %}"; 
+//                         } else {
+//                             window.location.href = "{% url 'account_add_client' %}"; 
+//                         }
+//                     });
+//                 } else {
+//                     // Show error alert if something goes wrong
+//                     Swal.fire({
+//                         icon: 'error',
+//                         title: 'Oops...',
+//                         text: response.message,
+//                     });
+//                 }
+//             },
+//             error: function(xhr, status, error) {
+//                 // Handle errors
+//                 Swal.fire({
+//                     icon: 'error',
+//                     title: 'Oops...',
+//                     text: 'An error occurred, please try again.',
+//                 });
+//             },
+//             complete: function() {
+//                 // You can keep the button disabled if needed, or re-enable it if necessary
+//                 // submitButton.prop('disabled', false);  // Re-enable the button after the request completes
+//                 // submitButton.text(isEdit ? 'Update' : 'Submit');  // Reset the button text if necessary
+//             }
+//         });
+//     });
+// });
+</script>
+
+<!--<script>-->
+<!--    document.getElementById('addclientForm').addEventListener('submit', function(e) {-->
+        <!--e.preventDefault(); // Prevent the default form submission-->
+
+<!--        const form = this;-->
+<!--        const formData = new FormData(form);-->
+<!--        const isEdit = {{ is_edit|yesno:"true,false" }}; -->
+        
+<!--        fetch(form.action, {-->
+<!--            method: form.method,-->
+<!--            body: formData,-->
+<!--        })-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+<!--            if (data.status === 'success') {-->
+<!--                Swal.fire({-->
+<!--                    icon: 'success',-->
+<!--                    title: 'Success!',-->
+<!--                    text: data.message,-->
+<!--                    confirmButtonText: 'OK'-->
+<!--                }).then(() => {-->
+<!--                    if(isEdit){-->
+<!--                    window.location.href = "{% url 'account_client' %}"; -->
+<!--                    }-->
+<!--                    else{-->
+                    <!--window.location.reload(); // Reload page after confirmation-->
+<!--                    }-->
+<!--                });-->
+<!--            } else {-->
+<!--                Swal.fire({-->
+<!--                    icon: 'error',-->
+<!--                    title: 'Error!',-->
+<!--                    text: data.message,-->
+<!--                });-->
+<!--            }-->
+<!--        })-->
+<!--        .catch(error => {-->
+<!--            Swal.fire({-->
+<!--                icon: 'error',-->
+<!--                title: 'Something went wrong!',-->
+<!--                text: error.message,-->
+<!--            });-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+
+<script>
+    document.getElementById('addclientForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent the default form submission
+
+        const form = this;
+        const formData = new FormData(form);
+        const isEdit = {{ is_edit|yesno:"true,false" }};
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        // Disable the submit button and change text
+        submitBtn.disabled = true;
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = 'Submitting...';
+
+        fetch(form.action, {
+            method: form.method,
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: data.message,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    if (isEdit) {
+                        window.location.href = "{% url 'account_client' %}";
+                    } else {
+                        window.location.reload(); // Reload page after confirmation
+                    }
+                });
+            } else if (data.status === 'error') {
+                let alertTitle = 'Error!';
+                let alertIcon = 'error';
+
+                // Check for specific error message about company not selected
+                if (data.message.includes('select a company')) {
+                    alertTitle = 'Company Not Selected';
+                    alertIcon = 'warning';
+                }
+
+                Swal.fire({
+                    icon: alertIcon,
+                    title: alertTitle,
+                    text: data.message,
+                });
+
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerText = originalText;
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Something went wrong!',
+                text: error.message,
+            });
+
+            // Re-enable submit button
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        });
+    });
+</script>
+
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; 
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 20px;
+        background-color:#859bff;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        border-radius: 20px;
+        background-color: #fc0a0a;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get references to the city select, state input, and country input
+        const citySelect = document.getElementById('citySelect');
+        const stateInput = document.getElementById('stateInput');
+        const countryInput = document.getElementById('countryInput');
+        
+        // Listen for the change event on the city select
+        citySelect.addEventListener('change', function() {
+            // Get the selected city option
+            const selectedOption = citySelect.options[citySelect.selectedIndex];
+            
+            // Get the corresponding state and country from the data-state and data-country attributes
+            const selectedState = selectedOption.getAttribute('data-state');
+            const selectedCountry = selectedOption.getAttribute('data-country');
+            
+            // Update the state and country input fields
+            stateInput.value = selectedState;
+            countryInput.value = selectedCountry;
+        });
+    });
+</script>
+<!--search select start -->
+<script>
+$(document).ready(function () {
+    // Function to toggle the Employee Name field visibility based on Ledger Type selection
+    function toggleEmployeeNameField() {
+        const selectedLedgerType = $('#ledgerTypeSelect').val();
+        if (selectedLedgerType === 'Salary Account') {
+            // Show employee name field for "Salary Account"
+            $('#employeeNameField').show();
+            $('#comfield').hide();
+            $('#namefield').hide();
+            $('#mobilefield').hide();
+            $('#emailfield').hide();
+            $('#addfield').hide();
+            $('#areafield').hide();
+            $('#cityfield').hide();
+            $('#statefield').hide();
+            $('#countryfield').hide();
+            $('#billfield').hide();
+            $('#shipfield').hide();
+            // $('#shippingAddressContainer').hide();
+            $('#panfield').hide();
+            $('#gstcheckfield').hide();
+            // $('#gstField').hide();
+        } else {
+            // Hide employee name field for other ledger types
+            $('#employeeNameField').hide();
+            $('#comfield').show();
+            $('#namefield').show();
+            $('#mobilefield').show();
+            $('#emailfield').show();
+            $('#addfield').show();
+            $('#areafield').show();
+            $('#cityfield').show();
+            $('#statefield').show();
+            $('#countryfield').show();
+            $('#billfield').show();
+            $('#shipfield').show();
+            // $('#shippingAddressContainer').show();
+            $('#panfield').show();
+            $('#gstcheckfield').show();
+            // $('#gstField').show();
+        }
+    }
+
+    // Initialize the visibility of Employee Name field based on the initial value of Ledger Type
+    toggleEmployeeNameField();
+
+    // Bind the change event of the select dropdown to toggle the visibility of Employee Name field
+    $('#ledgerTypeSelect').on('change', function () {
+        toggleEmployeeNameField();
+    });
+
+    // Custom dropdown creation and functionality (unchanged)
+    function create_custom_dropdowns() {
+        $('select').each(function () {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build dropdown wrapper
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                      '<span class="current"></span>' +
+                      '<div class="list">' +
+                        '<div class="dd-search">' +
+                          '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                        '</div>' +
+                        '<ul></ul>' +
+                      '</div>' +
+                    '</div>'
+                );
+
+                const $select = $(this);
+                const $dropdown = $select.next('.dropdown-select');
+                const $ul = $dropdown.find('ul');
+                const $current = $dropdown.find('.current');
+                const $options = $select.find('option');
+                const $selected = $select.find('option:selected');
+
+                // show initially selected
+                $current.text($selected.data('display-text') || $selected.text());
+
+                // build list items including state & country
+                $options.each(function () {
+                    const $o = $(this);
+                    const text = $o.text();
+                    const val = $o.val();
+                    const disp = $o.data('display-text') || '';
+                    const state = $o.data('state') || '';
+                    const country = $o.data('country') || '';
+                    const isSel = $o.is(':selected') ? ' selected' : '';
+
+                    $ul.append(
+                        '<li class="option' + isSel + '" ' +
+                          'data-value="' + val + '" ' +
+                          'data-display-text="' + disp + '" ' +
+                          'data-state="' + state + '" ' +
+                          'data-country="' + country + '">' +
+                          text +
+                        '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        const $dd = $(input).closest('.dropdown-select');
+        const filterVal = input.value.toLowerCase();
+        const $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            const txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(filterVal) > -1);
+        });
+
+        $dd.find('.no-results').toggle($opts.filter(':visible').length === 0);
+    }
+
+    $(document).on('click', '.dropdown-select', function (e) {
+        if ($(e.target).hasClass('dd-searchbox')) return;
+        $('.dropdown-select').not(this).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+        e.stopPropagation();
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.dropdown-select').length) {
+            $('.dropdown-select').removeClass('open').find('.option').removeAttr('tabindex');
+        }
+        e.stopPropagation();
+    });
+
+    // OPTION CLICK: set select, update current, AND fill state/country
+    $(document).on('click', '.dropdown-select .option', function () {
+        const $opt = $(this);
+        const value = $opt.data('value');
+        const display = $opt.data('display-text') || $opt.text();
+        const state = $opt.data('state');
+        const country = $opt.data('country');
+
+        // mark selected in dropdown
+        $opt
+            .addClass('selected')
+            .siblings().removeClass('selected');
+
+        // update visible label
+        $opt.closest('.dropdown-select').find('.current').text(display);
+
+        // update the original select and trigger change
+        const $origSelect = $opt.closest('.dropdown-select').prev('select');
+        $origSelect.val(value).trigger('change');
+
+        // UPDATE YOUR STATE & COUNTRY INPUTS
+        $('#stateInput').val(state);
+        $('#countryInput').val(country);
+    });
+
+    // keyboard nav (unchanged)
+    $(document).on('keydown', '.dropdown-select', function (e) {
+        const $dd = $(this);
+        const $visibleOpts = $dd.find('.list .option:visible');
+        let $focused = $($visibleOpts.filter(':focus')[0] || $visibleOpts.filter('.selected')[0]);
+
+        switch (e.which) {
+            case 13: // Enter
+                if ($dd.hasClass('open')) $focused.trigger('click');
+                else $dd.trigger('click');
+                return false;
+            case 40: // Down
+                if (!$dd.hasClass('open')) $dd.trigger('click');
+                else $visibleOpts.eq($visibleOpts.index($focused) + 1).focus();
+                return false;
+            case 38: // Up
+                if (!$dd.hasClass('open')) $dd.trigger('click');
+                else $visibleOpts.eq($visibleOpts.index($focused) - 1).focus();
+                return false;
+            case 27: // Esc
+                if ($dd.hasClass('open')) $dd.removeClass('open');
+                return false;
+        }
+    });
+
+    create_custom_dropdowns();
+});
+</script>
+<script>
+  function create_custom_dropdowns() {
+    $('select').each(function (i, select) {
+        const $select = $(this);
+        if ($select.next().hasClass('dropdown-select')) return;
+
+        $select.after(
+            '<div class="dropdown-select wide ' + ($select.attr('class') || '') + '" tabindex="0">' +
+                '<span class="current"></span>' +
+                '<div class="list">' +
+                    '<div class="dd-search">' +
+                        '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                    '</div>' +
+                    '<ul></ul>' +
+                    '<li class="no-results" style="display:none;">Not found</li>' +
+                '</div>' +
+            '</div>'
+        );
+
+        const $dropdown = $select.next('.dropdown-select');
+        const $ul = $dropdown.find('ul');
+        const $options = $select.find('option');
+        const $selected = $select.find('option:selected');
+
+        $dropdown.find('.current').html($selected.data('display-text') || $selected.text());
+
+        $options.each(function (j, o) {
+            const $o = $(o);
+            if ($o.is(':disabled')) return;
+
+            const text = $o.text();
+            const value = $o.val();
+            const display = $o.data('display-text') || '';
+            const state = $o.data('state') || '';
+            const country = $o.data('country') || '';
+            const hsn = $o.data('hsncode') || '';
+            const gst = $o.data('gstper') || '';
+            const isSelected = $o.is(':selected') ? ' selected' : '';
+
+            $ul.append(
+                '<li class="option' + isSelected + '" ' +
+                    'data-value="' + value + '" ' +
+                    'data-display-text="' + display + '" ' +
+                    'data-state="' + state + '" ' +
+                    'data-country="' + country + '" ' +
+                    'data-hsncode="' + hsn + '" ' +
+                    'data-gstper="' + gst + '">' +
+                    text +
+                '</li>'
+            );
+        });
+    });
+}
+
+
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

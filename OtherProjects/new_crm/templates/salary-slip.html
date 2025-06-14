@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salary Slip</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            background-color: gray;
+            padding: 0;
+            margin: 0;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            background-color: white;
+            margin: 20px auto;
+            padding: 40px 30mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            margin: 10px 0;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .signature {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 40px;
+        }
+
+        .print-button {
+            text-align: center;
+            margin: 30px 0;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+
+        .print-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .update-block {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .print-button,
+            .update-block {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="print-button">
+    <button onclick="window.print()">🖨️ Print</button>
+</div>
+
+<div class="update-block">
+    <label>House Rent Allowances: ₹</label>
+    <input type="number" id="hra" value="0" oninput="updateSalaryFields()"><br><br>
+
+    <label>Conveyance Allowances: ₹</label>
+    <input type="number" id="conveyance" value="0" oninput="updateSalaryFields()"><br><br>
+
+    <label>Medical Allowances: ₹</label>
+    <input type="number" id="medical" value="0" oninput="updateSalaryFields()"><br><br>
+
+    <label>EPF: ₹</label>
+    <input type="number" id="epf" value="0" oninput="updateSalaryFields()"><br><br>
+
+    <label>Health Insurance/ESI: ₹</label>
+    <input type="number" id="esi" value="0" oninput="updateSalaryFields()"><br><br>
+
+    <label>Professional Tax: ₹</label>
+    <input type="number" id="ptax" value="200" oninput="updateSalaryFields()"><br>
+</div>
+
+<div class="page">
+    <table>
+        <tr>
+            <th colspan="4" class="center">{{company_name.title}}<br>
+                {{company_address.title}}<br>
+                Pay Slip {{ formatted_from_date }} 
+            </th>
+        </tr>
+        <tr>
+            <td>Employee Name</td>
+            <td>{{employee.name.title}} {{employee.middle_name.title|default:""}} {{employee.last_name.title|default:""}}</td>
+            <td>Total Working Days</td>
+            <td>{{total_month_days}}</td>
+        </tr>
+        <tr>
+            <td>Designation</td>
+            <td>{{employee.role_name.title}}</td>
+            <td>Paid Days</td>
+            <td>{{paid_days}}</td>
+        </tr>
+        <tr>
+            <td>Department</td>
+            <td>{{dep_name}}</td>
+            <td>Gross Salary</td>
+            <td>₹<span>{{emp_salary}}</span></td>
+        </tr>
+        <tr>
+            <td>UAN</td>
+            <td colspan="3"></td>
+        </tr>
+        <tr>
+            <th colspan="2" class="center">Earnings</th>
+            <th colspan="2" class="center">Deductions</th>
+        </tr>
+        <tr>
+            <td>Basic Salary</td>
+            <td>₹<span id="basic-salary">{{emp_salary}}</span></td>
+            <td>EPF</td>
+            <td>₹<span id="epf-val">0</span></td>
+        </tr>
+        <tr>
+            <td>House Rent Allowances</td>
+            <td>₹<span id="hra-val">0</span></td>
+            <td>Health Insurance/ESI</td>
+            <td>₹<span id="esi-val">0</span></td>
+        </tr>
+        <tr>
+            <td>Conveyance Allowances</td>
+            <td>₹<span id="conveyance-val">0</span></td>
+            <td>Professional Tax</td>
+            <td>₹<span id="ptax-val">200</span></td>
+        </tr>
+        <tr>
+            <td>Medical Allowances</td>
+            <td>₹<span id="medical-val">0</span></td>
+        </tr>
+        <tr>
+            <td>Gross Salary</td>
+            <td>₹<span id="gross-salary-bottom">{{emp_salary}}</span></td>
+            <td>Total Deductions</td>
+            <td>₹<span id="total-deductions">0</span></td>
+        </tr>
+        <tr>
+            <th colspan="2" class="center">Net Pay</th>
+            <th colspan="2" class="center" id="net_pay">₹0</th>
+        </tr>
+        <tr>
+            <td colspan="4">Amount in Words: <strong><span id="amt_word">Rupees Zero Only</span></strong></td>
+        </tr>
+    </table>
+
+    <div class="signature">
+        <p>_____________________<br>Employer Signature</p>
+        <p>_____________________<br>Employee Signature</p>
+    </div>
+</div>
+
+<script>
+    function updateSalaryFields() {
+        const hra = parseFloat(document.getElementById('hra').value) || 0;
+        const conveyance = parseFloat(document.getElementById('conveyance').value) || 0;
+        const medical = parseFloat(document.getElementById('medical').value) || 0;
+        const epf = parseFloat(document.getElementById('epf').value) || 0;
+        const esi = parseFloat(document.getElementById('esi').value) || 0;
+        const ptax = parseFloat(document.getElementById('ptax').value) || 0;
+        const basic = parseFloat(document.getElementById('basic-salary').textContent) || 0;
+
+        // Set individual values
+        document.getElementById('hra-val').textContent = hra;
+        document.getElementById('conveyance-val').textContent = conveyance;
+        document.getElementById('medical-val').textContent = medical;
+        document.getElementById('epf-val').textContent = epf;
+        document.getElementById('esi-val').textContent = esi;
+        document.getElementById('ptax-val').textContent = ptax;
+
+        // Update gross salary and deductions
+        const gross = basic + hra + conveyance + medical;
+        document.getElementById('gross-salary-bottom').textContent = gross;
+
+        const totalDeductions = epf + esi + ptax;
+        document.getElementById('total-deductions').textContent = totalDeductions;
+
+        const netPay = Math.round({{amount}}+(hra + conveyance + medical)-(totalDeductions));
+        // const netPay = Math.round((hra + conveyance + medical) - totalDeductions);
+        document.getElementById('net_pay').textContent = '₹' + netPay;
+
+        const amountInWords = convertToWords(netPay);
+        document.getElementById('amt_word').textContent = amountInWords;
+    }
+
+    function convertToWords(num) {
+        const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
+            'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen',
+            'Seventeen', 'Eighteen', 'Nineteen'];
+        const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+        if ((num = num.toString()).length > 9) return 'Overflow';
+        let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+        if (!n) return;
+
+        let str = '';
+        str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+        str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+        str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+        str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
+        str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + ' ' : '';
+        return 'Rupees ' + str.trim() + ' Only';
+    }
+
+    document.addEventListener("DOMContentLoaded", updateSalaryFields);
+</script>
+
+</body>
+</html>

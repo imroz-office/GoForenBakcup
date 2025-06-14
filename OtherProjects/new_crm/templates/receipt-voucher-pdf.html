@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Voucher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .voucher {
+            width: 600px;
+            margin: 0 auto;
+            border: 1px solid #000;
+            padding: 20px;
+        }
+
+        .voucher-header {
+            text-align: center;
+        }
+
+        .voucher-header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .voucher-header p {
+            margin: 5px 0;
+        }
+
+        .voucher-details {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .voucher-details td,
+        .voucher-details th {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .voucher-details th {
+            background-color: #f2f2f2;
+        }
+
+        .voucher-signatures {
+            margin-top: 20px;
+        }
+
+        .voucher-signatures td { 
+            padding-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="https://api.whatsapp.com/send?phone={{ phoneno }}&text={{ your_message|urlencode }}" class="whatsApp" target="_blank">
+		<button>Share</button>
+	</a>
+    <div class="voucher">
+        <div class="voucher-header">
+            <h1>{{company_name}}</h1>
+            <!--<p>{{c_address}}, {{c_area}}, {{c_city}},{{c_pincode}}</p>-->
+            <p>EMAIL: {{c_email}}</p>
+            <p>PHONE: {{c_mobile}}</p>
+        </div>
+
+        <table class="voucher-details">
+            <tr>
+                <th colspan="4">RECEIPT VOUCHER</th>
+            </tr>
+            <tr>
+                {% for i in data %}
+                {% if forloop.first %}
+                <td colspan="2">Voucher no. : {{i.vouch_num}}</td>
+                <td colspan="2" style="text-align: right;">Date: {{i.payment_date|date:"d-m-Y"}}</td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for i in data %}
+                {% if forloop.first %}
+                <th>Ledger Name</th>
+                <th colspan="3">{{i.comp_name}}</th>
+                {% endif %}
+                {% endfor %}
+            <tr>
+                <th>Particulars</th>
+                <th>Quantity</th>
+                <th>MODE</th>
+                <th>Amount</th>
+            </tr>
+
+           
+            {% for i in data %}
+            <tr>
+                <th>{{i.perticular}}</th>
+                <td>{{i.quantity}}</td>
+                <td>{{i.payment_mode}}</td>
+                <td>{{i.total}}</td>
+            </tr>
+            {% endfor %}
+            <!--<tr>-->
+            <!--    <td>{{i.cheque}}</td>-->
+            <!--</tr>-->
+            
+            <tr>
+                {% for i in data %}
+                {% if forloop.first %}
+                <td colspan="3">Total</td>
+                <td>{{i.total_amount}}</td>
+                {% endif %}
+                {% endfor %}
+                
+            </tr>
+            <!--<tr>-->
+            <!--    <td colspan="4">SALARY OF MAY MONTH INTERNSHIP</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+            <!--    <td colspan="4" style="text-align: left;">-->
+            <!--        <p><strong>BANK DETAILS :</strong></p>-->
+            <!--        <p><strong>BANK NAME :</strong> {{c_bank_name}}</p>-->
+            <!--        <p><strong>ACCOUNT NO. :</strong> {{c_acc_no}}</p>-->
+            <!--        <p><strong>IFSC CODE :</strong> {{c_ifsc_code}}</p>-->
+            <!--        <p><strong>BRANCH NAME :</strong> {{c_branch_name}}</p>-->
+            <!--    </td>-->
+            <!--</tr>-->
+            
+            <!--<tr>-->
+            <!--    <td colspan="4" style="text-align: left;">-->
+            <!--        <p><strong>Bank Details</strong></p>-->
+            <!--        <p>Bank Name: {{ bank_details.bank_name }}</p>-->
+            <!--        <p>Account Number: {{ bank_details.acc_no }}</p>-->
+            <!--        <p>IFSC Code: {{ bank_details.ifsc_code }}</p>-->
+            <!--        <p>Branch: {{ bank_details.branch_name }}</p>-->
+            <!--    </td>-->
+            <!--</tr>-->
+        </table>
+
+        <table class="voucher-signatures" width="100%">
+            <tr>
+                <td>(Prepared By)</td>
+                <td>(Receiver)</td>
+                <td>(Accountant)</td>
+                <td>(Prop.)</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+
+</html>

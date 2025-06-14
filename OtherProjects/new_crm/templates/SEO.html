@@ -1,0 +1,1002 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<style>
+/* Chatbox (modal) */
+.chatbox1 {
+    width: 21.25rem;
+    height: 100vh;
+    position: fixed;
+    right: -31.25rem;  /* Initially offscreen */
+    top: 0;
+    z-index: 999;
+    background: #fff;
+    box-shadow: 0rem 0rem 1.875rem 0rem rgba(82, 63, 105, 0.15);
+    transition: all 0.8s ease-in-out;
+    overflow: hidden;  /* Prevent scrollbars */
+}
+
+/* Active class: Slide chatbox to the right */
+.chatbox1.active {
+    right: 0;
+    display: block;
+}
+
+/* Header and close button inside the chatbox */
+.chatbox1 .chatbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 17px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbox1 .chatbox-close1 {
+    cursor: pointer;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 1000;
+    width:12%;
+    margin: 2px 2px 2px 153px;
+}
+
+.custom-tab-1 {
+    padding: 10px 17px;
+    height: calc(100vh - 120px);  /* Subtract header and footer height */
+    overflow-y: auto;  /* Enable scroll for form */
+}
+
+/* Form field styling */
+form {
+    margin: 0;
+}
+
+/* Styling for the submit button */
+button {
+    width: 89%;
+    margin: 0 auto;
+}
+
+
+
+
+</style>
+<!--date range css start -->
+<style>
+    .daterangepicker .drp-buttons {
+    display: flex !important;
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+	<!-- row -->
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>Manage SEO</h1>
+					</div>
+					<div>
+					    <!--<li type="button" class="btn btn-primary" id="showFormBtn"><i class="fa-solid fa-download" style="margin-right:7px"></i>Download Report</li>-->
+						<a href="{% url 'add_seo' %}" type="button"
+							class="btn btn-primary right-sidebar-in content-sidebar-menu">
+							<i class="bi bi-person-fill" style="font-size: 1rem;margin-right:7px"></i>Add SEO
+						</a>
+                        <li type="button" class="btn btn-primary" id="showFormBtn1" style="margin-right: 15px;"><i class="bi bi-funnel-fill"></i>Filter</li>
+					</div>
+				</div>
+			</div>
+		</div>
+		  <!--FILTER CODE START  -->
+        <div id="reportForm1" style="display:none;position:relative;z-index:1">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'SEO' %}" method="get"> 
+                                 {% csrf_token %}
+                                <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                        <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="date_range" value="{{ request.GET.date_range }}"/>
+                                    </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Client Company Name</label>
+                                     <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    <input type="text" class="form-control slug-title" name="comp_name" id="comp_name" placeholder="Search By Client Client Company Name" value="{{ request.GET.comp_name }}">
+                                </div>
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Client Name</label>
+                                    <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="c_name" id="c_name" placeholder="Search By Client Name" value="{{ request.GET.c_name }}">
+                                </div>
+                                </div>
+                                
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">Email</label>-->
+                                <!--    <div class="input-group clockpicker">-->
+                                <!--                <span class="input-group-text"><i class="fa-solid fa-at"></i></span>-->
+                                <!--    <input type="text" class="form-control slug-title" name="email" id="email" placeholder="Search By Email" value="{{ request.GET.email }}">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">Mobile</label>-->
+                                <!--     <div class="input-group clockpicker">-->
+                                <!--          <span class="input-group-text"><i class="fas fa-address-book"></i></span>-->
+                                <!--    <input type="text" class="form-control slug-title" name="mobile" id="mobile" placeholder="Search By Mobile" value="{{ request.GET.mobile }}">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">Address</label>-->
+                                <!--     <div class="input-group clockpicker">-->
+                                <!--          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>-->
+                                <!--    <input type="text" class="form-control slug-title" name="address" id="address" placeholder="Search By Address" value="{{ request.GET.address }}">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">City</label>-->
+                                <!--     <div class="input-group clockpicker">-->
+                                <!--          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>-->
+                                <!--    <select name="city" aria-label="Project Include"-->
+                                <!--        data-placeholder="Select a City..." id="city" value="{{ request.GET.city }}"-->
+                                <!--        class="form-select form-select-solid"-->
+                                <!--        style="background-color: #ebebeb4a;">-->
+                                <!--        <option value="">Select City...</option>-->
+                                <!--        {% for i in cites %}-->
+                                <!--        <option value="{{ i.city }}">{{ i.city }}</option>-->
+                                <!--        {% endfor %}-->
+                                <!--    </select>-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">State</label>-->
+                                <!--     <div class="input-group clockpicker">-->
+                                <!--          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>-->
+                                <!--    <input type="text" class="form-control slug-title" name="state" id="state" placeholder="Search By State" value="{{ request.GET.state }}">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">Country</label>-->
+                                <!--     <div class="input-group clockpicker">-->
+                                <!--          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>-->
+                                <!--    <input type="text" class="form-control slug-title" name="country" id="country" placeholder="Search By Country" value="{{ request.GET.country }}">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">Service Type(SMO/SEO)</label>-->
+                                <!--    <div class="input-group clockpicker">-->
+                                <!--          <span class="input-group-text"><i class="fa-solid fa-bell-concierge"></i></span>-->
+                                <!--    <input type="text" class="form-control slug-title" name="service_type" id="service_type" placeholder="Search By Service Type"  value="{{ request.GET.service_type }}">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Plan</label>
+                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fa-solid fa-calendar-week"></i></span>
+                                    <select name="plan_id" aria-label="Select a Client" data-placeholder="Select a Client..." id="" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select a Plan...</option>
+                                        {% for i in smo_plan %}
+                                        <option value="{{ i.id }}" {% if request.GET.plan_id == i.id %}selected{% endif %}>{{ i.plan_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">SMO Start Date</label>
+                                    <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                    <input type="date" class="form-control slug-title" name="start_date" id="start_date" placeholder="Search By Start Date " value="{{ request.GET.start_date }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">SMO Expire Date</label>
+                                    <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                    <input type="date" class="form-control slug-title" name="end_date" id="end_date" placeholder="Search By Expire Date " value="{{ request.GET.end_date }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Number of post</label>
+                                    <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-clipboard"></i></span>
+                                    <input type="text" class="form-control slug-title" name="no_of_post" id="no_of_post" placeholder="Search By Number of post" value="{{ request.GET.no_of_post }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Number of reel</label>
+                                    <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-clipboard"></i></span>
+                                    <input type="text" class="form-control slug-title" name="no_of_reel" id="no_of_reel" placeholder="Search By Number of post" value="{{ request.GET.no_of_reel }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Remark</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="remark" id="remark" placeholder="Search By Remark" value="{{ request.GET.remark }}">
+                                </div>
+                                </div>
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">SEO Start Date</label>-->
+                                <!--    <div class="input-group clockpicker">-->
+                                <!--        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>-->
+                                <!--    <input type="date" class="form-control slug-title" name="seo_start" id="seo_start" placeholder="Search By Start Date "  value="{{ request.GET.seo_start }}">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">SEO Expire Date</label>-->
+                                <!--    <div class="input-group clockpicker">-->
+                                <!--        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>-->
+                                <!--    <input type="date" class="form-control slug-title" name="seo_expire" id="seo_expire" placeholder="Search By Expire Date " value="{{ request.GET.seo_expire }}">-->
+                                <!--</div>-->
+                                <!--</div>-->
+                               
+                                 <div style="display:flex;justify-content:end">
+                        <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div> 
+                        <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                            <button type="button" id="resetButton" class="btn btn-primary" onclick="resetForm();">Reset</button>
+                        </div>
+                    </div>  
+                                
+                            
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+  document.getElementById('showFormBtn1').addEventListener('click', function() {
+    var form = document.getElementById('reportForm1');
+    // If hidden (or first time), fade in
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+      form.animate(
+        [
+          { opacity: 0, transform: 'translateY(-10px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+    } 
+    // Otherwise, fade out then hide
+    else {
+      var anim = form.animate(
+        [
+          { opacity: 1, transform: 'translateY(0)' },
+          { opacity: 0, transform: 'translateY(-10px)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in',
+          fill: 'forwards'
+        }
+      );
+      anim.onfinish = function() {
+        form.style.display = 'none';
+      };
+    }
+  });
+</script>
+
+        <!--FILTER CODE END  -->
+		
+<div id="reportForm" style="display:none;">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'smo_excel' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="col-lg-3">
+                                        <label for="inputRemark" class="form-label">From Date</label>
+                                        <input type="date" class="form-control slug-title" name="from_date">
+                                    </div>
+                                    
+                                    <div class="col-lg-3">
+                                        <label for="inputRemark" class="form-label">To Date</label>
+                                        <input type="date" class="form-control slug-title" name="to_date">
+                                    </div>
+                                    
+                                    <div class="col-lg-3">
+                                        <button type="submit" class="btn btn-primary">Download</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+		<div class="col-xl-12 active-p">
+			<div class="tab-content" id="pills-tabContent">
+				<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+					<div class="card">
+						<div class="card-body px-0">
+							<div class="table-responsive active-projects user-tbl  dt-filter">
+								<table id="user-tbl" class="display table">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>-->
+                                            <!--	<div class="form-check custom-checkbox ms-0">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="checkAll" required="">-->
+                                            <!--		<label class="form-check-label" for="checkAll"></label>-->
+                                            <!--	</div>-->
+                                            <!--</th>-->
+                                            <th>No.</th>
+                                            <th>Company Name</th>
+                                            <th>Client Name</th>
+                                            <th>Plan</th>
+                                            <th>Expire Date</th>
+                                            <th>Renew</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {%for i in data%}
+                                        <tr>
+                                            <!--<td>-->
+                                            <!--	<div class="form-check custom-checkbox">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">-->
+                                            <!--		<label class="form-check-label" for="customCheckBox2"></label>-->
+                                            <!--	</div>-->
+                                            <!--</td>-->
+                                            <td>{{ i.smoId }}</td>
+                                            <td>{{ i.comp_name }}</td>
+                                            <td>{{ i.c_name }}</td>
+                                            <td>{{ i.plan_type }}</td>
+                                            <td>{{ i.seo_expire|date:'d-m-Y' }}</td>
+                                            <td>
+                                                {% if i.show_renew %}
+                                                    <button type="button" class="btn btn-warning btn-xs shadow"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#renewalModal" 
+                                                            data-smoid="{{ i.smoId }}">
+                                                        <i class="fa fa-refresh"></i> Renew
+                                                    </button>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                                    <!-- View button (eye icon) -->
+                                                    <a href="{%url 'view_seo' i.smoId %}"
+                                                       class="btn btn-info btn-xs shadow" title="View">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    
+                                                    <!-- Edit button (pencil icon) -->
+                                                    <a   href="{%url 'edit_seo' i.smoId %}"
+                                                       class="btn btn-primary btn-xs shadow" title="Edit">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+
+                                                    <!-- Delete button (trash icon) -->
+                                                    <a href="javascript:void(0);"
+                                                      onclick="confirmDelete(event, '{{ i.smoId }}')"
+                                                       class="btn btn-danger btn-xs shadow" title="Delete">
+                                                        <i class="fa fa-trash"></i>
+                                                   </a>
+                                                  
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="renewalModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <form method="post" action="{% url 'renew_seo_plan' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Renew Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="hidden" name="smo_id" id="smo_id_input">
+
+                    <div class="mb-3">
+                        <label for="plan_id" class="form-label">Select Plan</label>
+                        <select name="plan_id" id="plan_id" class="form-select" required>
+                            <option value="">Select Plan</option>
+                            {% for s in seo_plan %}
+                                <option value="{{ s.id }}">{{ s.plan_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary w-100">Submit</button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('renewalModal');
+    modal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const smoId = button.getAttribute('data-smoid');
+        const input = modal.querySelector('#smo_id_input');
+        input.value = smoId;
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+{% if messages %}
+<script type="text/javascript">
+    {% for message in messages %}
+        {% if message.tags == "success" %}
+            Swal.fire({
+                title: 'Success!',
+                text: '{{ message }}',
+                icon: 'success',
+                confirmButtonText: 'Ok'
+            });
+        {% elif message.tags == "error" %}
+            Swal.fire({
+                title: 'Error!',
+                text: '{{ message }}',
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            });
+        {% endif %}
+    {% endfor %}
+</script>
+{% endif %}
+<script>
+    function confirmDelete(event, smoId) {
+    event.preventDefault();  // Prevent the default action (which might be triggering the link directly)
+
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this SMO?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send an AJAX request to delete the department
+            $.ajax({
+                url: "{% url 'delete_smo' smoId=0 %}".replace('0', smoId),  // Dynamically set the URL
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    'smoId': smoId  // Send the department ID to delete
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'The SEO has been deleted.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
+<script>
+    function resetForm() {
+        // Clear all form fields
+        document.getElementById('fromDate').value = '';
+        document.getElementById('toDate').value = '';
+        document.getElementById('comp_name).value = '';
+        document.getElementById('c_name).value = '';
+        document.getElementById('email).value = '';
+        document.getElementById('mobile).value = '';
+        document.getElementById('address).value = '';
+        document.getElementById('city).value = '';
+        document.getElementById('state).value = '';
+        document.getElementById('country).value = '';
+        document.getElementById('service_type).value = '';
+        document.getElementById('plan_type).value = '';
+        document.getElementById('start_date).value = '';
+        document.getElementById('end_date).value = '';
+        document.getElementById('no_of_post).value = '';
+        document.getElementById('no_of_reel).value = '';
+        document.getElementById('remark).value = '';
+        document.getElementById('seo_start).value = '';
+        document.getElementById('seo_expire).value = '';
+
+        // Submit the form with cleared parameters
+        document.getElementById('filterForm').submit();
+    }
+</script>
+<script>
+    // Function to reset the form
+    function resetForm() {
+        // Select all the form elements (input, select, etc.)
+        const form = document.getElementById('filterForm');
+        
+        // Reset the form fields to empty
+        form.reset();
+        
+        // Optionally, reset the form's action to clear the URL parameters
+        window.location.href = window.location.pathname; // This will reload the page without query parameters
+    }
+
+    // Optional: You could add event listeners to your buttons to handle form submission and reset if needed
+    document.getElementById('resetButton').addEventListener('click', function (e) {
+        resetForm(); // Call reset form function
+    });
+
+    // You may want to submit the form via AJAX for a smoother experience, but this requires more code.
+</script>
+<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    // Handle Chatbox Open and Close
+    var handleChatbox = function () {
+        $('.chatbox1').addClass('active'); // Show chatbox
+    };
+
+    // Attach event listener for opening the chatbox
+    $('.bell-link1').on('click', function () {
+        handleChatbox();
+    });
+
+    // Attach event listener for closing the chatbox
+    $('.chatbox-close1').on('click', function () {
+        $('.chatbox1').removeClass('active'); // Hide chatbox
+    });
+});
+
+</script>
+
+<script>
+  document.getElementById('showFormBtn').addEventListener('click', function() {
+    var form = document.getElementById('reportForm');
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';  // Show the form
+    } else {
+      form.style.display = 'none';   // Hide the form
+    }
+  });
+</script> 
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+<!--filter script end -->
+
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

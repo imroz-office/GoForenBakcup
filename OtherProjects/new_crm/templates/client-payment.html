@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+
+
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+
+        <form method="POST" action="{% url 'generate_payment_invoice' %}">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="main-div">
+                    <div class="breadcrumb-wrapper breadcrumb-contacts"
+                        style="display: flex; justify-content: space-between;">
+                        <div>
+                            <h1>{{name}} Payment Voucher</h1>
+                        </div>
+                        <div>
+                            <!--<a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+                            <!--	<i class="bi bi-funnel-fill"></i> Filter-->
+                            <!--</a>-->
+                            <!--<a id="generateInvoiceBtn" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+                            <!--	<i class="bi bi-funnel-fill"></i> Generate Invoice-->
+                            <!--</a>-->
+                            <button type="submit" class="btn btn-primary">Generate Invoice</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-12 active-p">
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-colm" role="tabpanel"
+                        aria-labelledby="pills-colm-tab">
+                        <div class="card">
+                            <div class="card-body px-0">
+                                <div class="table-responsive active-projects user-tbl  dt-filter">
+
+
+                                    <table id="user-tbl" class="table shorting">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <div class="form-check custom-checkbox ms-0">
+                                                        <input type="checkbox" class="form-check-input" id="checkAll">
+                                                        <label class="form-check-label" for="checkAll"></label>
+                                                    </div>
+                                                </th>
+                                                <th>Date</th>
+                                                <th>Voucher No</th>
+                                                <th>Name</th>
+                                                <th>Amount</th>
+                                                <th>PDF</th>
+                                                <th>Invoice Number</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for i in data %}
+                                            <tr>
+                                                <td>
+                                                    <div class="form-check custom-checkbox">
+                                                        <input type="checkbox" class="form-check-input"
+                                                            name="selected_vouchers" value="{{ i.pv_id }}"
+                                                            id="customCheckBox{{ forloop.counter }}">
+                                                        <label class="form-check-label"
+                                                            for="customCheckBox{{ forloop.counter }}"></label>
+                                                    </div>
+                                                </td>
+                                                <td>{{ i.payment_date|date:"d-m-Y" }}</td>
+                                                <td>{{ i.vouch_num }}</td>
+                                                <td>{{ i.name }}</td>
+                                                <td>{{ i.total }}</td>
+                                                <td>
+                                                    <a style="background-color: #34c997; color: #fff; padding: 2px 10px; border-radius: 10px;"
+                                                        target="_blank"
+                                                        href="{% url 'payment_voucher_pdf' pv_id=i.pv_id %}">PDF</a>
+                                                </td>
+                                                <td>{% if i.inv_number %}{{ i.inv_number }}{% else %}{% endif %}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+{% endblock %}

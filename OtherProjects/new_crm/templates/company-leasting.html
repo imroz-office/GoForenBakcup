@@ -1,0 +1,1521 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.3/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.5.3/dist/sweetalert2.min.js"></script>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.css" rel="stylesheet" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!--date range css start -->
+<style>
+    .daterangepicker .drp-buttons {
+    display: flex !important;
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+<style>
+/* Chatbox (modal) */
+.chatbox1 {
+    width: 30.25rem;
+    height: 100vh;
+    position: fixed;
+    right: -31.25rem;  /* Initially offscreen */
+    top: 0;
+    z-index: 999;
+    background: #fff;
+    box-shadow: 0rem 0rem 1.875rem 0rem rgba(82, 63, 105, 0.15);
+    transition: all 0.8s ease-in-out;
+    overflow: hidden;  /* Prevent scrollbars */
+}
+
+/* Active class: Slide chatbox to the right */
+.chatbox1.active {
+    right: 0;
+    display: block;
+}
+
+/* Header and close button inside the chatbox */
+.chatbox1 .chatbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 17px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbox1 .chatbox-close1 {
+    cursor: pointer;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 1000;
+    width:10%;
+    margin:10px 10px 0px 0px;
+}
+
+.custom-tab-1 {
+    padding: 10px 17px;
+    height: calc(100vh - 120px);  /* Subtract header and footer height */
+    overflow-y: auto;  /* Enable scroll for form */
+}
+
+/* Form field styling */
+form {
+    margin: 0;
+}
+
+/* Styling for the submit button */
+button {
+    width: 89%;
+    margin: 0 auto;
+}
+</style>
+
+<!--search select style start -->
+<style>
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>Company</h1>
+                    </div>
+                    <div>
+                        {% if is_edit %}
+                        <a href="{% url 'company' %}" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">
+                            <i class="bi bi-plus-circle" style="font-size: 1rem;"></i> Add company
+                        </a>
+                        {% endif %}
+                        <!--<li type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+                        <!--    <a class="nav-link bell-link1" href="javascript:void(0);">-->
+                        <!--        <i class="bi bi-funnel-fill"></i> Filter-->
+                        <!--    </a>-->
+                        <!--</li>-->
+                          <!--{% if "1" in session_roleid or "6" in session_roleid %}-->
+                <li type="button" class="btn btn-primary" id="showFormBtn" style="margin-right: 15px;"><i class="bi bi-funnel-fill"></i>Filter</li>
+                <!--{% endif %}-->
+                        
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--FILTER CODE START  -->
+        <div id="reportForm" style="display:none;">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'company' %}" method="get"> 
+                                 {% csrf_token %}
+                                <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                         <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="date_range" />
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Company Name</label>
+                                    <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    <input type="text" class="form-control slug-title" name="com_name" id="com_name" placeholder="Search By Company Name " value="{{ request.GET.com_name }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Mobile Number</label>
+                                       <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                    <input type="text" class="form-control slug-title" name="mobile" id="mobile" placeholder="Search By Mobile Number" value="{{ request.GET.mobile }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Address</label>
+                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                        
+                                    <input type="text" class="form-control slug-title" name="address" id="address" placeholder="Search By Address" value="{{ request.GET.address }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                               </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Area</label>
+                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="area" id="area" placeholder="Search By Area" value="{{ request.GET.area }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">City</label>
+                                     <div class="input-group clockpicker" >
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <select name="city" aria-label="Select a City" id="city" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select City</option>
+                                        {% for city in cites %}
+                                            <option value="{{ city.city }}" {% if request.GET.city == city.city %}selected{% endif %}>{{ city.city }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">State</label>
+                                     <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <select name="state" aria-label="Select a City" id="state" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select State</option>
+                                        {% for city in cites %}
+                                            <option value="{{ city.state }}" {% if request.GET.state == city.state %}selected{% endif %}>{{ city.state }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Country</label>
+                                     <div class="input-group clockpicker" >
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="country" id="country" placeholder="Search By Country " value="{{ request.GET.country }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">GST number</label>
+                                     <div class="input-group clockpicker" >
+                                          <span class="input-group-text">GST</span>
+                                    <input type="text" class="form-control slug-title" name="gst_no" id="gst_no" placeholder="Search By GST number " value="{{ request.GET.gst_no }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Email</label>
+                                        <div class="input-group clockpicker">
+                                          <span class="input-group-text">@</span>
+                                    <input type="text" class="form-control slug-title" name="email" id="email" placeholder="Search By Email " value="{{ request.GET.email }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Website</label>
+                                        <div class="input-group clockpicker">
+                                            <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                    <input type="text" class="form-control slug-title" name="website" id="website" placeholder="Search By Website " value="{{ request.GET.website }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Bank Name</label>
+                                     <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                            
+                                    <input type="text" class="form-control slug-title" name="bank_name" id="bank_name" placeholder="Search By Bank Name " value="{{ request.GET.bank_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Account Number</label>
+                                     <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                            
+                                    <input type="text" class="form-control slug-title" name="acc_no" id="acc_no" placeholder="Search By Account Number" value="{{ request.GET.acc_no }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">IFSC Code</label>
+                                      <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                            
+                                    <input type="text" class="form-control slug-title" name="ifsc_code" id="ifsc_code" placeholder="Search By IFSC Code " value="{{ request.GET.ifsc_code }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Branch Name</label>
+                                       <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                    <input type="text" class="form-control slug-title" name="branch_name" id="branch_name" placeholder="Search By Branch Name " value="{{ request.GET.branch_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Beneficiary Name</label>
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                    <input type="text" class="form-control slug-title" name="beneficiary_name" id="beneficiary_name" placeholder="Search By Beneficiary Name" value="{{ request.GET.beneficiary_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Opening Balance</label>
+                                      <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="far fa-credit-card"></i></span>
+                                    <input type="text" class="form-control slug-title" name="opening_balance" id="opening_balance" placeholder="Search By Opening Balance" value="{{ request.GET.opening_balance }}">
+                                </div>
+                                </div>
+                                
+                               <div style="display:flex;justify-content:end">
+                        <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div> 
+                        <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                            <button type="button" id="resetButton" class="btn btn-primary" onclick="resetForm();">Reset</button>
+                        </div>
+                    </div>  
+                                
+                            
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+       <script>
+  document.getElementById('showFormBtn').addEventListener('click', function() {
+    var form = document.getElementById('reportForm');
+    // If hidden (or first time), fade in
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+      form.animate(
+        [
+          { opacity: 0, transform: 'translateY(-10px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+    } 
+    // Otherwise, fade out then hide
+    else {
+      var anim = form.animate(
+        [
+          { opacity: 1, transform: 'translateY(0)' },
+          { opacity: 0, transform: 'translateY(-10px)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in',
+          fill: 'forwards'
+        }
+      );
+      anim.onfinish = function() {
+        form.style.display = 'none';
+      };
+    }
+  });
+</script>
+
+        <!--FILTER CODE END  -->
+        <!--model side Filter-->
+				<div class="chatbox1" id="filterModal">
+                    <!--<div class="chatbox-close1">-->
+           
+                    <!--         </div>-->
+                    <div class="custom-tab-2">
+                        <div style="display:flex;justify-content:space-between">
+                        <h4 style="margin: 10px 0px -7px 17px;">Filter</h4>
+                        
+                        <button class="chatbox-close1">&times;</button>
+                        </div>
+                        <hr>
+                        <div class="custom-tab-1" style="margin: 0px 17px 0px 17px;" >
+                            
+                            <form class="form row g-3" action="{% url 'company' %}" method="get" id="filterForm">
+                                {% csrf_token %}
+                                <div class="col-lg-12 ">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="fromDate" />
+                                    </div>
+                                </div>
+                                <!--<div class="col-lg-12">-->
+                                <!--    <label for="fromDate" class="form-label">From Date</label>-->
+                                <!--    <div class="input-group clockpicker">-->
+                                <!--        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>-->
+                                <!--    <input type="date" class="form-control slug-title" name="fromDate" id="fromDate" value="{{ request.GET.fromDate }}" >-->
+                                <!--    </div>-->
+                                <!--</div>-->
+                                <!--<div class="col-lg-12">-->
+                                <!--    <label for="toDate" class="form-label">To Date</label>-->
+                                <!--    <div class="input-group clockpicker">-->
+                                <!--        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>-->
+                                <!--    <input type="date" class="form-control slug-title" name="toDate" id="toDate" value="{{ request.GET.toDate }}" >-->
+                                <!--    </div>-->
+                                <!--</div>-->
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Company Name</label>
+                                    <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    <input type="text" class="form-control slug-title" name="com_name" id="com_name" placeholder="Search By Company Name " value="{{ request.GET.com_name }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Mobile Number</label>
+                                       <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                    <input type="text" class="form-control slug-title" name="mobile" id="mobile" placeholder="Search By Mobile Number" value="{{ request.GET.mobile }}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Address</label>
+                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                        
+                                    <input type="text" class="form-control slug-title" name="address" id="address" placeholder="Search By Address" value="{{ request.GET.address }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                               </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Area</label>
+                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="area" id="area" placeholder="Search By Area" value="{{ request.GET.area }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">City</label>
+                                     <div class="input-group clockpicker" >
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <select name="city" aria-label="Select a City" id="city" value="{{ request.GET.city }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select City</option>
+                                        {% for city in cites %}
+                                            <option value="{{ city.city }}">{{ city.city }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">State</label>
+                                     <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <select name="state" aria-label="Select a City" id="state" value="{{ request.GET.state }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select State</option>
+                                        {% for city in cites %}
+                                            <option value="{{ city.state }}">{{ city.state }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Country</label>
+                                     <div class="input-group clockpicker" >
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="country" id="country" placeholder="Search By Country " value="{{ request.GET.country }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">GST number</label>
+                                     <div class="input-group clockpicker" >
+                                          <span class="input-group-text">GST</span>
+                                    <input type="text" class="form-control slug-title" name="gst_no" id="gst_no" placeholder="Search By GST number " value="{{ request.GET.gst_no }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Email</label>
+                                        <div class="input-group clockpicker">
+                                          <span class="input-group-text">@</span>
+                                    <input type="text" class="form-control slug-title" name="email" id="email" placeholder="Search By Email " value="{{ request.GET.email }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Website</label>
+                                        <div class="input-group clockpicker">
+                                            <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                    <input type="text" class="form-control slug-title" name="website" id="website" placeholder="Search By Website " value="{{ request.GET.website }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Bank Name</label>
+                                     <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                            
+                                    <input type="text" class="form-control slug-title" name="bank_name" id="bank_name" placeholder="Search By Bank Name " value="{{ request.GET.bank_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Account Number</label>
+                                     <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                            
+                                    <input type="text" class="form-control slug-title" name="acc_no" id="acc_no" placeholder="Search By Account Number" value="{{ request.GET.acc_no }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">IFSC Code</label>
+                                      <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                            
+                                    <input type="text" class="form-control slug-title" name="ifsc_code" id="ifsc_code" placeholder="Search By IFSC Code " value="{{ request.GET.ifsc_code }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Branch Name</label>
+                                       <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                    <input type="text" class="form-control slug-title" name="branch_name" id="branch_name" placeholder="Search By Branch Name " value="{{ request.GET.branch_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Beneficiary Name</label>
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                    <input type="text" class="form-control slug-title" name="beneficiary_name" id="beneficiary_name" placeholder="Search By Beneficiary Name" value="{{ request.GET.beneficiary_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Opening Balance</label>
+                                      <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="far fa-credit-card"></i></span>
+                                    <input type="text" class="form-control slug-title" name="opening_balance" id="opening_balance" placeholder="Search By Opening Balance" value="{{ request.GET.opening_balance }}">
+                                </div>
+                                </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex;">
+                        <div class="col-lg-6" style="margin: 0px 0 0 15px;">
+                            <button type="submit" style="width:89%" class="btn btn-primary">Submit</button>
+                        </div> 
+                        <div class="col-lg-6" style="margin: 0px 0 0 15px;">
+                            <button type="button" id="resetButton" style="width:89%" class="btn btn-primary" onclick="resetForm();">Reset</button>
+                        </div>
+                    </div>  
+                        </form>
+                </div>
+				<!--end side Filter-->
+
+        <div class="row">
+            <div class="col-xl-4 col-lg-12">
+                <div class="ec-cat-list card card-default mb-24px">
+                    <div class="card-body">
+                        <div class="row ec-vendor-uploads">
+                            <h4>{{ is_edit|yesno:"Edit Company,Add Company" }}</h4>
+                            <br><br>
+                            <div class="col-lg-12">
+                                <div class="ec-vendor-upload-detail">
+                                    <form id="addCompanyForm" class="form row g-3" action="{% if is_edit %}{% url 'update_company' company.com_id %}{% else %}{% url 'add_company' %}{% endif %}" method="post">
+                                        {% csrf_token %}
+                                        <label for="companyName" class="form-label">Company Name</label>
+                                        <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                <input type="text" required class="form-control slug-title" name="c_name" placeholder="Company Name" id="companyName" value="{{ company.com_name|default:'' }}" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');">
+                                            </div>
+                                        </div>
+                                            <label for="mobileNumber" class="form-label">Mobile Number</label>
+                                        <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                            <input type="text" required maxlength="10" minlength="10" pattern="[0-9]*" class="form-control slug-title" name="ph_no" placeholder="Mobile Number" id="mobileNumber" value="{{ company.mobile|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                            </div>                                
+                                        </div>
+
+                                        <label for="address" class="form-label">Address</label>
+                                        <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                        
+                                            
+                                            <input type="text" class="form-control slug-title" name="add2" placeholder="Address" id="address" value="{{ company.address|default:'' }}">
+                                            </div>
+                                        </div>
+                                            <label for="area" class="form-label">Area</label>
+                                        <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
+                                          <input type="text" class="form-control slug-title" name="add3" placeholder="Area" id="area" value="{{ company.area|default:'' }}" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');">
+                                            </div>
+                                        </div>
+                                        <label class="form-label">Select City</label>
+                                        <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            <div style="display:flex;width:100%">
+                                  <div class="input-group clockpicker" style="width:13%;">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                          </div>
+                                            <select name="city" aria-label="Select a City" id="citySelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                                <option value="{{ company.city|default:'Select City' }}">{{ company.city|default:'Select City' }}</option>
+                                                {% for city in cites %}
+                                                    <option value="{{ city.city }}" data-state="{{ city.state }}" data-country="{{ city.country }}">{{ city.city }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                        <!--<select style="width: 200px;" id="mySelect2">-->
+                                        <!--  <option value="AL">Alabama</option>-->
+                                        <!--  <option value="AK">Alaska</option>-->
+                                        <!--</select>-->
+
+
+<!--<script>-->
+<!--  let typed = "";-->
+
+<!--  const selectElement = document.getElementById('citySelect');-->
+<!--  $(selectElement).select2({-->
+<!--    language: {-->
+<!--      noResults: function() {-->
+<!--        typed = document.querySelector('.select2-search__field')?.value || '';-->
+<!--        return "No results found";-->
+<!--      }-->
+<!--    }-->
+<!--  });-->
+
+<!--  selectElement.addEventListener('select2:select', function () {-->
+<!--    typed = "";-->
+<!--  });-->
+
+<!--  document.getElementById('but').addEventListener('click', function () {-->
+<!--    if (typed) {-->
+<!--      const optionExists = Array.from(selectElement.options).some(option => option.value === typed);-->
+<!--      if (!optionExists) {-->
+<!--        const newOption = new Option(typed, typed, true, true);-->
+<!--        selectElement.add(newOption);-->
+<!--        $(selectElement).trigger('change');-->
+<!--      } else {-->
+<!--        selectElement.value = typed;-->
+<!--        $(selectElement).trigger('change');-->
+<!--      }-->
+<!--    }-->
+<!--  });-->
+<!--</script>-->
+                                        
+                                        
+                                        
+                                        
+                                        
+                                             <label for="stateInput" class="form-label">State</label>
+                                         <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                               
+                                                <input type="text" class="form-control slug-title" name="state" placeholder="State" id="stateInput" value="{{ company.state|default:'' }}" readonly>
+                                            </div>
+                                        </div>
+                                         <label for="countryInput" class="form-label">Country</label>
+                                        <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                               
+                                           
+                                            <input type="text" class="form-control slug-title" name="country" placeholder="Country" id="countryInput" value="{{ company.country|default:'' }}" readonly>
+                                        </div>
+                                        </div>
+                                        
+                                        <label for="pincode" class="form-label">Pincode</label>
+                                        <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
+                                            
+                                            <input type="text" class="form-control slug-title" name="pincode" maxlength="6" minlength="6" placeholder="Pincode" id="pincode" value="{{ company.pincode|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <label for="gstToggle" class="form-label">Do you have a GST number?</label>
+                                            <div style="display: flex; align-items: center;">
+                                                <p style="margin: 0; width: 30px;">No</p>
+                                                <label class="switch" style="margin: 0 10px;">
+                                                    <input type="checkbox" id="flexRadioYes" name="hostingoption" onclick="toggleGstField()"
+                                                           {% if company.gst_no %} checked {% endif %}>
+                                                    <span class="slider"></span>
+                                                </label>
+                                                <p style="margin: 0; width: 30px;">Yes</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-12 input-group mb-2" id="gstField" style="{% if company.gst_no %} display: block; {% else %} display: none; {% endif %};--bs-gutter-y: 0rem;">
+                                            <br>
+                                            <label for="inputGST" class="form-label">GST number</label>
+                                            <div class="input-group clockpicker">
+                                              <span class="input-group-text">GST</span>
+                                               
+                                           
+                                            <input type="text" class="form-control slug-title" name="gstNumber" placeholder="GST Number" id="inputGST" value="{{ company.gst_no|default:'' }}">
+                                            </div>
+                                        </div>
+                                        
+                                        <script>
+function toggleGstField() {
+    const gstField = document.getElementById('gstField');
+    const toggle = document.getElementById('flexRadioYes');
+    const inputGst = document.getElementById('inputGST'); // Get the GST input field
+    
+    if (toggle.checked) {
+        gstField.style.display = 'block'; // Show the input field
+    } else {
+        gstField.style.display = 'none'; // Hide the input field
+        inputGst.value = ''; // Clear the GST number if "No" is selected
+    }
+}
+
+// Call the function to set the initial state based on the backend data
+document.addEventListener('DOMContentLoaded', toggleGstField);
+</script>
+
+
+
+                                         <label for="email" class="form-label">Email</label>
+                                         <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text">@</span>
+                                            
+                                           
+                                            <input type="email" class="form-control slug-title" name="email" placeholder="Enter Email ID" id="email" value="{{ company.email|default:'' }}" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}">
+                                            </div>
+                                        </div>
+
+                                            <label for="text" class="form-label">Website</label>
+                                        <div class="col-lg-12 mb-2" style="margin-top: var(--bs-gutter-y);--bs-gutter-y: 0rem;">
+                                            
+                                             
+                                            <div class="input-group clockpicker">
+                                            <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                            
+                                           
+                                            <input type="text" required class="form-control slug-title" name="website" placeholder="Website" id="website" value="{{ company.website|default:'' }}">
+                                        </div>
+                                        </div>
+                                            
+                                            
+                                              <label for="bank_name" class="form-label">Bank Name</label>
+                                          <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                            
+                                           
+                                          
+                                            <input type="text" required class="form-control slug-title" name="bank_name" placeholder="Bank Name" id="bank_name" value="{{ company.bank_name|default:'' }}" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');">
+                                        </div>
+                                        </div>
+                                            
+                                            
+                                              <label for="acc_no" class="form-label">Account Number</label>
+                                         <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                            
+                                           
+                                          
+                                          
+                                            <input type="text" required class="form-control slug-title" pattern="[0-9]*" name="acc_no" placeholder="Account Number" id="acc_no" value="{{ company.acc_no|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        </div>
+                                        </div>
+                                            
+                                            
+                                          <label for="ifsc_code" class="form-label">IFSC Code</label>    
+                                         <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                            
+                                           
+                                          
+                                          
+                                            <input type="text" required class="form-control slug-title" name="ifsc_code" placeholder="IFSC Code" id="ifsc_code" value="{{ company.ifsc_code|default:'' }}">
+                                       </div>
+                                        </div>
+                                            
+                                            
+                                         <label for="branch_name" class="form-label">Branch Name</label>    
+                                         <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                            
+                                           
+                                           
+                                            <input type="text" required class="form-control slug-title" name="branch_name" placeholder="Branch Name" id="branch_name" value="{{ company.branch_name|default:'' }}" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');">
+                                        </div>
+                                        </div>
+                                        
+                                        
+                                        <label for="beneficiary_name" class="form-label">Beneficiary Name</label>
+                                       <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-money-check"></i></span>
+                                            
+                                           
+                                            
+                                            <input type="text" required class="form-control slug-title" name="beneficiary_name" placeholder="Beneficiary Name" id="beneficiary_name" value="{{ company.beneficiary_name|default:'' }}" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');">
+                                        </div>
+                                        </div>
+                                        
+                                         <label for="opening_balance" class="form-label">Opening Balance</label>
+                                         <div class="col-lg-12 input-group mb-2" style="--bs-gutter-y: 0rem;">
+                                            
+                                            <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="far fa-credit-card"></i></span>
+                                            
+                                           
+                                            
+                                           
+                                            <input type="text" required class="form-control slug-title" name="opening_balance" placeholder="Opening Balance" id="opening_balance" value="{{ company.opening_balance|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        </div>
+                                        </div>
+
+
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                    <script>
+                                        // This will disable the submit button when clicked and prevent multiple submissions.
+                                        document.querySelector('form').addEventListener('submit', function(event) {
+                                            // Disable the submit button
+                                            const submitButton = event.target.querySelector('button[type="submit"]');
+                                            submitButton.disabled = true;
+                                    
+                                            // Optionally, change the button text to indicate the form is being submitted
+                                            submitButton.innerText = 'Submitting...';
+                                    
+                                            // Prevent further form submissions by disabling the button
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-8 col-lg-12">
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+                        <div class="card">
+                            <div class="card-body px-0">
+                                <div class="table-responsive active-projects user-tbl dt-filter">
+                                    <table id="user-tbl" class="table shorting">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>GST No.</th>
+                                                <th>Action</th> 
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for i in data %}
+                                            <tr>
+                                                <td>{{i.com_name}}</td>
+                                                <td>{{i.gst_no}}</td>
+                                                <!--<td>-->
+                                                <!--    <div class="dropdown">-->
+                                                <!--        <div class="btn-link" data-bs-toggle="dropdown" aria-expanded="false">-->
+                                                <!--            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+                                                <!--                <path d="M11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+                                                <!--                <path d="M18 12C18 12.5523 18.4477 13 19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+                                                <!--                <path d="M4 12C4 12.5523 4.44772 13 5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+                                                <!--            </svg>-->
+                                                <!--        </div>-->
+                                                <!--        <ul class="dropdown-menu">-->
+                                                <!--            <li><a class="dropdown-item" href="{% url 'company_view' i.com_id %}">View</a></li>-->
+                                                <!--            <li><a class="dropdown-item" href="{% url 'update_company' i.com_id %}">Edit</a></li>-->
+                                                <!--            <li>-->
+                                                <!--                <a href="javascript:void(0);" class="dropdown-item deleteButton" data-company-id="{{ i.com_id }}">Delete</a>-->
+                                                <!--            </li>-->
+                                                <!--        </ul>-->
+                                                <!--    </div>-->
+                                                <!--</td>-->
+                                                <!---->
+                                                            <td>
+                                                          <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                                            
+                                                        
+                                                                <!-- View button (eye icon) -->
+                                                                <a href="{% url 'company_view' i.com_id %}"
+                                                                   class="btn btn-info btn-xs shadow" title="View">
+                                                                    <i class="fa fa-eye"></i>
+                                                                </a>
+                                                        
+                                                              
+                                                                    <!-- Edit button (pencil icon) -->
+                                                                    <a  href="{% url 'update_company' i.com_id %}"
+                                                                       class="btn btn-primary btn-xs shadow" title="Edit">
+                                                                        <i class="fa fa-pencil"></i>
+                                                                    </a>
+
+                                                                    <!-- Delete button (trash icon) -->
+                                                                    <a href="javascript:void(0);"
+                                                                       data-company-id="{{ i.com_id }}"
+                                                                       class="btn btn-danger btn-xs shadow" title="Delete">
+                                                                        <i class="fa fa-trash"></i>
+                                                                   </a>
+                                                              
+                                                            </div>
+                                                        </td>
+
+
+                                                <!---->
+                                                
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // jQuery to handle the AJAX form submission
+    $(document).ready(function() {
+        $('#addCompanyForm').submit(function(e) {
+            e.preventDefault();  // Prevent the default form submission
+
+            // Prepare the form data
+            var formData = $(this).serialize();  
+
+            // Check if the form is for adding or editing by inspecting the action URL
+            var isEdit = $(this).attr('action').includes('update_company'); // If it contains 'update_company', it’s an edit action.
+
+            // Send the form data using AJAX
+            $.ajax({
+                url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+                type: "POST",
+                data: formData,
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Show success alert with SweetAlert for Add or Edit
+                        Swal.fire({
+                            icon: 'success',
+                            title: isEdit ? 'Company Updated!' : 'Company Added!',
+                            text: response.message,
+                        }).then(() => {
+                            // Redirect to the company page without reloading
+                            window.location.href = "{% url 'company' %}";
+                        });
+                    } else {
+                        // Show error alert if something goes wrong
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.message,
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'An error occurred, please try again.',
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<script> 
+    $(document).ready(function() {
+        // Handle delete button click
+        $(document).on('click', '.deleteButton', function() { // Use event delegation
+            var comId = $(this).data('company-id');
+            
+            // Show a confirmation alert before deleting
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to delete this company?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, keep it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If confirmed, send an Ajax request to delete the company
+                    $.ajax({
+                        url: "{% url 'delete_company' com_id=0 %}".replace('0', comId),  // Replace URL with the correct view URL
+                        type: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{ csrf_token }}',
+                            'com_id': comId,
+                        },
+                        success: function(response) {
+                            // Check if the deletion was successful
+                            if (response.success) {
+                                // Show the SweetAlert success message
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Your company "' + response.company_name + '" was deleted.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(function() {
+                                    // Redirect to the company page without page reload
+                                    window.location.replace('{% url "company" %}');  // This will redirect without a page reload
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Something went wrong.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; 
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 20px;
+        background-color:green;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        border-radius: 20px;
+        background-color: #fff;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: red;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get references to the city select, state input, and country input
+        const citySelect = document.getElementById('citySelect');
+        const stateInput = document.getElementById('stateInput');
+        const countryInput = document.getElementById('countryInput');
+        
+        // Listen for the change event on the city select
+        citySelect.addEventListener('change', function() {
+            // Get the selected city option
+            const selectedOption = citySelect.options[citySelect.selectedIndex];
+            
+            // Get the corresponding state and country from the data-state and data-country attributes
+            const selectedState = selectedOption.getAttribute('data-state');
+            const selectedCountry = selectedOption.getAttribute('data-country');
+            
+            // Update the state and country input fields
+            stateInput.value = selectedState;
+            countryInput.value = selectedCountry;
+        });
+    });
+</script>
+
+<script>
+        function resetForm() {
+            // Clear all form fields
+            document.getElementById('fromDate').value = '';
+            document.getElementById('toDate').value = '';
+            document.getElementById('com_name').value = '';
+            document.getElementById('mobile').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('area').value = '';
+            document.getElementById('city').value = '';
+            document.getElementById('state').value = '';
+            document.getElementById('country').value = '';
+            document.getElementById('gst_no').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('website').value = '';
+            document.getElementById('bank_name').value = '';
+            document.getElementById('acc_no').value = '';
+            document.getElementById('ifsc_code').value = '';
+            document.getElementById('branch_name').value = '';
+            document.getElementById('beneficiary_name').value = '';
+            document.getElementById('opening_balance').value = '';
+
+            // Submit the form with cleared parameters
+            document.getElementById('filterForm').submit();
+        }
+    </script>
+<script>
+    // Function to reset the form
+    function resetForm() {
+        // Select all the form elements (input, select, etc.)
+        const form = document.getElementById('filterForm');
+        
+        // Reset the form fields to empty
+        form.reset();
+        
+        // Optionally, reset the form's action to clear the URL parameters
+        window.location.href = window.location.pathname; // This will reload the page without query parameters
+    }
+
+    // Optional: You could add event listeners to your buttons to handle form submission and reset if needed
+    document.getElementById('resetButton').addEventListener('click', function (e) {
+        resetForm(); // Call reset form function
+    });
+
+    // You may want to submit the form via AJAX for a smoother experience, but this requires more code.
+</script>
+<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    // Handle Chatbox Open and Close
+    var handleChatbox = function () {
+        $('.chatbox1').addClass('active'); // Show chatbox
+    };
+
+    // Attach event listener for opening the chatbox
+    $('.bell-link1').on('click', function () {
+        handleChatbox();
+    });
+
+    // Attach event listener for closing the chatbox
+    $('.chatbox-close1').on('click', function () {
+        $('.chatbox1').removeClass('active'); // Hide chatbox
+    });
+});
+
+</script>
+
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+<!--filter script end -->
+
+
+<!--search select  start -->
+<script>
+  function create_custom_dropdowns() {
+    $('select').each(function () {
+      var $select = $(this);
+      if ($select.next().hasClass('dropdown-select')) return;
+
+      // insert wrapper
+      $select.after(
+        '<div class="dropdown-select wide '+$select.attr('class')+'" tabindex="0">' +
+          '<span class="current"></span>' +
+          '<div class="list">' +
+            '<div class="dd-search">' +
+              '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+            '</div>' +
+            '<ul></ul>' +
+            '<li class="no-results" style="display:none;">Not found</li>' +
+          '</div>' +
+        '</div>'
+      );
+
+      var $dd      = $select.next();
+      var $options = $select.find('option');
+      var $sel     = $options.filter(':selected');
+
+      // set initial label
+      $dd.find('.current').text( $sel.data('display-text')||$sel.text() );
+
+      // copy options into <li>, including pincode/state/country
+      $options.each(function(){
+        var $o      = $(this);
+        var text    = $o.text();
+        var val     = $o.val();
+        var disp    = $o.data('display-text')||'';
+        var pinc    = $o.data('pincode')||'';
+        var state   = $o.data('state')||'';
+        var country = $o.data('country')||'';
+
+        $dd.find('ul').append(
+          '<li class="option '+($o.is(':selected')?'selected':'')+'" '+
+            'data-value="'+val+'" '+
+            'data-display-text="'+disp+'" '+
+            'data-pincode="'+pinc+'" '+
+            'data-state="'+state+'" '+
+            'data-country="'+country+'">'+
+            text+
+          '</li>'
+        );
+      });
+    });
+  }
+
+  function filter(input) {
+    var $dd   = $(input).closest('.dropdown-select');
+    var val   = input.value.toLowerCase();
+    var $opts = $dd.find('ul > li.option');
+
+    $opts.each(function(){
+      $(this).toggle( $(this).text().toLowerCase().indexOf(val) > -1 );
+    });
+
+    $dd.find('.no-results').toggle( $opts.filter(':visible').length === 0 );
+  }
+
+  // open/close
+  $(document).on('click','.dropdown-select',function(e){
+    if ($(e.target).hasClass('dd-searchbox')) return;
+    $('.dropdown-select').not(this).removeClass('open').find('.option').removeAttr('tabindex');
+    $(this).toggleClass('open');
+    if ($(this).hasClass('open')) {
+      $(this).find('.option').attr('tabindex',0).show();
+      $(this).find('.selected').focus();
+    } else {
+      $(this).find('.option').removeAttr('tabindex').not('.selected').hide();
+      $(this).focus();
+    }
+  });
+
+  // click outside to close
+  $(document).on('click',function(e){
+    if (!$(e.target).closest('.dropdown-select').length) {
+      $('.dropdown-select').removeClass('open')
+        .find('.option').removeAttr('tabindex').not('.selected').hide();
+    }
+  });
+
+  // option click
+  $(document).on('click','.dropdown-select .option',function(){
+    var $opt    = $(this),
+        text    = $opt.data('display-text')||$opt.text(),
+        val     = $opt.data('value'),
+        pinc    = $opt.data('pincode'),
+        state   = $opt.data('state'),
+        country = $opt.data('country'),
+        $dd     = $opt.closest('.dropdown-select'),
+        $sel    = $dd.prev('select');
+
+    // mark
+    $dd.find('.selected').removeClass('selected');
+    $opt.addClass('selected');
+    $dd.find('.current').text(text);
+
+    // close dropdown
+    $dd.removeClass('open').find('.option').removeAttr('tabindex').not('.selected').hide();
+    $dd.focus();
+
+    // sync real select
+    $sel.val(val).trigger('change');
+
+    // area → pincode
+    if ($sel.is('#areaSelect')) {
+      $('#pincodeInput').val(pinc);
+    }
+
+    // city → state + country
+    if ($sel.is('#citySelect')) {
+      $('#stateInput').val(state);
+      $('#countryInput').val(country);
+    }
+  });
+
+  // keyboard nav
+  $(document).on('keydown','.dropdown-select',function(e){
+    var $dd      = $(this),
+        $visible = $dd.find('.option:visible'),
+        $focus   = $visible.filter(':focus').add($visible.filter('.selected'));
+
+    switch(e.keyCode){
+      case 13: // enter
+        if ($dd.hasClass('open')) $focus.trigger('click');
+        else $dd.trigger('click');
+        return false;
+      case 40: // down
+        if (!$dd.hasClass('open')) $dd.trigger('click');
+        else $focus.nextAll('.option:visible').first().focus();
+        return false;
+      case 38: // up
+        if (!$dd.hasClass('open')) $dd.trigger('click');
+        else $focus.prevAll('.option:visible').first().focus();
+        return false;
+      case 27: // esc
+        if ($dd.hasClass('open')) {
+          $dd.removeClass('open')
+             .find('.option').removeAttr('tabindex').not('.selected').hide();
+        }
+        return false;
+    }
+  });
+
+  $(document).ready(create_custom_dropdowns);
+</script>
+
+<!--search select  end -->
+{% endblock %}

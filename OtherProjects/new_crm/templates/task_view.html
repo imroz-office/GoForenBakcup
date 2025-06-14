@@ -1,0 +1,1094 @@
+{% extends "base.html" %}
+{% load static %}
+{% block start %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!--date range css start -->
+<style>
+    .daterangepicker .drp-buttons {
+    display: flex !important;
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+
+
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+		     <div class="col-xl-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="row task">
+									<div class="col-xl-2 col-sm-4 col-6">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline">
+												<h2 class="text-primary count">{{ not_started_task_count }}</h2> 
+												<span>Not Started</span>
+											</div>
+											<p>Tasks assigne</p>
+										</div>
+									</div>
+									<div class="col-xl-2 col-sm-4 col-6">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline">
+												<h2 class="text-purple count">{{ in_progress_task_count }}</h2>
+												<span>In Progress</span>
+											</div>	
+											<p>Tasks assigne</p>
+										</div>
+									</div>
+									<div class="col-xl-2 col-sm-4 col-6">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline">
+												<h2 class="text-warning count">{{ revise_task_count }}</h2>
+												<span>Revise Task</span>
+											</div>	
+											<p>Tasks assigne</p>
+										</div>
+									</div>
+									<div class="col-xl-2 col-sm-4 col-6">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline">
+												<h2 class="text-danger count">{{ urgent_task_count }}</h2>
+												<span>Urgent Task</span>
+											</div>	
+											<p>Tasks assigne</p>
+										</div>
+									</div>
+									<div class="col-xl-2 col-sm-4 col-6">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline">
+												<h2 class="text-success count">{{ complete_task_count }}</h2>
+												<span>Complete Task</span>
+											</div>	
+											<p>Tasks assigne</p>
+										</div>
+									</div>
+									<div class="col-xl-2 col-sm-4 col-6">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline">	
+												<h2 class="text-danger count">{{ pending_task_count }}</h2>
+												<span>pending Task</span>
+											</div>	
+											<p>Tasks assigne</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>{{ data.name }} Task List</h1>
+					</div>
+					<div>
+					    
+                        <button type="button" class="btn btn-primary" onclick="showTab('pending')">
+                            <i class="fa-solid fa-clock me-1"></i> Pending
+                        </button>
+
+                        <button type="button" class="btn btn-success" onclick="showTab('complete')">
+                            <i class="fa-solid fa-circle-check me-1"></i> Complete
+                        </button>
+
+                        <button type="button" class="btn btn-danger" onclick="showTab('urgent')">
+                            <i class="fa-solid fa-triangle-exclamation me-1"></i> Urgent
+                        </button>
+
+                        <button type="button" class="btn btn-warning text-white" onclick="showTab('revise')">
+                            <i class="fa-solid fa-rotate-left me-1"></i> Revise
+                        </button>
+
+						<!--<li type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+      <!--                      <a class="nav-link bell-link1" href="javascript:void(0);">-->
+      <!--                          <i class="bi bi-funnel-fill"></i> Filter-->
+      <!--                      </a>-->
+      <!--                  </li>-->
+       <li type="button" class="btn btn-primary" id="showFormBtn" style="margin-right: 15px;"><i class="bi bi-funnel-fill"></i>Filter</li>
+					</div>
+				</div>
+			</div>
+		</div>
+		 <!--FILTER CODE START  -->
+        <div id="reportForm" style="display:none;">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'task_view' data.userId %}" method="get">
+                                    {% csrf_token %}
+                                    <div class="col-lg-4">
+                                        <label class="form-label">Date Range With Time</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                            <input type="text" id="date_range" class="form-control input-daterange-timepicker" name="date_range" />
+                                        </div>
+                                    </div>
+                                
+                                    <div class="col-lg-4">
+                                        <label class="form-label">Status</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa-solid fa-circle-check"></i></span>
+                                            <select name="status" class="form-select form-select-solid" id="status">
+                                                <option value="">Select Status</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Complete">Complete</option>
+                                                <option value="Revise">Revise</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="col-lg-4">
+                                        <label class="form-label">Project Name</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-search-location"></i></span>
+                                            <select name="project_name" id="project_name" class="form-select form-select-solid">
+                                                <option value="">Select Project</option>
+                                                {% for i in project_list %}
+                                                    <option value="{{ i.pro_name }}">{{ i.pro_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                
+                                    <div style="display:flex; justify-content:end;">
+                                        <div class="col-lg-2" style="margin-left:15px;">
+                                            <button type="button" id="submitFilter" class="btn btn-primary w-100">Submit</button>
+                                        </div>
+                                        <div class="col-lg-2" style="margin-left:15px;">
+                                            <button type="button" class="btn btn-secondary w-100" onclick="resetForm();">Reset</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+$('.input-daterange-timepicker').daterangepicker({
+    locale: {
+        format: 'MM/DD/YYYY',
+        cancelLabel: 'Clear',
+        applyLabel: 'Apply'
+    }
+});
+
+$('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+});
+
+
+function resetForm() {
+    document.getElementById("addtaskForm").reset();
+    $('.input-daterange-timepicker').val('');
+}
+</script>
+
+    <script>
+  document.getElementById('showFormBtn').addEventListener('click', function() {
+    var form = document.getElementById('reportForm');
+    // If hidden (or first time), fade in
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+      form.animate(
+        [
+          { opacity: 0, transform: 'translateY(-10px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+    } 
+    // Otherwise, fade out then hide
+    else {
+      var anim = form.animate(
+        [
+          { opacity: 1, transform: 'translateY(0)' },
+          { opacity: 0, transform: 'translateY(-10px)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in',
+          fill: 'forwards'
+        }
+      );
+      anim.onfinish = function() {
+        form.style.display = 'none';
+      };
+    }
+  });
+</script>
+
+        <!--FILTER CODE END  -->
+		<div id="tab-pending" class="task-tab" style="display: block;">
+		<div class="col-xl-12 active-p">
+			<div class="tab-content" id="pills-tabContent">
+				<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+					<div class="card">
+						<div class="card-body px-0">
+							<div class="table-responsive active-projects user-tbl  dt-filter">
+								<table id="user-tbl" class="display table">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>-->
+                                            <!--	<div class="form-check custom-checkbox ms-0">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="checkAll" required="">-->
+                                            <!--		<label class="form-check-label" for="checkAll"></label>-->
+                                            <!--	</div>-->
+                                            <!--</th>-->
+                                            <th>Sr. No.</th>
+                                            <th>Project Name</th>
+                                            <th>Assign To</th>
+                                            <th>Task Type</th>
+                                            <th>Dedline Date</th>
+                                            <th>Created Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in pending_task %}
+                                        <tr>
+                                            <!--<td>-->
+                                            <!--	<div class="form-check custom-checkbox">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">-->
+                                            <!--		<label class="form-check-label" for="customCheckBox2"></label>-->
+                                            <!--	</div>-->
+                                            <!--</td>-->
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{i.task_name}}</td>
+                                            <td>
+                                                {{data.name}}
+                                                {% if i.department %}
+                                                    <br><small class="text-muted">Dept: {{ i.department }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{i.task_type}}</td>
+                                            <td>{{i.dead_date|date:"d-m-Y"}}</td>
+                                            <td>{{ i.createdDtm|date:"d-m-Y H:i:s" }}</td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                                  <!-- Complete button (check icon) -->
+                                                  <a href="javascript:void(0);"
+                                                     onclick="confirmComplete(event, '{{ i.taskId }}')"
+                                                      class="btn btn-success btn-xs shadow" title="Complete">
+                                                       <i class="fa fa-check"></i>
+                                                   </a>
+
+                                                    <!-- Pending button (clock icon) -->
+                                                    <a href="javascript:void(0);"
+                                                       onclick="handlePendingTaskWithRemark('{{ i.taskId }}')"
+                                                       class="btn btn-warning btn-xs shadow" title="Pending">
+                                                        <i class="fa fa-hourglass-half"></i>
+                                                    </a>
+                                            
+                                                    <!-- View button (eye icon) -->
+                                                    <a href="{% url 'view_task' i.taskId %}"
+                                                       class="btn btn-info btn-xs shadow" title="View">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                            
+                                                   {% if "1" in session_roleid or "2" in session_roleid or "12" in session_roleid %}
+                                                        <!-- Edit button (pencil icon) -->
+                                                        <a href="{% url 'edit_task' i.taskId %}"
+                                                           class="btn btn-primary btn-xs shadow" title="Edit">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+
+                                                        <!-- Delete button (trash icon) -->
+                                                        <a href="javascript:void(0);"
+                                                           onclick="confirmDelete(event, '{{ i.taskId }}')"
+                                                           class="btn btn-danger btn-xs shadow" title="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                       </a>
+                                                   {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		
+		<div id="tab-complete" class="task-tab" style="display: none;">
+		<div class="col-xl-12 active-p">
+			<div class="tab-content" id="pills-tabContent">
+				<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+					<div class="card">
+						<div class="card-body px-0">
+							<div class="table-responsive active-projects user-tbl  dt-filter">
+								<table id="user-tbl" class="display table">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>-->
+                                            <!--	<div class="form-check custom-checkbox ms-0">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="checkAll" required="">-->
+                                            <!--		<label class="form-check-label" for="checkAll"></label>-->
+                                            <!--	</div>-->
+                                            <!--</th>-->
+                                            <th>Sr. No.</th>
+                                            <th>Project Name</th>
+                                            <th>Assign To</th>
+                                            <th>Task Type</th>
+                                            <th>Dedline Date</th>
+                                            <th>Delay days</th>
+                                            <th>Created Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in complete_task %}
+                                        <tr>
+                                            <!--<td>-->
+                                            <!--	<div class="form-check custom-checkbox">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">-->
+                                            <!--		<label class="form-check-label" for="customCheckBox2"></label>-->
+                                            <!--	</div>-->
+                                            <!--</td>-->
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{i.task_name}}</td>
+                                            <td>
+                                                {{data.name}}
+                                                {% if i.department %}
+                                                    <br><small class="text-muted">Dept: {{ i.department }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{i.task_type}}</td>
+                                            <td>{{i.dead_date|date:"d-m-Y"}}</td>
+                                            <td>{{i.delay_count}}</td>
+                                            <td>{{ i.createdDtm|date:"d-m-Y H:i:s" }}</td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                                    {% if "1" in session_roleid or "2" in session_roleid or "12" in session_roleid %}
+                                                        <a href="javascript:void(0);"
+                                                           onclick="confirmRewaise(event, '{{ i.taskId }}')"
+                                                           class="btn btn-warning btn-xs shadow"
+                                                           title="Revise">
+                                                           <i class="fa fa-edit"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                              
+                                                    <!-- View button (eye icon) -->
+                                                    <a href="{% url 'view_task' i.taskId %}"
+                                                       class="btn btn-info btn-xs shadow" title="View">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                        
+                                                    {% if "1" in session_roleid or "2" in session_roleid %}
+                                                        <!-- Edit button (pencil icon) -->
+                                                        <a href="{% url 'edit_task' i.taskId %}"
+                                                           class="btn btn-primary btn-xs shadow" title="Edit">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+
+                                                        <!-- Delete button (trash icon) -->
+                                                        <a href="javascript:void(0);"
+                                                            onclick="confirmDelete1(event, '{{ i.taskId }}')"
+                                                            class="btn btn-danger btn-xs shadow" title="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                   {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		
+		<div id="tab-urgent" class="task-tab" style="display: none;">
+		<div class="col-xl-12 active-p">
+			<div class="tab-content" id="pills-tabContent">
+				<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+					<div class="card">
+						<div class="card-body px-0">
+							<div class="table-responsive active-projects user-tbl  dt-filter">
+								<table id="user-tbl" class="display table">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>-->
+                                            <!--	<div class="form-check custom-checkbox ms-0">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="checkAll" required="">-->
+                                            <!--		<label class="form-check-label" for="checkAll"></label>-->
+                                            <!--	</div>-->
+                                            <!--</th>-->
+                                            <th>Sr. No.</th>
+                                            <th>Project Name</th>
+                                            <th>Assign To</th>
+                                            <th>Task Type</th>
+                                            <th>Dedline Date</th>
+                                            <th>Created Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in urgent_task %}
+                                        <tr>
+                                            <!--<td>-->
+                                            <!--	<div class="form-check custom-checkbox">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">-->
+                                            <!--		<label class="form-check-label" for="customCheckBox2"></label>-->
+                                            <!--	</div>-->
+                                            <!--</td>-->
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{i.task_name}}</td>
+                                            <td>
+                                                {{data.name}}
+                                                {% if i.department %}
+                                                    <br><small class="text-muted">Dept: {{ i.department }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{i.task_type}}</td>
+                                            <td>{{i.dead_date|date:"d-m-Y"}}</td>
+                                            <td>{{ i.createdDtm|date:"d-m-Y H:i:s" }}</td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                                    <a href="javascript:void(0);"
+                                                        onclick="confirmComplete(event, '{{ i.taskId }}')"
+                                                        class="btn btn-success btn-xs shadow" title="Complete">
+                                                        <i class="fa fa-check"></i>
+                                                    </a>
+
+                                                  
+                                                    <!-- View button (eye icon) -->
+                                                    <a href="{% url 'view_task' i.taskId %}"
+                                                       class="btn btn-info btn-xs shadow" title="View">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                            
+                                                    {% if "1" in session_roleid or "2" in session_roleid or "12" in session_roleid %}
+                                                        <!-- Edit button (pencil icon) -->
+                                                        <a href="{% url 'edit_task' i.taskId %}"
+                                                           class="btn btn-primary btn-xs shadow" title="Edit">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+
+                                                        <!-- Delete button (trash icon) -->
+                                                        <a href="javascript:void(0);"
+                                                           onclick="confirmDelete2(event, '{{ i.taskId }}')"
+                                                           class="btn btn-danger btn-xs shadow" title="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                       </a>
+                                                   {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		
+		<div id="tab-revise" class="task-tab" style="display: none;">
+		<div class="col-xl-12 active-p">
+			<div class="tab-content" id="pills-tabContent">
+				<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+					<div class="card">
+						<div class="card-body px-0">
+							<div class="table-responsive active-projects user-tbl  dt-filter">
+								<table id="user-tbl" class="display table">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>-->
+                                            <!--	<div class="form-check custom-checkbox ms-0">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="checkAll" required="">-->
+                                            <!--		<label class="form-check-label" for="checkAll"></label>-->
+                                            <!--	</div>-->
+                                            <!--</th>-->
+                                            <th>Sr. No.</th>
+                                            <th>Project Name</th>
+                                            <th>Assign To</th>
+                                            <th>Task Type</th>
+                                            <th>Dedline Date</th>
+                                            <th>Created Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in revise_task %}
+                                        <tr>
+                                            <!--<td>-->
+                                            <!--	<div class="form-check custom-checkbox">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">-->
+                                            <!--		<label class="form-check-label" for="customCheckBox2"></label>-->
+                                            <!--	</div>-->
+                                            <!--</td>-->
+                                            <td>{{ forloop.counter }}</td>
+                                            <td>{{i.task_name}}</td>
+                                            <td>
+                                                {{data.name}}
+                                                {% if i.department %}
+                                                    <br><small class="text-muted">Dept: {{ i.department }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{i.task_type}}</td>
+                                            <td>{{i.dead_date|date:"d-m-Y"}}</td>
+                                            <td>{{ i.createdDtm|date:"d-m-Y H:i:s" }}</td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-1 justify-content-end">
+                                                    <a href="javascript:void(0);"
+                                                     onclick="confirmComplete(event, '{{ i.taskId }}')"
+                                                      class="btn btn-success btn-xs shadow" title="Complete">
+                                                       <i class="fa fa-check"></i>
+                                                    </a>
+
+                                                  
+                                                    <!-- View button (eye icon) -->
+                                                    <a href="{% url 'view_task' i.taskId %}"
+                                                       class="btn btn-info btn-xs shadow" title="View">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                            
+                                                    {% if "1" in session_roleid or "2" in session_roleid or "12" in session_roleid %}
+                                                        <!-- Edit button (pencil icon) -->
+                                                        <a href="{% url 'edit_task' i.taskId %}"
+                                                           class="btn btn-primary btn-xs shadow" title="Edit">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+
+                                                        <!-- Delete button (trash icon) -->
+                                                        <a href="javascript:void(0);"
+                                                           onclick="confirmDelete3(event, '{{ i.taskId }}')"
+                                                           class="btn btn-danger btn-xs shadow" title="Delete">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                        
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function resetForm() {
+        // Clear all form fields
+        document.getElementById('status').value = '';
+        document.getElementById('project_name').value = '';
+        document.getElementById('date_range').value = '';
+
+        // Submit the form with cleared parameters
+        document.getElementById('addtaskForm').submit();
+    }
+    
+    const form = document.getElementById('addtaskForm');
+
+    function isAnyFilterFilled() {
+        const fieldsToCheck = form.querySelectorAll('input:not([type="hidden"]), select');
+        for (const field of fieldsToCheck) {
+            if (field.value.trim() !== '') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    document.getElementById('submitFilter').addEventListener('click', function (e) {
+        e.preventDefault(); // ✅ prevent default submit
+
+        if (!isAnyFilterFilled()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Filters Selected!',
+                text: 'Please select or enter at least one filter to search.',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            form.submit(); // ✅ now it will only submit if valid
+        }
+    });
+
+</script>
+
+<script>
+function handlePendingTaskWithRemark(taskId) {
+    // Show SweetAlert to ask for the remark
+    Swal.fire({
+        title: 'Enter Remark',
+        input: 'textarea',
+        inputPlaceholder: 'Enter your remark here...',
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        cancelButtonText: 'Cancel',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'You need to write a remark!';
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Fetch the remark value from SweetAlert input
+            let remark = result.value;
+
+            // Make the AJAX request to update the task status and remark
+            updateTaskStatusToPending(taskId, remark);
+        }
+    });
+}
+
+function updateTaskStatusToPending(taskId, remark) {
+    // Send AJAX request to update task status and remark
+    $.ajax({
+        url: '/new_crm/update_task_remark/' + taskId + '/',
+        type: 'POST',
+        data: {
+            'remark': remark,
+            'status': 'Pending',
+            'csrfmiddlewaretoken': '{{ csrf_token }}'  // Include CSRF token
+        },
+        success: function(response) {
+            if (response.status === 'success') {
+                // Show confirmation SweetAlert
+                Swal.fire({
+                    title: 'Pending Task Updated',
+                    text: 'Your remark has been submitted.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+                // Optionally reload the table or update the task row dynamically
+            } else {
+                Swal.fire('Error!', 'There was an issue updating the task.', 'error');
+            }
+        },
+        error: function() {
+            Swal.fire('Error!', 'There was an error communicating with the server.', 'error');
+        }
+    });
+}
+</script>
+
+<script>
+    function confirmComplete(event, taskId) {
+        event.preventDefault(); // Prevent the default link behavior
+
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to complete this task?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, complete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send an AJAX request to complete the task
+                $.ajax({
+                    url: "{% url 'complete_task' task_id=0 %}".replace('0', taskId),  // Dynamically set the URL
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Completed!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(function() {
+                                // Redirect to the task list without page reload
+                                window.location.href = "{% url 'task_view' data.userId %}";
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Something went wrong. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request: ' + error,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+    function confirmDelete(event, taskId) {
+    event.preventDefault();  // Prevent the default action (which might be triggering the link directly)
+
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this task?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send an AJAX request to delete the department
+            $.ajax({
+                url: "{% url 'delete_task' taskId=0 %}".replace('0', taskId),  // Dynamically set the URL
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    'taskId': taskId  // Send the department ID to delete
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'The task "' + response.name + '" has been deleted.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
+<script>
+    function confirmDelete1(event, taskId) {
+        event.preventDefault();  // This will now work correctly
+    
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this task?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send an AJAX request to delete the task
+                $.ajax({
+                    url: "{% url 'delete_task' taskId=0 %}".replace('0', taskId),  // Dynamically set the URL
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                        'taskId': taskId  // Send the task ID to delete
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'The task "' + response.name + '" has been deleted.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(function() {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Something went wrong. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request: ' + error,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+function confirmDelete2(event, taskId) {
+    event.preventDefault();  // This will now work correctly
+
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this task?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send an AJAX request to delete the task
+            $.ajax({
+                url: "{% url 'delete_task' taskId=0 %}".replace('0', taskId),  // Dynamically set the URL
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    'taskId': taskId  // Send the task ID to delete
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'The task "' + response.name + '" has been deleted.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
+
+<script>
+function confirmDelete3(event, taskId) {
+    event.preventDefault();  // This will now work correctly
+
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this task?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send an AJAX request to delete the task
+            $.ajax({
+                url: "{% url 'delete_task' taskId=0 %}".replace('0', taskId),  // Dynamically set the URL
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    'taskId': taskId  // Send the task ID to delete
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'The task "' + response.name + '" has been deleted.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(function() {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'An error occurred while processing your request: ' + error,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        }
+    });
+}
+</script>
+<script>
+    function confirmRewaise(event, taskId) {
+        event.preventDefault();  // Prevent the default link behavior
+
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to Revise this task?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, rewaise it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send an AJAX request to rewaise the task
+                $.ajax({
+                    url: "{% url 'rewaise_task' task_id=0 %}".replace('0', taskId),  // Dynamically set the URL
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Revised!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(function() {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Something went wrong. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request: ' + error,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+function showTab(tabName) {
+    const tabs = document.querySelectorAll('.task-tab');
+    tabs.forEach(tab => tab.style.display = 'none');
+
+    const activeTab = document.getElementById('tab-' + tabName);
+    if (activeTab) {
+        activeTab.style.display = 'block';
+    }
+}
+</script>
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+<!--filter script end -->
+{% endblock %}

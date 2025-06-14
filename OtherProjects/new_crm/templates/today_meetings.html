@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+			    <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between;">
+			        <div>
+				        <h1>Today Meeting</h1>
+				    </div>
+				    <div>
+			            <!--<li type="button" class="btn btn-primary" id="showFormBtn">Download Report</li>-->
+			            <!--<a href="{% url 'addlead' %}" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+               <!--             <i class="bi bi-plus-circle" style="font-size: 1rem;"></i> Add Lead-->
+               <!--         </a>-->
+               <!--         <li type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+               <!--             <a class="nav-link bell-link1" href="javascript:void(0);">-->
+               <!--                 <i class="bi bi-funnel-fill"></i> Filter-->
+               <!--             </a>-->
+               <!--         </li>-->
+			        </div>
+		        </div>
+			</div>
+		</div>
+			<div class="col-xl-12 active-p">
+				<div class="tab-content" id="pills-tabContent">
+					<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+						<div class="card">
+							<div class="card-body px-0">
+							    <div class="table-responsive active-projects user-tbl  dt-filter">
+								<table id="user-tbl" class="table shorting">
+									<thead>
+										<tr>
+											<!--<th>-->
+											<!--	<div class="form-check custom-checkbox ms-0">-->
+											<!--		<input type="checkbox" class="form-check-input" id="checkAll" required="">-->
+											<!--		<label class="form-check-label" for="checkAll"></label>-->
+											<!--	</div>-->
+											<!--</th>-->
+											
+											<th>Company Name</th>
+											<th>Name</th>
+											<th>Mobile</th>
+											<th>Status</th>
+											<th>Followup Date</th>
+											<th>Meeting date</th>
+											<th>Add By</th>
+											<!--<th>Action</th>-->
+											
+										</tr>
+									</thead>
+									<tbody>
+									    {% for i in data %}
+										<tr>
+											<!--<td>-->
+											<!--	<div class="form-check custom-checkbox">-->
+											<!--		<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">-->
+											<!--		<label class="form-check-label" for="customCheckBox2"></label>-->
+											<!--	</div>-->
+											<!--</td>-->
+											<td>{{ i.business_name }}</td>
+											<td>{{ i.c_name }}</td>
+											<td>{{ i.mobile }}</td>
+											<td>{{ i.status }}</td>
+											<td>{{ i.next_followup_date|date:'d-m-Y' }}</td>
+											<td>{{ i.next_meeting_date|date:'d-m-Y' }}</td>
+											<td>{{ i.add_by_name }}</td>
+											<!--<td>-->
+											<!--	<div class="dropdown">-->
+											<!--		<div class="btn-link" data-bs-toggle="dropdown" aria-expanded="false">-->
+											<!--			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+											<!--				<path d="M11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+											<!--				<path d="M18 12C18 12.5523 18.4477 13 19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+											<!--				<path d="M4 12C4 12.5523 4.44772 13 5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+											<!--			</svg>-->
+											<!--		</div>-->
+											<!--		<div class="dropdown-menu dropdown-menu-right" style="">-->
+														<!--<a class="dropdown-item" href="{% url 'lead_view' i.l_id %}">View</a> -->
+											<!--		</div>-->
+											<!--	</div>-->
+											<!--</td>-->
+										</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+                            </div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

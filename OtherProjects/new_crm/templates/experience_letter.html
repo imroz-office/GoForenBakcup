@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experience Letter</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            padding: 0;
+            margin: 0;
+            background-color: gray;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            background-color: white;
+            margin: 20px auto;
+            padding: 40px 30mm;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align:justify;
+            place-content: center start; /* center vertically, align left horizontally */
+        }
+        .print-button {
+            text-align: center;
+            margin-top: 30px;
+            position:fixed;
+            top:10px;
+            left:10px;
+
+        }
+        .print-button button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .letter {
+            width: 100%;
+        }
+
+        .date {
+            text-align: right;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            text-align: center;
+            text-decoration: underline;
+            margin-bottom: 30px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .signature {
+            margin-top: 50px;
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .indent {
+            text-indent: 50px;
+        }
+
+        ul {
+            margin-top: 5px;
+        }
+
+        .blank {
+            border-bottom: 1px dotted #000;
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+             .print-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="letter">
+            <div class="date">
+                Date : <span id="today-date"></span>
+            </div>
+
+            <h2>Experience Letter</h2>
+ 
+            <p class="bold">To Whomsoever It May Concern,</p>
+
+            <p class="indent">
+                This is to certify that 
+                <span class="bold">
+                    {{ employee.name.title|default:"" }} {{ employee.middle_name.title|default:"" }} {{ employee.last_name.title|default:"" }}
+                </span>, 
+                son/daughter of 
+                <span class="bold">{{ employee.middle_name.title|default:"" }} {{ employee.last_name.title|default:"" }}</span>, 
+                was employed with 
+                <span class="bold">{{ employee.company_name.title|default:"_________" }}</span> 
+                as a 
+                <span class="bold">{{ employee.role_name.title|default:"_________" }}</span> 
+                from 
+                <span class="bold">{{ employee.join_date|date:"F j, Y"|default:"_________" }}</span> 
+                to 
+                {% if employee.completion_date %}
+                <span class="bold">{{ employee.termi_date|date:"F j, Y"|default:"" }}{{ employee.completion_date|date:"F j, Y"|default:"" }}</span>.
+                {% elif employee.termi_date %}
+                <span class="bold">{{ employee.termi_date|date:"F j, Y"|default:"" }}{{ employee.completion_date|date:"F j, Y"|default:"" }}</span>.
+                {% else %}
+                <span class="bold">{{ employee.termi_date|date:"F j, Y"|default:"_________" }}</span>.
+                {% endif %}
+            </p>
+
+            <p>During their tenure with us, they were responsible for:</p>
+            <ul>
+                <li>
+                    {{ employee.role_name.title|default:"_________" }}
+                </li>
+            </ul>
+
+            <p class="indent">
+                We found 
+                <span class="bold">
+                    {{ employee.name.title|default:"" }} {{ employee.middle_name.title|default:"" }} {{ employee.last_name.title|default:"" }}
+                </span> 
+                to be hardworking, dedicated, and professional in their approach towards their work. Their contributions have been valuable to our organization, and we appreciate their efforts.
+            </p>
+
+            <p class="indent">
+                We wish 
+                <span class="bold">
+                    {{ employee.name.title|default:"" }} {{ employee.middle_name.title|default:"" }} {{ employee.last_name.title|default:"" }}
+                </span> 
+                all the best in their future endeavors.
+            </p>
+
+            <p class="bold" style="margin-top: 40px;">
+                For Success Innovative Technologies Pvt. Ltd.,
+            </p>
+
+            <div class="signature">
+                <p class="bold">Authorized Signatory</p>
+            </div>
+        </div>
+    </div>
+    <div class="print-button">
+        <button onclick="window.print()">🖨️ Print</button>
+    </div>
+
+<script>
+  const today = new Date();
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = today.toLocaleDateString(undefined, options);
+
+  document.getElementById('today-date').textContent = formattedDate;
+</script>
+
+</body>
+</html>

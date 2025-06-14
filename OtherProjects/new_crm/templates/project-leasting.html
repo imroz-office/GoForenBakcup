@@ -1,0 +1,658 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(26px);
+    }
+
+    .form-select {
+        display: block;
+        padding: 10px 15px;
+        width: 100%;
+
+        -moz-padding-start: calc(0.75rem - 3px);
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #888888;
+        background-color: #F3F0EC;
+        background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+        border: 1px solid #E6E6E6;
+        border-radius: 6px;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        appearance: none;
+    }
+</style>
+
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts"
+                    style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>Project</h1>
+                    </div>
+                    <div>
+                        <a href="{% url 'project_list' %}" type="button"
+							class="btn btn-primary right-sidebar-in content-sidebar-menu">
+							<i class="bi bi-person-fill" style="font-size: 1rem;"></i>View Project
+						</a>
+                        <!--<a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i-->
+                        <!--        class="bi bi-funnel-fill"></i> Filter </a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+
+                <div class="ec-cat-list card card-default mb-24px">
+                    <div class="card-body">
+                        <div class="row ec-vendor-uploads">
+                            <h4>Add Project</h4>
+                            <br><br>
+                            <div class="col-lg-12">
+                                <div class="ec-vendor-upload-detail">
+
+                                        <form id="addprojectForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_project' lead.pj_id %}{% else %}{% url 'addproject' %}{% endif %}" method="post">
+                                    {% csrf_token %}
+                                    
+                                <!--    <div class="col-lg-6">-->
+                                <!--        <label class="form-label">Company</label>-->
+                                <!--        <div class="input-group clockpicker">-->
+                                <!--              <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+                                <!--        <select name="com_id" aria-label="Project Include" required data-placeholder="Select a Company..." -->
+                                <!--                id="citySelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">-->
+                                <!--            <option value="">Select a Company...</option>-->
+                                <!--            {% for p in company_data %}-->
+                                <!--                <option value="{{ p.com_id }}" {% if lead.com_id == p.com_id %}selected{% endif %}>{{ p.com_name }}</option>-->
+                                <!--            {% endfor %}-->
+                                <!--        </select>-->
+                                <!--    </div>-->
+                                <!--</div>-->
+                                
+                                <!--<div class="col-lg-6">-->
+                                <!--        <label class="form-label">ledger Company</label>-->
+                                <!--        <div class="input-group clockpicker">-->
+                                <!--              <span class="input-group-text"> <i class="fa-solid fa-vector-square"></i></span>-->
+                                <!--        <select name="product" aria-label="Project Include" required data-placeholder="Select a Product..." class="form-select form-select-solid" style="background-color: #ebebeb4a;">-->
+                                <!--                <option value="">Select a Company...</option>-->
+                                <!--            {% for p in client_data %}-->
+                                <!--                <option value="{{ p.comp_name }}">{{ p.comp_name }}</option>-->
+                                <!--            {% endfor %}-->
+                                <!--        </select>-->
+                                <!--    </div>-->
+                                <!--</div>-->
+                                    <div class="col-lg-6">
+                                        <label for="inputEmail4" class="form-label">Project Name</label>
+                                          <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                        <input type="text" required class="form-control slug-title" name="pj_name" oninput="this.value = this.value.replace(/[^A-Za-z _,/-]/g, '');"
+                                            placeholder="Project Name" id="inputEmail4" value="{{ lead.pro_name|default:'' }}">
+                                    </div>
+                                </div>
+                                    <div class="col-lg-6">
+                                        <label class="form-label">Product</label>
+                                        <div class="input-group clockpicker">
+                                              <span class="input-group-text"> <i class="fa-solid fa-vector-square"></i></span>
+                                       
+                                        <select name="product" aria-label="Project Include" required data-placeholder="Select a Product..." 
+                                                id="citySelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                            {% if lead.service %}
+                                                <option value="{{ lead.service }}">{{ lead.service }}</option>
+                                            {% else %}
+                                                <option value="">Select a Product...</option>
+                                            {% endif %}
+                                            {% for p in products %}
+                                                <option value="{{ p.pro_name }}">{{ p.pro_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <!--<div class="col-lg-6">-->
+                                    <!--    <label for="inputEmail4" class="form-label">Description</label>-->
+                                    <!--         <div class="input-group clockpicker">-->
+                                    <!--          <span class="input-group-text">   <i class="fa-solid fa-prescription-bottle"></i></span>-->
+                                     
+                                    <!--    <input type="text" required class="form-control slug-title" name="des"-->
+                                    <!--        placeholder="Description" id="inputEmail4" value="{{ lead.des|default:'' }}">-->
+                                    <!--</div>-->
+                                    <!--</div>-->
+                                
+                                    <div class="col-lg-6">
+                                        <label for="inputName" class="form-label">Task Deadline Date :</label>
+                                              <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="date" class="form-control" name="technicle_date"
+                                            placeholder="mm/dd/yyyy" value="{{ lead.tech_date|date:'Y-m-d'|default:'' }}">
+                                    </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label for="inputName" class="form-label">Client Deadline Date :</label>
+                                              <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="date" class="form-control" name="client_date"
+                                            placeholder="mm/dd/yyyy" value="{{ lead.client_date|date:'Y-m-d'|default:'' }}">
+                                    </div>
+                                </div>
+                                    <div class="col-lg-12">
+                                        <button type="submit" class="btn btn-primary">{{ is_edit|yesno:"Update,Submit" }}</button>
+                                    </div>
+                                </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $('#addprojectForm').submit(function(e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        // Disable the submit button to prevent further clicks
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true);  // Disable the submit button
+        submitButton.text('Submitting...');    // Optional: Change the button text to indicate submission
+
+        // Prepare the form data
+        var formData = $(this).serialize();  
+
+        // Check if the form is for adding or editing by inspecting the action URL
+        var isEdit = $(this).attr('action').includes('edit_project'); 
+
+        // Send the form data using AJAX
+        $.ajax({
+            url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Show success alert with SweetAlert for Add or Edit
+                    Swal.fire({
+                        icon: 'success',
+                        title: isEdit ? 'Project Updated!' : 'Project Added!',
+                        text: response.message,
+                    }).then(() => {
+                        if (isEdit) {
+                            window.location.href = "{% url 'project_list' %}"; 
+                        } else {
+                            window.location.href = "{% url 'add_project' %}"; 
+                        }
+                    });
+                } else {
+                    // Show error alert if something goes wrong
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred, please try again.',
+                });
+            },
+            complete: function() {
+                // You can keep the button disabled if needed, or re-enable it if necessary
+                // submitButton.prop('disabled', false);  // Re-enable the button after the request completes
+                // submitButton.text(isEdit ? 'Update' : 'Submit');  // Reset the button text if necessary
+            }
+        });
+    });
+});
+
+</script>
+        <!--<div class="row">-->
+        <!--    <div class="tab-content" id="pills-tabContent">-->
+        <!--        <div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">-->
+        <!--            <div class="card">-->
+        <!--                <div class="card-body px-0">-->
+        <!--                    <div class="table-responsive active-projects user-tbl  dt-filter">-->
+        <!--                        <table id="user-tbl" class="table shorting">-->
+        <!--                            <thead>-->
+        <!--                                <tr>-->
+                                            <!--<th>-->
+                                            <!--	<div class="form-check custom-checkbox ms-0">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="checkAll" required="">-->
+                                            <!--		<label class="form-check-label" for="checkAll"></label>-->
+                                            <!--	</div>-->
+                                            <!--</th>-->
+        <!--                                    <th>Project Name</th>-->
+        <!--                                    <th>Client Date</th>-->
+        <!--                                    <th>Technical Date</th>-->
+        <!--                                    <th>Create Time</th>-->
+                                            <!--<th>Status</th>-->
+        <!--                                    <th>Action</th>-->
+        <!--                                </tr>-->
+        <!--                            </thead>-->
+        <!--                            <tbody>-->
+        <!--                                {%for i in data%}-->
+        <!--                                <tr>-->
+                                            <!--<td>-->
+                                            <!--	<div class="form-check custom-checkbox">-->
+                                            <!--		<input type="checkbox" class="form-check-input" id="customCheckBox2" required="">-->
+                                            <!--		<label class="form-check-label" for="customCheckBox2"></label>-->
+                                            <!--	</div>-->
+                                            <!--</td>-->
+        <!--                                    <td>{{i.pro_name}}</td>-->
+        <!--                                    <td>{{i.tech_date}}</td>-->
+        <!--                                    <td>{{i.client_date}}</td>-->
+        <!--                                    <td>{{i.create_time}}</td>-->
+                                            <!--<td>11</td>-->
+        <!--                                    <td>-->
+        <!--                                        <div class="dropdown">-->
+        <!--                                            <div class="btn-link" data-bs-toggle="dropdown"-->
+        <!--                                                aria-expanded="false">-->
+        <!--                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"-->
+        <!--                                                    xmlns="http://www.w3.org/2000/svg">-->
+        <!--                                                    <path-->
+        <!--                                                        d="M11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12Z"-->
+        <!--                                                        stroke="#737B8B" stroke-width="2" stroke-linecap="round"-->
+        <!--                                                        stroke-linejoin="round"></path>-->
+        <!--                                                    <path-->
+        <!--                                                        d="M18 12C18 12.5523 18.4477 13 19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12Z"-->
+        <!--                                                        stroke="#737B8B" stroke-width="2" stroke-linecap="round"-->
+        <!--                                                        stroke-linejoin="round"></path>-->
+        <!--                                                    <path-->
+        <!--                                                        d="M4 12C4 12.5523 4.44772 13 5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12Z"-->
+        <!--                                                        stroke="#737B8B" stroke-width="2" stroke-linecap="round"-->
+        <!--                                                        stroke-linejoin="round"></path>-->
+        <!--                                                </svg>-->
+        <!--                                            </div>-->
+        <!--                                            <div class="dropdown-menu dropdown-menu-right" style="">-->
+        <!--                                                <a class="dropdown-item" href="{% url 'edit_project' i.pj_id %}">Edit</a>-->
+        <!--                                                <a class="dropdown-item" href="{% url 'delete_project' i.pj_id %}">Delete</a>-->
+        <!--                                            </div>-->
+        <!--                                        </div>-->
+        <!--                                    </td>-->
+        <!--                                </tr>-->
+        <!--                                {% endfor %}-->
+        <!--                            </tbody>-->
+
+        <!--                        </table>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--            </div>-->
+
+        <!--        </div>-->
+        <!--    </div>-->
+        <!--</div>-->
+        
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+    </div>
+
+
+    {% endblock %}

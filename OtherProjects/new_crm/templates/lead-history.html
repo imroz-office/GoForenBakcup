@@ -1,0 +1,1077 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>{{lead.c_name}} lead Details</h1>
+                    </div>
+                    <div>
+                        <a href="{% url 'lead_list' %}" class="btn btn-primary me-2"><i class="fa-solid fa-backward" style="margin-right:7px"></i>Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-bottom:10px">
+        <button type="button" class="btn btn-primary" id="toggle-more-info1" style="font-size: 12px; padding: 10px 20px;">Lead History</button>
+        <button type="button" class="btn btn-primary" id="toggle-more-info2" style="font-size: 12px; padding: 10px 20px;">Quotation History</button>
+        <button type="button" class="btn btn-primary" id="toggle-more-info3" style="font-size: 12px; padding: 10px 20px;">Meeting History</button>
+        <button type="button" class="btn btn-primary" id="toggle-more-info4" style="font-size: 12px; padding: 10px 20px;">Today Meeting</button>
+        <button type="button" class="btn btn-primary" id="toggle-more-info5" style="font-size: 12px; padding: 10px 20px;">Details</button>
+        </div>
+        <div class="col-12 active-p" >
+            <div class="card">
+                <div class="card-body d-flex justify-between">
+                   <div style="color:black;width:16%;"><strong>Contacted : </strong>{{Contacted_count}}</div>
+                   <div style="color:black;width:16%;"><strong>Meetings : </strong>{{Meeting_count}}</div>
+                   <div style="color:black;width:16%;"><strong>Contracted : </strong>{{Contracted_count}}</div>
+                   <div style="color:black;width:16%;"><strong>Quatation : </strong>{{quotation_count}}</div>
+                </div>
+            </div>
+        </div>
+<style>
+    .table-section {
+        display: none;
+    }
+</style>
+        <!-- Lead History Section -->
+        <div id="more-info1">
+            <div class="col-12 active-p">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="addstatusFor" class="form row g-3" action="{% url 'edit_lead_status' l_id=lead.l_id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="col-md-6">
+                                <label class="form-label">Select Status</label>
+                                <select id="status" name="status" aria-label="Select a status" class="form-select form-select-solid">
+                                    <option value="">Select a status..</option>
+                                    {% for s in statuses %}
+                                        <option value="{{s.status}}" {% if lead.status == s.status %} selected {% endif %}>{{s.status}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6" id="remark-field">
+                                <label for="remark" class="form-label">Remark</label>
+                                <textarea class="form-control slug-title" name="remark" placeholder="Enter Remark">{{lead.remark}}</textarea>
+                            </div>
+                            <div class="col-md-6" id="upload-file-field">
+                                <label for="file" class="form-label">Upload File</label>
+                                <input type="file" class="form-control slug-title" name="file" placeholder="If quotation, then upload file">
+                            </div>
+                            <div class="col-md-6" id="next-followup-date-field">
+                                <label for="nf_date" class="form-label">Next Followup Date</label>
+                                <input type="datetime-local" class="form-control slug-title" name="nf_date" value="{{lead.next_followup_date|date:'Y-m-d\\TH:i'}}">
+                            </div>
+                            <div class="col-md-6" id="next-meeting-date-field">
+                                <label for="mt_date" class="form-label">Next Meeting Date</label>
+                                <input type="datetime-local" class="form-control slug-title" name="mt_date" value="{{lead.next_meeting_date|date:'Y-m-d\\TH:i'}}">
+                            </div>
+                            <div class="col-md-6" id="select-reason-field">
+                                <label class="form-label">Select Reason</label>
+                                <select name="reason" class="form-select form-select-solid">
+                                    <option value="">Select a Reason</option>
+                                    {% for i in lost_reasons %}
+                                        <option value="{{i.reason}}" {% if lead.reason == i.reason %} selected {% endif %}>{{i.reason}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-12 mt-1">
+                                <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 active-p">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Lead History</h2>
+                        <div class="list-group">
+                            <div class="nested-info">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td><strong>DATE</strong></td>
+                                                    <td><strong>STATUS</strong></td>
+                                                    <td><strong>REMARK</strong></td>
+                                                    <td><strong>Follow-up Date</strong></td>
+                                                    <td><strong>Meeting Date</strong></td>
+                                                    <td><strong>Add By</strong></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% if followup %}
+                                                    {% for followup in followup %}
+                                                    <tr>
+                                                        <td>{{ followup.create_time|date:'d-m-Y' }}</td>
+                                                        <td>{{ followup.followupRemarks }}</td>
+                                                        <td>{{ followup.remark }}</td>
+                                                        <td>
+                                                            {% if followup.next_followup_date %}
+                                                                {{ followup.next_followup_date|date:'d-m-Y' }}
+                                                            {% else %}
+                                                                -
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            {% if followup.next_meeting_date %}
+                                                                {{ followup.next_meeting_date|date:'d-m-Y' }}
+                                                            {% else %}
+                                                                -
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>{{ followup.add_by_name }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <tr><td colspan="3" class="text-center">No data available</td></tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quotation History Section -->
+        <div id="more-info2" style="display:none;">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Quotation History</h2>
+                    <div class="list-group">
+                        <div class="nested-info">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <td><strong>DATE</strong></td>
+                                                <td><strong>File</strong></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if quotation %}
+                                                {% for i in quotation %}
+                                                <tr>
+                                                    <td>{{ i.createDtm|date:'d-m-Y' }}</td>
+                                                    <td>
+                                                        {% if i.file_name %}
+                                                            <a href="/new_crm{{ i.file_name.url }}" target="_blank">{{ i.file_name.name }}</a>
+                                                        {% else %}
+                                                            No file available
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr><td colspan="2" class="text-center">No data available</td></tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meeting History Section -->
+        <div id="more-info3" style="display:none;">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Meeting History</h2>
+                    <div class="list-group">
+                        <div class="nested-info">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <td><strong>Meeting Date</strong></td>
+                                                <td><strong>Remark</strong></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if Meeting_history %}
+                                                {% for i in Meeting_history %}
+                                                <tr>
+                                                    <td>{{ i.next_meeting_date|date:'d-m-Y' }}</td>
+                                                    <td>{{ i.remark }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr><td colspan="2" class="text-center">No data available</td></tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today Meeting Section -->
+        <div id="more-info4" style="display:none;">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Today Meeting</h2>
+                    <div class="list-group">
+                        <div class="nested-info">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <td><strong>Meeting Date</strong></td>
+                                                <td><strong>Remark</strong></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if today_meeting %}
+                                                {% for i in today_meeting %}
+                                                <tr>
+                                                    <td>{{ i.next_meeting_date|date:'d-m-Y' }}</td>
+                                                    <td>{{ i.remark }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr><td colspan="2" class="text-center">No data available</td></tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+<!--        <div id="more-info5" style="display:none;">-->
+<!--            <div class="card h-auto">-->
+<!--                            <div class="card-body">-->
+<!--                                <div class="profile-tab">-->
+<!--                                    <div class="custom-tab-1">-->
+<!--                                        <ul class="nav nav-tabs">-->
+<!--                                            <li class="nav-item"><a href="#my-posts" data-bs-toggle="tab" class="nav-link active show">Company Details</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="nav-item"><a href="#about-me" data-bs-toggle="tab" class="nav-link">Address details</a>-->
+<!--                                            </li>-->
+<!--                                            <li class="nav-item"><a href="#profile-settings" data-bs-toggle="tab" class="nav-link">Other Details</a>-->
+<!--                                            </li>-->
+<!--                                        </ul>-->
+<!--                                        <div class="tab-content">-->
+                        
+<!--                        <div id="my-posts" class="tab-pane fade active show" style="margin-top:25px">-->
+<!--  <table class="table table-bordered">-->
+<!--    <tr>-->
+<!--      <td><strong>Company Name</strong></td>-->
+<!--      <td>{{ lead.business_name }}</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--      <td><strong>Client Name</strong></td>-->
+<!--      <td>{{ lead.c_name }}</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--      <td><strong>Email</strong></td>-->
+<!--      <td>{{ lead.email }}</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--      <td><strong>Mobile Number</strong></td>-->
+<!--      <td>{{ lead.mobile }}</td>-->
+<!--    </tr>-->
+<!--  </table>-->
+<!--</div>-->
+                     
+                                            
+<!--                                            <div id="about-me" class="tab-pane fade" style="margin-top:25px">-->
+<!--  <table class="table table-bordered">-->
+<!--    <tr><td><strong>Office No. & Building name</strong></td><td>{{ lead.house_no }}</td></tr>-->
+<!--    <tr><td><strong>Address</strong></td><td>{{ lead.address }}</td></tr>-->
+<!--    <tr><td><strong>Area</strong></td><td>{{ lead.area }}</td></tr>-->
+<!--    <tr><td><strong>Pincode</strong></td><td>{{ lead.pincode }}</td></tr>-->
+<!--    <tr><td><strong>City</strong></td><td>{{ lead.city }}</td></tr>-->
+    
+<!--    <tr><td><strong>Country</strong></td><td>{{ lead.country }}</td></tr>-->
+<!--  </table>-->
+<!--</div>-->
+
+                                            
+                                            
+                       
+                        
+<!--                        <div id="profile-settings" class="tab-pane fade" style="margin-top:25px">-->
+<!--  <table class="table table-bordered">-->
+<!--    <tr><td><strong>Business Segment</strong></td><td>{{ lead.segment }}</td></tr>-->
+<!--    <tr><td><strong>Remark</strong></td><td>{{ lead.remark }}</td></tr>-->
+<!--    <tr><td><strong>Stage</strong></td><td>{{ lead.stage_by }}</td></tr>-->
+<!--    <tr><td><strong>Source of Lead</strong></td><td>{{ lead.source }}</td></tr>-->
+<!--    <tr><td><strong>Inquiry For</strong></td><td>{{ lead.inqu_for }}</td></tr>-->
+<!--    <tr><td><strong>Next Follow-up Date</strong></td><td>{{ lead.next_followup_date|date:'d-m-Y' }}</td></tr>-->
+<!--    <tr><td><strong>Next Meeting Date</strong></td><td>{{ lead.next_meeting_date|date:'d-m-Y' }}</td></tr>-->
+<!--    <tr><td><strong>Status</strong></td><td>{{ lead.status }}</td></tr>-->
+<!--  </table>-->
+<!--</div>-->
+
+                                            
+                                                 
+                       
+<!--                                        </div>-->
+<!--                                    </div>-->
+								
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--        </div>-->
+        
+        
+        
+        
+        
+        
+        
+        
+        
+         <style>
+/* Container card style - subtle glow */
+.card.h-auto {
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+  border: none;
+  background-color: #fff;
+}
+
+/* Tabs - Rounded with smooth color transition */
+.custom-tab-1 .nav-tabs {
+  border-bottom: none;
+  display: flex;
+  gap: 14px;
+  padding-left: 12px;
+}
+
+.custom-tab-1 .nav-tabs .nav-link {
+  border: none;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  color: #444;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  box-shadow: 0 4px 8px rgba(199, 210, 254, 0.4);
+  transition: all 0s ease;
+}
+
+.custom-tab-1 .nav-tabs .nav-link:hover {
+  background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 100%);
+  color: white;
+box-shadow: 0 6px 14px rgba(34, 43, 64, 0.7);
+
+
+}
+
+.custom-tab-1 .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #222b40 0%, #3b4c73 100%);
+
+  color: white;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.9);
+}
+
+/* Table - card style rows with gradient and shadow */
+.table.table-bordered {
+  border-collapse: separate;
+  border-spacing: 0 16px; /* space between rows */
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+}
+
+.table.table-bordered tr {
+  background: linear-gradient(135deg, #fef9ff 0%, #ede9fe 100%);
+  box-shadow: 0 6px 18px rgba(156, 163, 175, 0.12);
+  border-radius: 14px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: table-row; /* keep table behavior */
+}
+
+.table.table-bordered tr:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+}
+
+.table.table-bordered td {
+  padding: 14px 26px;
+  border: none !important;
+  vertical-align: middle;
+  color: #3730a3;
+  font-weight: 600;
+  background: transparent;
+  border-radius: 14px;
+}
+
+.table.table-bordered tr td:first-child {
+  width: 35%;
+  color: #222b40c7;
+  font-weight: 700;
+}
+
+.table.table-bordered tr td:last-child {
+  color: #1e1b4b;
+  font-weight: 500;
+}
+
+/* Modal - softer round corners and shadows */
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(79, 70, 229, 0.25);
+  border: none;
+}
+
+.modal-header {
+  background: #eef2ff;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  font-weight: 700;
+  color: #4338ca;
+}
+
+.modal-footer {
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+}
+
+.modal-body textarea.form-control {
+  border-radius: 14px;
+  border: 1.5px solid #a5b4fc;
+  font-size: 15px;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+
+.modal-body textarea.form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 10px #6366f1;
+}
+</style>
+        <div class="card h-auto" id="more-info5" style="display:none;">
+            
+                            <div class="card-body">
+                                <div class="profile-tab">
+                                    <div class="custom-tab-1">
+                                        <ul class="nav nav-tabs">
+                                            <li class="nav-item"><a href="#my-posts" data-bs-toggle="tab" class="nav-link active show">Company Details</a>
+                                            </li>
+                                            <li class="nav-item"><a href="#about-me" data-bs-toggle="tab" class="nav-link">Address details</a>
+                                            </li>
+                                            <li class="nav-item"><a href="#profile-settings" data-bs-toggle="tab" class="nav-link">Other Details</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                        <!--                    <div id="my-posts" class="tab-pane fade active show">-->
+                        <!--             <div class="list-group list-group-item" style="margin-top:25px">-->
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Company Name :</strong> {{ lead.business_name }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Client Name :</strong> {{ lead.c_name }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Email :</strong> {{ lead.email }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Mobile Number :</strong> {{ lead.mobile }}-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--                    </div>-->
+                        <div id="my-posts" class="tab-pane fade active show" style="margin-top:25px">
+  <table class="table table-bordered">
+    <tr>
+      <td><strong>Company Name</strong></td>
+      <td>{{ lead.business_name }}</td>
+    </tr>
+    <tr>
+      <td><strong>Client Name</strong></td>
+      <td>{{ lead.c_name }}</td>
+    </tr>
+    <tr>
+      <td><strong>Email</strong></td>
+      <td>{{ lead.email }}</td>
+    </tr>
+    <tr>
+      <td><strong>Mobile Number</strong></td>
+      <td>{{ lead.mobile }}</td>
+    </tr>
+  </table>
+</div>
+                        <!--                    <div id="about-me" class="tab-pane fade">-->
+                        <!--                           <div class="list-group list-group-item" style="margin-top:25px">-->
+                        <!--        <div class="list-group-item">-->
+                        <!--    <strong>House no. & Building name :</strong> {{ lead.house_no }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Address :</strong> {{ lead.address }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Area :</strong> {{ lead.area }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Pincode :</strong> {{ lead.pincode }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>City :</strong> {{ lead.city }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>State :</strong> {{ lead.state }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Country :</strong> {{ lead.country }}-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--                    </div>-->
+                                            
+                                            <div id="about-me" class="tab-pane fade" style="margin-top:25px">
+  <table class="table table-bordered">
+    <tr><td><strong>House no. & Building name</strong></td><td>{{ lead.house_no }}</td></tr>
+    <tr><td><strong>Address</strong></td><td>{{ lead.address }}</td></tr>
+    <tr><td><strong>Area</strong></td><td>{{ lead.area }}</td></tr>
+    <tr><td><strong>Pincode</strong></td><td>{{ lead.pincode }}</td></tr>
+    <tr><td><strong>City</strong></td><td>{{ lead.city }}</td></tr>
+    <tr><td><strong>State</strong></td><td>{{ lead.state }}</td></tr>
+    <tr><td><strong>Country</strong></td><td>{{ lead.country }}</td></tr>
+  </table>
+</div>
+
+                                            
+                                            
+                                            
+                        <!--                    <div id="profile-settings" class="tab-pane fade">-->
+                        <!--                        <div class="list-group list-group-item" style="margin-top:25px">-->
+                        <!--                          <div class="list-group-item">-->
+                        <!--    <strong>Segment :</strong> {{ lead.segment }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Remark :</strong> {{ lead.remark }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Source :</strong> {{ lead.source }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Next Follow-up Date :</strong> {{ lead.next_followup_date|date:'d-m-Y' }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Assign Name :</strong> {{ assigned_user_name }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Next Meeting Date :</strong> {{ lead.next_meeting_date|date:'d-m-Y' }}-->
+                        <!--</div>-->
+                        
+                        <!--<div class="list-group-item">-->
+                        <!--    <strong>Status :</strong> {{ lead.status }}-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--                    </div>-->
+                        
+                        <div id="profile-settings" class="tab-pane fade" style="margin-top:25px">
+  <table class="table table-bordered">
+    <tr><td><strong>Segment</strong></td><td>{{ lead.segment }}</td></tr>
+    <tr><td><strong>Remark</strong></td><td>{{ lead.remark }}</td></tr>
+    <tr><td><strong>Source</strong></td><td>{{ lead.source }}</td></tr>
+    <tr><td><strong>Next Follow-up Date</strong></td><td>{{ lead.next_followup_date|date:'d-m-Y' }}</td></tr>
+    <tr><td><strong>Assign Name</strong></td><td>{{ assigned_user_name }}</td></tr>
+    <tr><td><strong>Next Meeting Date</strong></td><td>{{ lead.next_meeting_date|date:'d-m-Y' }}</td></tr>
+    <tr><td><strong>Status</strong></td><td>{{ lead.status }}</td></tr>
+  </table>
+</div>
+
+                                        </div>
+                                    </div>
+									<!-- Modal -->
+                                </div>
+                            </div>
+                        </div>
+
+    </div>
+</div>
+
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+
+<!-- AJAX Submit -->
+<script>
+document.getElementById("addstatusForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const submitButton = document.getElementById('submitBtn');
+    submitButton.disabled = true;
+    submitButton.innerText = 'Submitting...';
+
+    const formData = new FormData(this);
+
+    fetch("{% url 'edit_lead_status' l_id=lead.l_id %}", {
+        method: "POST",
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: data.message,
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.href = window.location.href;
+            });
+        } else {
+            Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong!' });
+            submitButton.disabled = false;
+            submitButton.innerText = 'Submit';
+        }
+    })
+    .catch(error => {
+        Swal.fire({ icon: 'error', title: 'Oops...', text: 'Something went wrong!' });
+        submitButton.disabled = false;
+        submitButton.innerText = 'Submit';
+    });
+});
+</script>
+
+<!-- Status Field Display Logic -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusField = document.getElementById('status');
+    const remarkField = document.getElementById('remark-field');
+    const uploadFileField = document.getElementById('upload-file-field');
+    const nextFollowupDateField = document.getElementById('next-followup-date-field');
+    const nextMeetingDateField = document.getElementById('next-meeting-date-field');
+    const selectReasonField = document.getElementById('select-reason-field');
+
+    function updateFields() {
+        const status = statusField.value.toLowerCase();
+        remarkField.style.display = 'none';
+        uploadFileField.style.display = 'none';
+        nextFollowupDateField.style.display = 'none';
+        nextMeetingDateField.style.display = 'none';
+        selectReasonField.style.display = 'none';
+
+        if (status === 'meeting') {
+            remarkField.style.display = 'block';
+            nextMeetingDateField.style.display = 'block';
+            // nextFollowupDateField.style.display = 'block';
+        } else if (['contacted', 'test'].includes(status)) {
+            remarkField.style.display = 'block';
+            nextFollowupDateField.style.display = 'block';
+        } else if (status === 'quotation') {
+            remarkField.style.display = 'block';
+            uploadFileField.style.display = 'block';
+            nextFollowupDateField.style.display = 'block';
+        } else if (status === 'lost') {
+            selectReasonField.style.display = 'block';
+        } else {
+            nextFollowupDateField.style.display = 'block';
+            remarkField.style.display = 'block';
+        }
+    }
+
+    statusField.addEventListener('change', updateFields);
+    updateFields();
+});
+</script>
+
+<!-- Toggle Sections -->
+<script>
+function hideAllSections() {
+    const allSections = document.querySelectorAll('[id^="more-info"]');
+    allSections.forEach(section => section.style.display = 'none');
+}
+
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    hideAllSections();
+    section.style.display = 'block';
+}
+
+document.getElementById('toggle-more-info1').addEventListener('click', () => toggleSection('more-info1'));
+document.getElementById('toggle-more-info2').addEventListener('click', () => toggleSection('more-info2'));
+document.getElementById('toggle-more-info3').addEventListener('click', () => toggleSection('more-info3'));
+document.getElementById('toggle-more-info4').addEventListener('click', () => toggleSection('more-info4'));
+document.getElementById('toggle-more-info5').addEventListener('click', () => toggleSection('more-info5'));
+</script>
+<!--search select start -->
+<script>
+  function filter(input) {
+    const $dd = $(input).closest('.dropdown-select');
+    const val = input.value.toLowerCase();
+    const $opts = $dd.find('ul > li.option');
+
+    $opts.each(function () {
+      const txt = $(this).text().toLowerCase();
+      $(this).toggle(txt.indexOf(val) > -1);
+    });
+
+    $dd.find('.no-results').toggle($opts.filter(':visible').length === 0);
+  }
+
+  function create_custom_dropdowns() {
+    $('select').each(function () {
+      const $select = $(this);
+      if ($select.next('.dropdown-select').length) return;
+
+      const classes = $select.attr('class') || '';
+      const $dropdown = $(`
+        <div class="dropdown-select wide ${classes}" tabindex="0">
+          <span class="current"></span>
+          <div class="list">
+            <div class="dd-search">
+              <input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">
+            </div>
+            <ul></ul>
+            <li class="no-results" style="display:none;">Not found</li>
+          </div>
+        </div>
+      `);
+
+      const $options = $select.find('option');
+      $options.each(function () {
+        const $opt = $(this);
+        const display = $opt.data('display-text') || $opt.text();
+        const selClass = $opt.is(':selected') ? ' selected' : '';
+        $dropdown.find('ul').append(`
+          <li class="option${selClass}" 
+              data-value="${$opt.val()}" 
+              data-display-text="${display}">
+            ${$opt.text()}
+          </li>
+        `);
+      });
+
+      const $selected = $select.find('option:selected');
+      $dropdown.find('.current').text($selected.data('display-text') || $selected.text());
+
+      $select.after($dropdown).hide();
+    });
+  }
+
+  function updateFields() {
+    const status = ($('#status').val() || '').toLowerCase();
+    $('#remark-field, #upload-file-field, #next-followup-date-field, #next-meeting-date-field, #select-reason-field').hide();
+
+    if (status === 'meeting') {
+      $('#remark-field, #next-meeting-date-field').show();
+    } else if (status === 'contacted' || status === 'test') {
+      $('#remark-field, #next-followup-date-field').show();
+    } else if (status === 'quotation') {
+      $('#remark-field, #upload-file-field, #next-followup-date-field').show();
+    } else if (status === 'lost') {
+      $('#select-reason-field').show();
+    } else if (status) {
+      $('#remark-field, #next-followup-date-field').show();
+    }
+  }
+
+  $(document).ready(function () {
+    create_custom_dropdowns();
+    updateFields();
+
+    // When real select changes
+    $('#status').on('change', updateFields);
+
+    // Custom option click
+    $(document).on('click', '.dropdown-select .option', function () {
+      const $opt = $(this);
+      const val = $opt.data('value');
+      const txt = $opt.data('display-text') || $opt.text();
+      const $dd = $opt.closest('.dropdown-select');
+
+      $dd.find('.selected').removeClass('selected');
+      $opt.addClass('selected');
+      $dd.find('.current').text(txt);
+      $dd.removeClass('open');
+
+      // Update actual select
+      const $realSelect = $dd.prev('select');
+      $realSelect.val(val).trigger('change');
+    });
+
+    // Open/close dropdown
+    $(document).on('click', '.dropdown-select', function (e) {
+      if ($(e.target).hasClass('dd-searchbox')) return;
+      $('.dropdown-select').not(this).removeClass('open');
+      $(this).toggleClass('open');
+      if ($(this).hasClass('open')) {
+        $(this).find('.option').attr('tabindex', 0);
+        $(this).find('.selected').focus();
+      } else {
+        $(this).find('.option').removeAttr('tabindex');
+      }
+    });
+
+    // Outside click closes dropdown
+    $(document).on('click', function (e) {
+      if (!$(e.target).closest('.dropdown-select').length) {
+        $('.dropdown-select').removeClass('open');
+        $('.dropdown-select .option').removeAttr('tabindex');
+      }
+    });
+
+    // Keyboard navigation
+    $(document).on('keydown', '.dropdown-select', function (e) {
+      const $focused = $(this).find('.option:focus');
+      const $allOptions = $(this).find('.option:visible');
+      const idx = $allOptions.index($focused);
+
+      if (e.keyCode === 13) {
+        if ($(this).hasClass('open')) $focused.trigger('click');
+        else $(this).trigger('click');
+        return false;
+      } else if (e.keyCode === 40 && idx < $allOptions.length - 1) {
+        $allOptions.eq(idx + 1).focus();
+        return false;
+      } else if (e.keyCode === 38 && idx > 0) {
+        $allOptions.eq(idx - 1).focus();
+        return false;
+      } else if (e.keyCode === 27) {
+        $(this).removeClass('open');
+        return false;
+      }
+    });
+  });
+</script>
+
+<!--search select end -->
+
+<!--{% if messages %}-->
+<!--  <div class="container mt-3">-->
+<!--    {% for message in messages %}-->
+<!--      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">-->
+<!--        {{ message }}-->
+<!--        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--      </div>-->
+<!--    {% endfor %}-->
+<!--  </div>-->
+<!--{% endif %}-->
+
+{% endblock %}

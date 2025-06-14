@@ -1,0 +1,635 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<style>
+	.form-select {
+		display: block;
+		padding: 10px 15px;
+		width: 100%;
+
+		-moz-padding-start: calc(0.75rem - 3px);
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #888888;
+		background-color: #F3F0EC;
+		background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+		background-repeat: no-repeat;
+		background-position: right 0.75rem center;
+		background-size: 16px 12px;
+		border: 1px solid #E6E6E6;
+		border-radius: 6px;
+		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+		appearance: none;
+	}
+</style>
+
+
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>{{ is_edit|yesno:"Edit Leave Application,Add Leave Application" }}</h1>
+					</div>
+					<div>
+						<a href="{% url 'pending_leave' %}" type="button"
+							class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:7px"></i>Pending Leave</a>
+						<a href="{% url 'approved_leave' %}" type="button"
+							class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:7px"></i>Approve Leave</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<h4>Add Leave Report</h4>
+							<br><br>
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+									<form id="addleaveForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_leave' leave.leave_id %}{% else %}{% url 'addleave' %}{% endif %}" method="post" id="leaveForm" enctype="multipart/form-data">
+										{% csrf_token %}
+                                    
+                                        <div class="col-lg-6" hidden>
+                                            <label for="inputName" class="form-label">Employee ID</label>
+                                             <div class="input-group clockpicker">
+                                                        <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
+                                            <input type="text" required class="form-control slug-title" name="empid" placeholder="Enter Employee ID" id="inputName" 
+                                            value="{% if '1' in request.session.session_roleid or '9' in request.session.session_roleid %}{{ leave.emp_id|default:'' }}{% else %}{{ request.session.session_id }}{% endif %}" readonly>
+                                        </div>
+                                        </div>
+            <!--                            <div class="col-lg-6">-->
+            <!--                                <label class="form-label">Employee Name</label>-->
+            <!--                                <div class="input-group clockpicker">-->
+            <!--                            <span class="input-group-text"><i class="fas fa-user-alt"></i></span>-->
+            <!--                                <select name="ename" aria-label="Select Employee Name" required id="empidSelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;" onchange="updateEmployeeName(this)">-->
+            <!--                                    {% if leave.emp_name %}-->
+												<!--<option value="{{leave.emp_name}}">{{leave.emp_name}}</option>-->
+												<!--{% else %}-->
+												<!--<option value="">Select Employee Name</option>-->
+												<!--{% endif %}-->
+            <!--                            {% if request.session.role_id == 1 or request.session.role_id == 9 %}-->
+            <!--                                    {% for e in employee %}-->
+            <!--                                        <option value="{{ e.name }}" data-name="{{ e.userId }}">{{ e.name }}</option>-->
+            <!--                                    {% endfor %}-->
+            <!--                            {% else %}-->
+            <!--                                        <option value="{{ request.session.name }}" data-name="{{ request.session.session_id }}">{{ request.session.name }}</option>-->
+            <!--                            {% endif %}-->
+            <!--                                </select>-->
+            <!--                                </div>-->
+            <!--                            </div>-->
+            
+{% if "1" in request.session.session_roleid or "9" in request.session.session_roleid %}
+<div class="col-lg-6">
+    <label class="form-label">Employee Name</label>
+    <div class="input-group clockpicker">
+        <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+        <select 
+            name="ename" 
+            aria-label="Select Employee Name" 
+            required 
+            id="empidSelect" 
+            class="form-select form-select-solid" 
+            style="background-color: #ebebeb4a;" 
+            onchange="updateEmployeeName(this)"
+        >
+            {% if leave.emp_name %}
+                <option value="{{ leave.emp_name }}">{{ leave.emp_name }}</option>
+            {% else %}
+                <option value="">Select Employee Name</option>
+            {% endif %}
+
+            {% for e in employee %}
+                <option value="{{ e.name }} {{ e.middle_name }} {{ e.last_name }}" data-name="{{ e.userId }}">
+                    {{ e.name }} {{ e.middle_name }} {{ e.last_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+{% else %}
+<!-- For non-1 or 9 roles, send user data directly -->
+<input type="hidden" name="ename" value="{{ request.session.session_user }}">
+<!--<input type="text" name="session_id" value="{{ request.session.session_id }}">-->
+{% endif %}
+
+
+											<!--<input type="text" required class="form-control" name="ename" hidden value="{{request.session.name}}">-->
+										<div class="col-lg-6">
+											<label class="form-label">Leave Type</label>
+											<div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-person-walking-arrow-right"></i></span>
+											<select name="leavetype" aria-label="Select Leave Type" required
+												id="leaveTypeSelect" class="form-select form-select-solid"
+												style="background-color: #ebebeb4a;">
+												{% if leave.leave_type %}
+												<option value="{{leave.leave_type}}">{{leave.leave_type}}</option>
+												{% else %}
+												<option value="">Select Leave Type...</option>
+												{% endif %}
+												<option value="Half Leave">Half Leave</option>
+												<option value="Full Leave">Full Leave</option>
+												<option value="Sick Leave">Sick Leave</option>
+												<option value="Exception">Exception</option>
+												<option value="Emergency leave">Emergency leave</option>
+											</select>
+										</div>
+                                    </div>
+										<div class="col-lg-6">
+											<label for="inputName" class="form-label">Application Start Date</label>
+											 <div class="input-group clockpicker">
+                                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+											<input type="date" required class="form-control" name="asdate"
+												placeholder="mm/dd/yyyy" id="inputName" value="{{ leave.app_start_date|date:'Y-m-d'|default:'' }}">
+										</div>
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputName" class="form-label">Application End Date</label>
+											 <div class="input-group clockpicker">
+                                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+											<input type="date" required class="form-control" name="aedate"
+												placeholder="mm/dd/yyyy" id="inputName" value="{{ leave.app_end_date|date:'Y-m-d'|default:'' }}">
+										</div>
+                                        </div>
+                                        
+										<!--<div class="col-lg-6">-->
+										<!--	<label for="inputEmail4" class="form-label">Application Hard Copy</label>-->
+										<!--	<input type="file"  class="form-control" name="app_hard_copy"-->
+										<!--		placeholder="Please upload Application Hard Copy" id="inputEmail4" value="{{ leave.app_hard_copy|default:'' }}">-->
+										<!--	{% if leave.app_hard_copy %}-->
+										<!--	<p style="margin-bottom: 0;">Current File: {{ leave.app_hard_copy }}</p>-->
+										<!--	{% endif %}-->
+										<!--</div>-->
+
+										<div class="col-lg-6">
+											<label for="inputName" class="form-label">Reason</label>
+											 <div class="input-group clockpicker">
+                                                        <span class="input-group-text"><i class="fa-solid fa-message"></i></span>
+											<input type="text" required class="form-control" name="reson"
+												placeholder="Reason" id="inputName" value="{{ leave.reason|default:'' }}">
+										</div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Allocation of work</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                                <select name="allocation_to" aria-label="Select Employee Name" required id="" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                                    <option value="">Select Employee Name</option>
+                                                    {% for e in employee %}
+                                                        <option value="{{ e.userId }}" {% if leave.allocation_to == e.userId %}selected{% endif %}>
+                                                            {{ e.name }} {{ e.middle_name }} {{ e.last_name }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+										<div class="col-lg-12">
+											<button type="submit" class="btn btn-primary">{{ is_edit|yesno:"Update,Submit" }}</button>
+										</div>
+									</form>
+									<script>
+                                        function updateEmployeeName(selectElement) {
+                                            const selectedOption = selectElement.options[selectElement.selectedIndex];
+                                            const employeeName = selectedOption.getAttribute('data-name');
+                                            document.getElementById('inputName').value = employeeName;
+                                        }
+                                    </script>
+
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--    $('#addleaveForm').submit(function(e) {-->
+<!--        e.preventDefault();-->
+
+<!--        var submitButton = $(this).find('button[type="submit"]');-->
+<!--        submitButton.prop('disabled', true); -->
+<!--        submitButton.text('Submitting...'); -->
+
+<!--        var formData = $(this).serialize();  -->
+
+<!--        var isEdit = $(this).attr('action').includes('edit_leave'); -->
+
+<!--        $.ajax({-->
+<!--            url: $(this).attr('action'), -->
+<!--            type: "POST",-->
+<!--            data: formData,-->
+<!--            success: function(response) {-->
+<!--                if (response.status === 'success') {-->
+<!--                    Swal.fire({-->
+<!--                        icon: 'success',-->
+<!--                        title: isEdit ? 'Leave Application Updated!' : 'Leave Application Added!',-->
+<!--                        text: response.message,-->
+<!--                    }).then(() => {-->
+<!--                        window.location.href = "{% url 'pending_leave' %}";-->
+<!--                    });-->
+<!--                } else {-->
+<!--                    Swal.fire({-->
+<!--                        icon: 'error',-->
+<!--                        title: 'Oops...',-->
+<!--                        text: response.message,-->
+<!--                    });-->
+<!--                }-->
+<!--            },-->
+<!--            error: function(xhr, status, error) {-->
+                // Handle errors
+<!--                Swal.fire({-->
+<!--                    icon: 'error',-->
+<!--                    title: 'Oops...',-->
+<!--                    text: 'An error occurred, please try again.',-->
+<!--                });-->
+<!--            },-->
+<!--            complete: function() {-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+<!--});-->
+<!--</script>-->
+
+<script>
+    const form = document.getElementById('addleaveForm');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault(); 
+
+        // Disable the submit button while the form is submitting
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...'; // Optional: change text to indicate submission
+
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        // Re-enable the submit button after the response is processed
+        submitButton.disabled = false;
+        submitButton.textContent = '{{ is_edit|yesno:"Update,Submit" }}'; // Reset text to original
+        
+        if (result.status === 'success') {
+            Swal.fire({
+                icon: 'success',
+                title: result.message,
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href =  "{% url 'pending_leave' %}";  
+                }
+            });
+        } else {
+            // Optional: Handle error case, if needed
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'There was an issue with the submission.'
+            });
+        }
+    });
+</script>
+
+
+
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

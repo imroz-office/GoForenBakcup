@@ -1,0 +1,505 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!--date range css start -->
+<style>
+    .daterangepicker .drp-buttons {
+    display: flex !important;
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+	<div class="container-fluid">
+        <div id="reportForm"  style="">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="ec-cat-list card card-default mb-24px">
+                        <div class="card-body">
+                            <div class="row ec-vendor-uploads">
+                                <div class="col-lg-12">
+                                    <div class="ec-vendor-upload-detail">
+                                        <form class="form row g-3" id="addtaskForm" action="{% url 'payment_report' %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                         <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="date_range" required/>
+                                    </div>
+                                </div>
+                                </div>
+                                            <!--<div class="col-lg-3">-->
+                                            <!--    <label for="inputRemark" class="form-label">From Date</label>-->
+                                            <!--     <div class="input-group clockpicker">-->
+                                            <!--    <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+                                            <!--    <input type="date" class="form-control slug-title" name="from_date">-->
+                                            <!--    </div>-->
+                                            <!--</div>-->
+                                            
+                                            <!--<div class="col-lg-3">-->
+                                            <!--    <label for="inputRemark" class="form-label">To Date</label>-->
+                                            <!--     <div class="input-group clockpicker">-->
+                                            <!--    <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+                                            <!--    <input type="date" class="form-control slug-title" name="to_date">-->
+                                            <!--</div>-->
+                                            <!--</div>-->
+                                            <div class="col-lg-4">
+                                                <label for="client" class="form-label">Select a Client</label>
+                                                	<div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                                <select name="client" aria-label="Select a Client" id="client" value="" class="form-select form-select-solid" style="background-color: #ebebeb4a;" required>
+                                                    <option value="">Select a Client ...</option>
+                                                    <option value="ALL">ALL</option>
+                                                    {% for client in client_data %}
+                                                        <option value="{{ client.clt_id }}">{{ client.comp_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            </div>
+                                            <div class="col-lg-3" style="align-items:center;justify-content:center;display:flex">
+                                                <button type="submit" name="action" value="search" class="btn btn-primary" style="margin-right:10px">Search</button>
+                                                <button type="submit" name="action" value="download" class="btn btn-success" style="margin-right:10px">Download</button>
+                                                <button type="reset" class="btn btn-secondary">Clear</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if payments %}
+            <div id="reportForm"  style="">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12">
+                        <div class="ec-cat-list card card-default mb-24px">
+                            <div class="card-body">
+                                <div class="row ec-vendor-uploads">
+                                    <div class="col-lg-12">
+                                        <div><h5>Total Amount : {{ total_amount_sum}}</h5></div>
+                                        <div class="ec-vendor-upload-detail">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Payment Date</th>
+                                                        <th>Voucher No</th>
+                                                        <th>Name</th>
+                                                        <th>Company Name</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for payment in payments %}
+                                                        <tr>
+                                                            <td>{{ payment.payment_date|date:"d/m/Y" }}</td>
+                                                            <td>{{ payment.vouch_num }}</td>
+                                                            <td>{{ payment.name }}</td>
+                                                            <td>{{ payment.clt_company_name }}</td>
+                                                            <td>{{ payment.total_amount }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<!--{% if messages %}-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>-->
+<!--    <script>-->
+<!--        {% for message in messages %}-->
+<!--            Swal.fire({-->
+<!--                icon: 'error',-->
+<!--                title: 'Oops...',-->
+<!--                text: '{{ message }}',-->
+<!--            });-->
+<!--        {% endfor %}-->
+<!--    </script>-->
+    
+<!--{% endif %}-->
+
+
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+<!--filter script end -->
+
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        // Don’t convert selects inside SweetAlert containers
+        $('select').not('.swal2-container select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options  = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current')
+                        .html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') +
+                        '" data-value="' + $(o).val() +
+                        '" data-display-text="' + display + '">' +
+                        $(o).text() +
+                        '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd   = $(input).closest('.dropdown-select');
+        var val   = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(val) > -1);
+        });
+
+        $dd.find('.no-results').toggle($opts.filter(':visible').length === 0);
+    }
+
+    // Toggle open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) return;
+        $('.dropdown-select').not(this).removeClass('open').find('.option').removeAttr('tabindex');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0).filter('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Close on outside click
+    $(document).on('click', function (event) {
+        if (!$(event.target).closest('.dropdown-select').length) {
+            $('.dropdown-select').removeClass('open').find('.option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Option click
+    $(document).on('click', '.dropdown-select .option', function () {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Keyboard nav
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused = $($(this).find('.option:focus')[0] || $(this).find('.option.selected')[0]);
+        switch (event.keyCode) {
+            case 13: // Enter
+                if ($(this).hasClass('open')) focused.trigger('click');
+                else $(this).trigger('click');
+                return false;
+            case 40: // Down
+                if (!$(this).hasClass('open')) return $(this).trigger('click'), false;
+                focused.nextAll(':visible').first().focus();
+                return false;
+            case 38: // Up
+                if (!$(this).hasClass('open')) return $(this).trigger('click'), false;
+                focused.prevAll(':visible').first().focus();
+                return false;
+            case 27: // Esc
+                if ($(this).hasClass('open')) $(this).removeClass('open');
+                return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+
+{% if messages %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% for message in messages %}
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ message }}',
+            });
+        {% endfor %}
+    </script>
+{% endif %}
+
+<!--search select end -->
+
+
+{% endblock %}

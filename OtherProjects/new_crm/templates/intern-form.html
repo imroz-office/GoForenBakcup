@@ -1,0 +1,1219 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<style>
+
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+}
+
+.next-btn, .prev-btn, .submit-btn {
+    margin-top: 20px;
+}
+</style>
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>{{ is_edit|yesno:"Edit Intern On Boarding,Intern On Boarding" }}</h1>
+					</div>
+					<div class="d-flex align-items-center">
+                        <a href="{% url 'intern_list' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu">Intern List</a>
+                    </div>
+					<!--<div>-->
+				 <!--       <a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+				 <!--           <i class="bi bi-funnel-fill"></i> Filter-->
+				 <!--       </a>-->
+					<!--</div>-->
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail"> 
+									<form id="addinternForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_intern' lead.emp_id %}{% else %}{% url 'add_intern_onboarding' %}{% endif %}" method="post" enctype="multipart/form-data">
+										{% csrf_token %}
+                                        <input type="text" class="form-control slug-title" name="emp_type" value="intern" hidden> 
+										<div class="form-section" id="personalInfo">
+                                            <h4>Personal Information</h4><br>
+                                            	<div class="row">
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">First Name<span style="color:red;">*</span></label>
+                                                     <div class="input-group clockpicker">
+                                               <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                                    <input  type="text" required class="form-control slug-title" name="name" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');"
+                                                        placeholder="Enter First Name"  value="{{ lead.name|default:'' }}" > 
+                                                </div>
+                                                </div>
+                                                
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">Middle Name</label>
+                                                     <div class="input-group clockpicker">
+                                               <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                                    <input type="text"  class="form-control slug-title" name="middle_name" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');"
+                                                        placeholder="Enter Middle Name"  value="{{ lead.middle_name|default:'' }}">
+                                                </div>
+                                                </div>
+                                                
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">Last Name</label>
+                                                     <div class="input-group clockpicker">
+                                               <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                                    <input  type="text"  class="form-control slug-title" name="last_name" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');"
+                                                        placeholder="Enter Last Name"  value="{{ lead.last_name|default:'' }}" >
+                                                </div>
+                                                </div>
+                                        	<div class="col-md-6">
+                                        		<label class="form-label">Date of Birth</label>
+                                        		 <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        		<input  type="date" class="form-control slug-title" name="date_of_birth"  value="{{ lead.date_of_birth|date:'Y-m-d'|default:'' }}"  placeholder="Date of Birth" >
+                                        	</div>
+                                        	</div>
+                                        	<div class="col-md-6">
+                                        		<label class="form-label">Gender</label>
+                                        		<div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-person"></i></span>
+                                        		<select  name="gender" aria-label="Select a Gender" data-placeholder="Select a Gender..." 
+                                        			class="form-select form-select-solid" >                                        			<option value="">Select a Gender...</option>
+                                        			<option value="Male" {% if lead.gender == "Male" %}selected{% endif %}>Male</option>
+                                        			<option value="Female" {% if lead.gender == "Female" %}selected{% endif %}>Female</option>
+                                        			<option value="Others" {% if lead.gender == "Others" %}selected{% endif %}>Others</option>
+                                        		</select>
+                                        		</div>
+                                        	</div>
+                                        	       
+                                        	<div class="col-md-6">
+                                        		<label class="form-label">Marital Status</label>
+                                        			<div class="input-group clockpicker">
+                                      <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+                                        		<select  name="marital_status" aria-label="Select a Marital Status" data-placeholder="Select a Marital Status..." 
+                                        			class="form-select form-select-solid" >
+                                        			<option value="">Select a Marital Status...</option>
+                                        			<option value="Single" {% if lead.marital_status == "Single" %}selected{% endif %}>Single</option>
+                                        			<option value="Married" {% if lead.marital_status == "Married" %}selected{% endif %}>Married</option>
+                                        			<option value="Divorced" {% if lead.marital_status == "Divorced" %}selected{% endif %}>Divorced</option>
+                                        			<option value="Widowed" {% if lead.marital_status == "Widowed" %}selected{% endif %}>Widowed</option>
+                                        		</select>
+                                        	</div>
+                                        	</div>
+
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">Machine ID</label>
+                                                     <div class="input-group clockpicker">
+                                               <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                                    <input type="number"  class="form-control slug-title" name="machine_id" 
+                                                        placeholder="Enter Punch Machine ID"  value="{{ lead.machine_id|default:0 }}" >
+                                                </div>
+                                                </div>
+                                              
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">Mobile Number<span style="color:red;">*</span></label>
+                                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                                    <input type="text"   required class="form-control slug-title" name="ph_no" maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                                        placeholder="Enter Mobile Number"  value="{{ lead.ph_no|default:'' }}" >
+                                                </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">Email Address</label>
+                                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                                    <input type="email"  class="form-control slug-title" name="email" placeholder="Enter Email Address"  value="{{ lead.email|default:'' }}" >
+                                                </div>
+                                                </div>
+                                            	<div class="col-md-6">
+                                            		<label class="form-label">Emergency Contact Person</label>
+                                            		 <div class="input-group clockpicker">
+                                           <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                            		<input type="text" class="form-control slug-title" name="emer_cont_pers"  value="{{ lead.emer_cont_pers|default:'' }}" placeholder="Emergency Contact Person" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');"
+                                            			 >
+                                            	</div>
+                                            	</div>
+                                            	<div class="col-md-6">
+                                            		<label class="form-label">Emergency Contact</label>
+                                            		<div class="input-group clockpicker">
+                                      <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                            		<input type="text" class="form-control slug-title" name="emer_cont_ph_no"  value="{{ lead.emer_cont_ph_no|default:'' }}" placeholder="Emergency Contact"  maxlength="10" minlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                            			 >
+                                            	</div>
+                                            	</div>
+                                            	
+                                            	<div class="col-md-6">
+                                            		<label class="form-label">Permanent Address</label>
+                                            		<div class="input-group clockpicker">
+                                      <span class="input-group-text"><i class="fas fa-address-book"></i></span>
+                                            		<input type="text" class="form-control slug-title" name="address"  value="{{ lead.address|default:'' }}" placeholder="Enter permanenet address"  >
+                                            	</div> 
+                                            	</div>
+                                            	
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">City</label>
+                                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+
+                                            <select name="city" id="citySelect" class="form-select form-select-solid">
+                                                <option value="">Select City</option>
+                                                {% for city in cites %}
+                                                    <option value="{{ city.city }}" 
+                                                            {% if lead.city == city.city %} selected {% endif %}
+                                                            data-country="{{ city.country }}" 
+                                                            data-state="{{ city.state }}">{{ city.city }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            </div>
+                                                </div>
+                                                
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">State</label>
+                                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+
+                                            <select name="state" id="stateInput" class="form-select form-select-solid">
+                                                <option value="">Select State</option>
+                                                {% for st in state %}
+                                                    <option value="{{ st.state }}" {% if lead.state == st.state %} selected {% endif %}> {{ st.state }} </option>
+                                                {% endfor %}
+                                            </select>
+                                            </div>
+                                                </div>
+                                       
+                                                <div class="col-lg-6">
+                                                    <label for="countryInput" class="form-label">Country</label>
+                                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                                    <input  type="text"  class="form-control slug-title" name="country" readonly
+                                                        placeholder="Enter Country" id="countryInput" value="{{ lead.country|default:'' }}" >
+                                                </div>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">Zip Code</label>
+                                                    <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                                    <input type="text"  class="form-control slug-title" name="zip_code" oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+                                                         placeholder="Enter Zip Code"  value="{{ lead.zip_code|default:'' }}" >
+                                                </div>
+                                                </div>
+                                                
+
+                                           <div class="d-flex justify-content-end">
+                                                <button type="button" class="btn btn-primary next-btn">Next</button>
+                                           </div>
+                                        </div>
+                                        	
+                                        </div>
+                                        
+										<div class="form-section" id="OtherInfo">
+                                            <h4>Other Information</h4><br>
+                                            	<div class="row">
+
+                                                <div class="col-lg-6">
+                                                    <label class="form-label">Shift Time</label>
+                                                     <div class="input-group clockpicker">
+                                          <span class="input-group-text"><i class="fa-solid fa-clock"></i></span>
+                                                    <select  name="attendence_time" aria-label="Select intern Type"  data-placeholder="Select intern Type..." class="form-select form-select-solid" style="background-color: #ebebeb4a;" >
+                                                        <option value="">Select Attendance Time...</option>
+                                                        {% for shift in shifts %}
+                                                            <option value="{{ shift.time_range }}" {% if lead.attendence_time == shift.time_range %}selected{% endif %}>{{ shift.time_range }}</option>
+                                                        {% endfor %}
+
+                                                        <!--<option value="15:30 - 20:00" {% if lead.attendence_time == "15:30 - 20:00" %}selected{% endif %}>15:30 - 20:00</option>-->
+                                                        <!--<option value="09:00 - 18:00" {% if lead.attendence_time == "09:00 - 18:00" %}selected{% endif %}>09:00 - 18:00</option>-->
+                                                        <!--<option value="10:00 - 19:00" {% if lead.attendence_time == "10:00 - 19:00" %}selected{% endif %}>10:00 - 19:00</option>-->
+                                                    </select>
+                                                </div>
+                                                </div>
+
+
+                                        <!--        <div class="col-lg-6">-->
+                                        <!--            <label class="form-label">Intern Type</label>-->
+                                        <!--            <div class="input-group clockpicker">-->
+                                        <!--<span class="input-group-text"><i class="fas fa-user-alt"></i></span>-->
+                                        <!--            <select  name="emp_type" aria-label="Select intern Type"  data-placeholder="Select intern Type..." class="form-select form-select-solid" style="background-color: #ebebeb4a;" id="interntype">-->
+                                        <!--                <option value="">Select intern Type...</option>-->
+                                        <!--                <option value="Intern" {% if lead.emp_type == "Intern" %}selected{% endif %}>Intern</option>-->
+                                        <!--                <option value="Freelancer" {% if lead.emp_type == "Freelancer" %}selected{% endif %}>Freelancer</option>-->
+                                        <!--                <option value="Contractual" {% if lead.emp_type == "Contractual" %}selected{% endif %}>Contractual</option>-->
+                                        <!--                <option value="Full Time" {% if lead.emp_type == "Full Time" %}selected{% endif %}>Full Time</option>-->
+                                        <!--            </select>-->
+                                        <!--        </div>-->
+                                        <!--        </div>-->
+
+                            {% if lead.intern_id_custom %}
+                            <div class="col-lg-6">
+                                <label for="empid" class="form-label">Intern ID</label>
+                                   <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                
+                                <input type="text" readonly class="form-control" name="intern_id_custom" placeholder="Enter intern ID" id="intern_id_custom" value="{{ lead.intern_id_custom|default:'' }}">
+                                <!-- Add a toggle for password visibility -->
+                            </div>
+                            </div>
+                            {% endif %}
+                          
+                            <div class="col-lg-6">
+                                <label for="college_name" class="form-label">College Name</label>
+                                   <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                
+                                <input type="text"  class="form-control" name="college_name" placeholder="Enter College Name" id="college_name" value="{{ lead.college_name|default:'' }}">
+                            </div>
+                            </div>
+                         
+                         
+                            <div class="col-lg-6">
+                                <label for="college_id" class="form-label">College ID</label>
+                                   <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                
+                                <input type="text"  class="form-control" name="college_id" placeholder="Enter College ID" id="college_id" value="{{ lead.college_id|default:'' }}">
+                            </div>
+                            </div>
+                         
+                         
+                            <div class="col-lg-6">
+                                <label for="enrollment_no" class="form-label">Enrollment Number</label>
+                                   <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                
+                                <input type="text"  class="form-control" name="enrollment_no" placeholder="Enter Enrollment Number" id="enrollment_no" value="{{ lead.enrollment_no|default:'' }}">
+                            </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <label for="inputPassword" class="form-label">Password<span style="color:red;">*</span></label>
+                                   <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                
+                                <input type="text"  required  class="form-control" name="password" placeholder="Enter Password" id="inputPassword" value="{{ lead.password|default:'' }}">
+                                <!-- Add a toggle for password visibility -->
+                            </div>
+                            </div>
+
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Reporting Manager(Head)<span style="color:red;">*</span></label>
+                                <div style="display:flex;">
+                                  <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-user-secret"></i></span>
+                                   
+                                <select name="head" id="automatic-selection"   required class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select a Head..</option>
+                                    {% for u in users %}
+                                        <option value="{{ u.userId }}" {% if u.userId == lead.head_id %}selected{% endif %}>{{ u.name }}</option>
+                                    {% endfor %}
+                                </select>
+                             </div>
+                                </div>
+                            </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Joining Date</label>
+                                                    <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                    <input type="date"  class="form-control slug-title" name="join_date"  placeholder="Joining Date" value="{{ lead.join_date|date:'Y-m-d'|default:'' }}">
+                                                </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Completion Date</label>
+                                                    <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                    <input type="date" class="form-control slug-title" name="completion_date"  value="{{ lead.completion_date|date:'Y-m-d'|default:'' }}" placeholder="Completion Date"  >
+                                                </div>
+                                                </div>
+                                                
+                            <div class="col-md-6"> 
+                                <label class="form-label">Select Company Name<span style="color:red;">*</span></label>
+                                <div style="display:flex;">
+                                    <div class="input-group clockpicker" >
+                                        <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    
+                                    <select name="company_name"   required  id="company-select" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select a company name..</option>
+                                        {% for company in compney_list %}
+                                            <option value="{{ company.com_name }}" {% if lead.company_name == company.com_name %}selected{% endif %}>{{ company.com_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                </div>
+                            </div>
+                            
+                         <div class="col-md-6">
+                            </div>
+                         
+                         
+                         <div class="col-md-6">
+                                <label class="form-label">Select a Department</label>
+                                <div class="row" id="departments-container">
+                                    <!-- Departments will be loaded dynamically here -->
+                                </div>
+                            </div>
+                            
+                             <div class="col-md-6">
+                                <label class="form-label">Select Roles<span style="color:red;">*</span></label>
+                                <div class="row">
+                                    {% for role in roles %}
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check" style="padding-left: 0;">
+                                                <input class="form-checkbox" type="checkbox" name="roles" id="role-{{ role.roleId }}" value="{{ role.roleId }}" {% if role.roleId in user_roles %}checked{% endif %}>
+                            
+                                                <label class="form-checkbox" for="role-{{ role.roleId }}">{{ role.role }}</label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                                         <div class="d-flex justify-content-end">
+                                            <button type="button" class="btn btn-primary prev-btn m-2">Back</button>
+                                            <button type="button" class="btn btn-primary next-btn m-2">Next</button>
+                                        </div>
+                                        </div>
+                                        	
+                                        </div>
+                                        
+                                        <div class="form-section" id="bankDetails">
+                                            <h4>Bank Account</h4><br>
+                                                	<div class="row">
+                                                	    
+                                             	<div class="col-md-6">
+                                            		<label class="form-label">stipend</label>
+                                            		<div class="input-group clockpicker">
+                                                    <span class="input-group-text"><i class="fa-solid fa-person"></i></span>
+                                            		<select  name="stipend" aria-label="Select a option" data-placeholder="Select a Option..." 
+                                            			class="form-select form-select-solid" >
+                                            			<option value="">Select an Option...</option>
+                                            			<option value="YES" {% if lead.stipend == "YES" %}selected{% endif %}>YES</option>
+                                            			<option value="No" {% if lead.stipend == "NO" %}selected{% endif %}>NO</option>
+                                            		</select>
+                                            		</div>
+                                            	</div>
+                                            	
+                                            	
+<div class="row" id="salaryBankFields">
+<div class="col-lg-12" >
+    <div class="col-lg-6">
+        <label class="form-label">Monthly Stipend</label>
+        <div class="input-group clockpicker">
+            <span class="input-group-text"><i class="fa-solid fa-wallet"></i></span>
+            <input type="text" class="form-control slug-title" name="gross_sal" placeholder="Enter Stipend Amount" id="grossSal" value="{{ lead.gross_sal|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <label class="form-label">Bank Name</label>
+        <div class="input-group clockpicker">
+            <span class="input-group-text"><i class="fa-solid fa-building-columns"></i></span>
+            <input type="text" class="form-control slug-title" name="bank_name" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');" placeholder="Enter Bank Name" value="{{ lead.bank_name|default:'' }}">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <label class="form-label">IFSC Code</label>
+        <div class="input-group clockpicker">
+            <span class="input-group-text"><i class="fa-solid fa-barcode"></i></span>
+            <input type="text" class="form-control slug-title" name="ifsc_code" placeholder="Enter IFSC Code" value="{{ lead.ifsc_code|default:'' }}">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <label class="form-label">Account Number</label>
+        <div class="input-group clockpicker">
+            <span class="input-group-text"><i class="fa-solid fa-file-invoice"></i></span>
+            <input type="text" class="form-control slug-title" name="acc_num" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter Account Number" value="{{ lead.acc_num|default:'' }}">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <label for="acc_holder_name" class="form-label">Account Holder's Name</label>
+        <div class="input-group clockpicker">
+            <span class="input-group-text"><i class="fa-solid fa-file-invoice"></i></span>
+            <input type="text" class="form-control slug-title" name="acc_holder_name" placeholder="Enter Account Holder's Name" value="{{ lead.acc_holder_name|default:'' }}">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <label class="form-label">Branch Address</label>
+        <div class="input-group clockpicker">
+            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+            <input type="text" class="form-control slug-title" name="branch_add" placeholder="Enter Branch Address" value="{{ lead.branch_add|default:'' }}">
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    function toggleSalaryFields() {
+        var stipendValue = document.querySelector('select[name="stipend"]').value;
+        var salaryFields = document.getElementById('salaryBankFields');
+
+        if (stipendValue === 'YES') {
+            salaryFields.style.display = 'block';
+        } else {
+            salaryFields.style.display = 'none';
+        }
+    }
+
+    // Run on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleSalaryFields();
+        document.querySelector('select[name="stipend"]').addEventListener('change', toggleSalaryFields);
+    });
+</script>
+
+
+
+
+                                          <!--      <div class="col-md-6">-->
+                                          <!--          <label class="form-label">Monthly Salary</label>-->
+                                          <!--          <div class="input-group clockpicker">-->
+                                          <!--              <span class="input-group-text"><i class="fa-solid fa-wallet"></i></span>-->
+                                          <!--              <input  type="text" class="form-control slug-title" name="gross_sal" placeholder="Gross Salary" id="grossSal" -->
+                                          <!--              value="{{ lead.gross_sal|default:'' }}">-->
+                                          <!--          </div>  -->
+                                          <!--      </div>-->
+                                          <!--      <div class="col-lg-6">-->
+                                          <!--          <label class="form-label">Bank Name</label>-->
+                                          <!--            <div class="input-group clockpicker">-->
+                                          <!--      <span class="input-group-text"><i class="fa-solid fa-building-columns"></i></span>-->
+                                          <!--          <input type="text"  class="form-control slug-title" name="bank_name" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');"-->
+                                          <!--              placeholder="Enter Bank Name"  value="{{ lead.bank_name|default:'' }}">-->
+                                          <!--      </div>-->
+                                          <!--      </div>-->
+                                          <!--      <div class="col-lg-6">-->
+                                          <!--          <label class="form-label">IFSC Code</label>-->
+                                          <!--          <div class="input-group clockpicker">-->
+                                          <!--      <span class="input-group-text"><i class="fa-solid fa-barcode"></i></span>-->
+                                          <!--          <input type="text"  class="form-control slug-title" name="ifsc_code"-->
+                                          <!--              placeholder="Enter IFSC Code"  value="{{ lead.ifsc_code|default:'' }}">-->
+                                          <!--      </div>-->
+                                          <!--      </div>-->
+                                          <!--      <div class="col-lg-6">-->
+                                          <!--          <label class="form-label">Account Number</label>-->
+                                          <!--           <div class="input-group clockpicker">-->
+                                          <!--      <span class="input-group-text"><i class="fa-solid fa-file-invoice"></i></span>-->
+                                          <!--          <input type="text"  class="form-control slug-title" name="acc_num" oninput="this.value = this.value.replace(/[^0-9]/g, '');"-->
+                                          <!--              placeholder="Enter Account Number"  value="{{ lead.acc_num|default:'' }}">-->
+                                          <!--      </div>-->
+                                          <!--      </div>-->
+                                          <!--      <div class="col-lg-6">-->
+                                          <!--          <label for="acc_holder_name" class="form-label">Account Holder's Name</label>-->
+                                          <!--           <div class="input-group clockpicker">-->
+                                          <!--      <span class="input-group-text"><i class="fa-solid fa-file-invoice"></i></span>-->
+                                          <!--          <input type="text"  class="form-control slug-title" name="acc_holder_name"-->
+                                          <!--              placeholder="Enter Account Holder's Name"  value="{{ lead.acc_holder_name|default:'' }}">-->
+                                          <!--      </div>-->
+                                          <!--      </div>-->
+                                          <!--      <div class="col-lg-6">-->
+                                          <!--          <label class="form-label">Branch Address</label>-->
+                                          <!--           <div class="input-group clockpicker">-->
+                                          <!--<span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>-->
+                                          <!--          <input type="text"  class="form-control slug-title" name="branch_add"-->
+                                          <!--              placeholder="Enter Branch Address"  value="{{ lead.branch_add|default:'' }}">-->
+                                          <!--      </div>-->
+                                          <!--      </div>-->
+                                            <div class="d-flex justify-content-end">
+                                            <button type="button" class="btn btn-primary prev-btn m-2">Back</button>
+                                            <button type="button" class="btn btn-primary next-btn m-2">Next</button>
+                                        </div>
+                                        </div>
+                                        </div>
+                                            
+                                      <!--  <div class="form-section" id="benefit">-->
+                                      <!--  	<h4>Benefit</h4><br>-->
+                                      <!--      	<div class="row">-->
+                                      <!--  	<div class="col-md-6">-->
+                                      <!--  		<label class="form-label">Medical</label>-->
+                                      <!--  		<div class="input-group clockpicker">-->
+                                      <!--<span class="input-group-text"><i class="fa-solid fa-notes-medical"></i></span>-->
+                                      <!--  		<input type="text" class="form-control slug-title" name="med_benifit"  value="{{ lead.med_benifit|default:'' }}" placeholder="Medical"  >-->
+                                      <!--  	</div>-->
+                                      <!--  	</div>-->
+                                      <!--  	<div class="col-md-6">-->
+                                      <!--  		<label class="form-label">Family</label>-->
+                                      <!--  			<div class="input-group clockpicker">-->
+                                      <!--<span class="input-group-text"><i class="fa-solid fa-people-group"></i></span>-->
+                                      <!--  		<input type="text" class="form-control slug-title" name="family_benifit"  value="{{ lead.family_benifit|default:'' }}" placeholder="Family"  >-->
+                                      <!--  	</div>-->
+                                      <!--  	</div>-->
+                                      <!--  	<div class="col-md-6">-->
+                                      <!--  		<label class="form-label">Transportation</label>-->
+                                      <!--  			<div class="input-group clockpicker">-->
+                                      <!--<span class="input-group-text"><i class="fa-solid fa-car"></i></span>-->
+                                      <!--  		<input type="text" class="form-control slug-title" name="transport_benifit"  value="{{ lead.transport_benifit|default:'' }}" placeholder="Transportation"-->
+                                      <!--  			 >-->
+                                      <!--  	</div>-->
+                                      <!--  	</div>-->
+                                      <!--  	<div class="col-md-6">-->
+                                      <!--  		<label class="form-label">Others</label>-->
+                                      <!--  			<div class="input-group clockpicker">-->
+                                      <!--<span class="input-group-text"><i class="fa-solid fa-plus"></i></span>-->
+                                      <!--  		<input type="text" class="form-control slug-title" name="other_benifit"  value="{{ lead.other_benifit|default:'' }}" placeholder="Others"  >-->
+                                      <!--  	</div>-->
+                                      <!--  	</div>-->
+                                        	
+                                      <!--  	<button type="button" class="btn btn-primary prev-btn">Back</button>-->
+                                      <!--  	<button type="button" class="btn btn-primary next-btn">Next</button>-->
+                                      <!--  </div>-->
+                                      <!--      </div>-->
+                                        <div class="form-section" id="documentuplod">
+                                        	<h4>Doccumets</h4><br>
+                                        		<div class="row">
+                                        
+                                        	<div class="col-md-6 avatar-edit">
+                                            <label for="aadharUpload">Aadhar Card</label>
+                                            <input type="file" name="aadhar_data" id="aadharUpload" class="ec-image-upload form-control slug-title" accept=".pdf" />
+                                            {% if is_edit %}
+                                                {% if lead.aadhar_pdf %}
+                                                    <a target="_blank" href="/new_crm/media/{{lead.aadhar_pdf}}" class="text-success">View Aadhar Card</a>
+                                                {% else %}
+                                                    <a class="text-danger">No Aadhar Card</a>
+                                                {% endif %}
+                                            {% endif %}
+                                            </div>
+                                            
+                                            <div class="col-md-6 avatar-edit">
+                                            <label for="panUpload">Pan Card</label>
+                                            <input type="file" name="pan_data" id="panUpload" class="ec-image-upload form-control slug-title" accept=".pdf" />
+                                            {% if is_edit %}
+                                                {% if lead.pan_pdf %}
+                                                    <a target="_blank" href="/new_crm/media/{{lead.pan_pdf}}" class="text-success">View Pan Card</a>
+                                                {% else %}
+                                                    <a class="text-danger">No Pan Card</a>
+                                                {% endif %}
+                                            {% endif %}
+                                            </div>
+                                            
+                                            <div class="col-md-6 avatar-edit">
+                                            <label for="photoUpload">Photo</label>
+                                            <input type="file" name="photo_data" id="photoUpload" class="ec-image-upload form-control slug-title" accept=".png, .jpg, .jpeg" />
+                                            {% if is_edit %}
+                                                {% if lead.photo %}
+                                                    <a target="_blank" href="/new_crm/media/{{lead.photo}}" class="text-success">View Photo</a>
+                                                {% else %}
+                                                    <a class="text-danger">No Photo</a>
+                                                {% endif %}
+                                            {% endif %}
+                                            </div>
+                                        
+                                            <!--<div class="col-md-6 avatar-edit">-->
+                                            <!--<label for="panUpload">Joining Letter</label>-->
+                                            <!--<input type="file" name="joining_letter" id="joining_letter" class="ec-image-upload form-control slug-title" accept=".pdf" />-->
+                                            <!--{% if is_edit %}-->
+                                            <!--    {% if lead.joining_letter %}-->
+                                            <!--        <a target="_blank" href="/new_crm/media/{{lead.joining_letter}}" class="text-success">View Joining Letter</a>-->
+                                            <!--    {% else %}-->
+                                            <!--        <a class="text-danger">No Joining Letter</a>-->
+                                            <!--    {% endif %}-->
+                                            <!--{% endif %}-->
+                                            <!--</div>-->
+                                           
+                                            <!--<div class="col-md-6 avatar-edit">-->
+                                            <!--<label for="bank_statement">Bank Statement</label>-->
+                                            <!--<input type="file" name="bank_statement" id="bank_statement" class="ec-image-upload form-control slug-title" accept=".pdf" />-->
+                                            <!--{% if is_edit %}-->
+                                            <!--    {% if lead.bank_statement %}-->
+                                            <!--        <a target="_blank" href="/new_crm/media/{{lead.bank_statement}}" class="text-success">View Bank Statement</a>-->
+                                            <!--    {% else %}-->
+                                            <!--        <a class="text-danger">No Bank Statement</a>-->
+                                            <!--    {% endif %}-->
+                                            <!--{% endif %}-->
+                                            <!--</div>-->
+                                                  <div class="d-flex justify-content-end">
+                                            	<button type="button" class="btn btn-primary prev-btn m-2">Back</button>
+                                            	<button type="submit" class="btn btn-primary submit-btn m-2">{{ is_edit|yesno:"Update,Submit" }}</button>
+                                            </div>
+                                            </div>
+                                            </div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $('#addinternForm').submit(function(e) { 
+        e.preventDefault(); 
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true);
+        submitButton.text('Submitting...');  
+        var formData = $(this).serialize();  
+
+        var isEdit = $(this).attr('action').includes('edit_intern'); 
+
+        $.ajax({
+            url: $(this).attr('action'), 
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: isEdit ? 'intern Updated!' : 'intern Added!',
+                        text: response.message,
+                    }).then(() => {
+                        window.location.href = "{% url 'intern_list' %}"; 
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred, please try again.',
+                });
+            },
+            complete: function() {
+            }
+        });
+    });
+});
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const citySelect = document.getElementById('citySelect');
+        const countryInput = document.getElementById('countryInput');
+        const stateInput = document.getElementById('stateInput');
+
+        citySelect.addEventListener('change', function() {
+            const selectedOption = citySelect.options[citySelect.selectedIndex];
+            const selectedCountry = selectedOption.getAttribute('data-country');
+            const selectedState = selectedOption.getAttribute('data-state');
+
+            if (selectedCountry) {
+                countryInput.value = selectedCountry;
+            }
+
+            if (selectedState && stateInput) {
+                // Try to match the value with one of the state select options
+                for (let i = 0; i < stateInput.options.length; i++) {
+                    if (stateInput.options[i].value === selectedState) {
+                        stateInput.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sections = document.querySelectorAll('.form-section');
+            const submitBtn = document.querySelector('.submit-btn');
+            let currentSection = 0;
+
+            function showSection(index) {
+                sections.forEach((section, i) => {
+                    section.classList.toggle('active', i === index);
+                });
+                submitBtn.style.display = (index === sections.length - 1) ? 'block' : 'none';
+            }
+
+            function validateSection(section) {
+                const inputs = section.querySelectorAll('input[required], select[required]'); 
+                for (let input of inputs) {
+                    if (!input.value) {
+                        input.focus();
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            showSection(currentSection);
+
+            document.querySelectorAll('.next-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    if (validateSection(sections[currentSection])) {
+                        if (currentSection < sections.length - 1) {
+                            currentSection++;
+                            showSection(currentSection);
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.prev-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    if (currentSection > 0) {
+                        currentSection--;
+                        showSection(currentSection);
+                    }
+                });
+            });
+        });
+    </script>
+    
+    
+<script type="text/javascript">
+// document.getElementById('company-select').addEventListener('change', function() {
+
+//     var companyName = this.value;
+   
+//     document.getElementById('departments-container').innerHTML = '';
+
+//     console.log("Selected Company:", companyName);
+
+//     if (companyName) {
+       
+//         fetch(`https://shubhamsingh.in/new_crm/get_departments_by_company/?company_name=${encodeURIComponent(companyName)}`)
+//             .then(response => response.json())
+//             .then(data => {
+//                 console.log("Departments Data:", data); 
+
+//                 var departmentsContainer = document.getElementById('departments-container');
+//                 if (data.departments && data.departments.length > 0) {
+//                     data.departments.forEach(department => {
+                       
+//                         var isChecked = '';
+//                         {% for selected_department in user_departments %}
+//                             if (department.dp_id == '{{ selected_department }}') {
+//                                 isChecked = 'checked';
+//                             }
+//                         {% endfor %}
+
+//                         var departmentCheckbox = `
+//                             <div class="col-md-3 mb-2">
+//                                 <div class="form-check">
+//                                     <input class="form-checkbox" type="checkbox" name="departments" id="department-${department.dp_id}" value="${department.dp_id}" ${isChecked}>
+//                                     <label class="form-checkbox" for="department-${department.dp_id}">${department.dep_name}</label>
+//                                 </div>
+//                             </div>
+//                         `;
+//                         departmentsContainer.innerHTML += departmentCheckbox;
+//                     });
+//                 } else {
+//                     departmentsContainer.innerHTML = '<p>No departments found for this company.</p>';
+//                 }
+//             })
+//             .catch(error => console.error('Error fetching departments:', error));
+//     }
+// });
+
+
+// window.addEventListener('load', function() {
+//     var companySelect = document.getElementById('company-select');
+//     if (companySelect.value) {
+//         companySelect.dispatchEvent(new Event('change'));
+//     }
+// });
+</script>
+<!--search select start -->
+<script>
+$(document).ready(function() {
+    // 1. Build custom dropdowns
+    function create_custom_dropdowns() {
+        $('select').each(function () {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+                var $select   = $(this);
+                var $dropdown = $select.next('.dropdown-select');
+                var $options  = $select.find('option');
+                var $selected = $options.filter(':selected');
+                $dropdown.find('.current').html($selected.data('display-text') || $selected.text());
+                $options.each(function () {
+                    var disp = $(this).data('display-text') || '';
+                    $dropdown.find('ul').append(
+                        '<li class="option ' + ($(this).is(':selected') ? 'selected' : '') + '"' +
+                        ' data-value="' + $(this).val() + '"' +
+                        ' data-display-text="' + disp + '">' +
+                        $(this).text() +
+                        '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    // 2. Filter dropdown options
+    function filter(input) {
+        var $dd   = $(input).closest('.dropdown-select');
+        var val   = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+        $dd.find('.no-results').toggle($opts.filter(':visible').length === 0);
+    }
+
+    // 3. Toggle stipend → salary fields
+    function toggleSalaryFields() {
+        var stipendValue = $('select[name="stipend"]').val();
+        if (stipendValue === 'YES') {
+            $('#salaryBankFields').show();
+        } else {
+            $('#salaryBankFields').hide();
+        }
+    }
+
+    // 4. Initialize all on page load
+    create_custom_dropdowns();
+    toggleSalaryFields();  // stipend fields
+    $('#citySelect').trigger('change');
+    $('#company-select').trigger('change');
+
+    // 5. City → Country/State linkage
+    $('#citySelect').on('change', function() {
+        var $opt    = $(this).find('option:selected');
+        var country = $opt.data('country');
+        var state   = $opt.data('state');
+        if (country) {
+            $('#countryInput').val(country);
+        }
+        if (state) {
+            var $stateSel = $('#stateInput');
+            $stateSel.val(state).trigger('change');
+            var $dd = $stateSel.next('.dropdown-select');
+            var $item = $dd.find('.option[data-value="' + state + '"]');
+            $dd.find('.current').text($item.data('display-text') || $item.text());
+            $dd.find('.option.selected').removeClass('selected');
+            $item.addClass('selected');
+        }
+    });
+
+    // 6. Company → Departments fetch & render
+    $('#company-select').on('change', function() {
+        var companyName = this.value;
+        var $deptCont   = $('#departments-container').empty();
+        if (!companyName) return;
+        fetch(`https://shubhamsingh.in/new_crm/get_departments_by_company/?company_name=${encodeURIComponent(companyName)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.departments && data.departments.length) {
+                    data.departments.forEach(dep => {
+                        var isChecked = '';
+                        {% for selected_department in user_departments %}
+                        if (dep.dp_id == '{{ selected_department }}') {
+                            isChecked = 'checked';
+                        }
+                        {% endfor %}
+                        var html = `
+                            <div class="col-md-3 mb-2">
+                              <div class="form-check">
+                                <input class="form-checkbox" type="checkbox"
+                                       name="departments"
+                                       id="department-${dep.dp_id}"
+                                       value="${dep.dp_id}"
+                                       ${isChecked}>
+                                <label class="form-checkbox" for="department-${dep.dp_id}">
+                                  ${dep.dep_name}
+                                </label>
+                              </div>
+                            </div>`;
+                        $deptCont.append(html);
+                    });
+                } else {
+                    $deptCont.html('<p>No departments found for this company.</p>');
+                }
+            })
+            .catch(err => console.error('Error fetching departments:', err));
+    });
+
+    // 7. Bind stipend change
+    $('select[name="stipend"]').on('change', toggleSalaryFields);
+});
+
+// 8. Custom dropdown interaction
+$(document).on('click', '.dropdown-select', function(event) {
+    if ($(event.target).hasClass('dd-searchbox')) return;
+    $('.dropdown-select').not(this).removeClass('open');
+    $(this).toggleClass('open');
+    if ($(this).hasClass('open')) {
+        $(this).find('.option').attr('tabindex', 0).first().focus();
+    } else {
+        $(this).find('.option').removeAttr('tabindex');
+        $(this).focus();
+    }
+});
+
+// 9. Close dropdown on outside click
+$(document).on('click', function(event) {
+    if ($(event.target).closest('.dropdown-select').length === 0) {
+        $('.dropdown-select').removeClass('open').find('.option').removeAttr('tabindex');
+    }
+    event.stopPropagation();
+});
+
+// 10. Option selection
+$(document).on('click', '.dropdown-select .option', function() {
+    var $dd = $(this).closest('.dropdown-select');
+    $dd.find('.option.selected').removeClass('selected');
+    $(this).addClass('selected');
+    var text = $(this).data('display-text') || $(this).text();
+    $dd.find('.current').text(text);
+    $dd.prev('select').val($(this).data('value')).trigger('change');
+});
+
+// 11. Keyboard navigation
+$(document).on('keydown', '.dropdown-select', function(event) {
+    var $opts  = $(this).find('.list .option:visible');
+    var $focus = $opts.filter(':focus').length ? $opts.filter(':focus') : $opts.filter('.selected');
+    switch (event.keyCode) {
+        case 13: // Enter
+            if ($(this).hasClass('open')) {
+                $focus.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        case 40: // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                $focus.nextAll(':visible').first().focus();
+            }
+            return false;
+        case 38: // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                $focus.prevAll(':visible').first().focus();
+            }
+            return false;
+        case 27: // Escape
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+    }
+});
+
+// 12. Search box filtering
+$(document).on('keyup', '.dd-searchbox', function() {
+    filter(this);
+});
+</script>
+
+
+<!--search select end -->
+{% endblock %}

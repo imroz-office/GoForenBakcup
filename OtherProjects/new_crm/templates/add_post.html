@@ -1,0 +1,518 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>{{ is_edit|yesno:"Edit Post,Add Post" }}</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<h4>{{ is_edit|yesno:"Edit Post,Add Post" }}</h4>
+							<br><br>
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+								    <form id="addpostForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_post' post.id %}{% else %}{% url 'addpost' %}{% endif %}" method="post">
+								        {% csrf_token %}
+								        <div class="col-lg-6"> 
+                                            <label class="form-label">Select Client</label>
+                                            <div class="input-group clockpicker">
+                                               <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                                <select name="client_id" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                                    <option value="">Select Client</option>
+                                                    {% for client in clients %}
+                                                        <option value="{{ client.clt_id }}" {% if post.client_id == client.clt_id %}selected{% endif %}>
+                                                            {{ client.comp_name }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+										
+										<div class="col-lg-6" >
+										    <label for="inputEmail4" class="form-label">Post Date</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                <input type="date" required class="form-control slug-title" name="post_date" value="{{ post.post_date|date:'Y-m-d' |default:'' }}">
+                                            </div>
+										</div>
+										
+										<div class="col-lg-6">
+                                            <label for="postTypeSelect" class="form-label">Select post type</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa-solid fa-clipboard"></i></span>
+                                                <select id="postTypeSelect" name="post_type" class="form-select form-select-solid" style="background-color: #ebebeb4a;" required>
+                                                    <option value="">Select post type</option>
+                                                    <option value="POST" {% if post.post_type == "POST" %}selected{% endif %}>POST</option>
+                                                    <option value="REEL" {% if post.post_type == "REEL" %}selected{% endif %}>REEL</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6" id="numberOfPostField" style="display:none;">
+                                            <label for="inputEmail4" class="form-label">Number of Post</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa-solid fa-clipboard"></i></span>
+                                                <input type="text" class="form-control slug-title" name="no_of_post" value="{{ post.no_of_post|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter Number of Posts">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6" id="numberOfReelField" style="display:none;">
+                                            <label for="inputEmail4" class="form-label">Number of Reel</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa-solid fa-clipboard"></i></span>
+                                                <input type="text" class="form-control slug-title" name="no_of_reel" value="{{ post.no_of_reel|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter Number of Reels">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-6" >
+										    <label for="inputEmail4" class="form-label">Remark</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                <input type="text" class="form-control slug-title" name="remark" placeholder="Enter Remark" value="{{ post.remark|default:'' }}">
+                                            </div>
+										</div>
+                                        
+										<div class="col-lg-12">
+											<button type="submit" class="btn btn-primary">Submit</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    $(document).ready(function() {
+    $('#addpostForm').submit(function(e) {
+        e.preventDefault();  // Prevent the default form submission
+
+        // Disable the submit button to prevent further clicks
+        var submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true);  // Disable the submit button
+        submitButton.text('Submitting...');    // Optional: Change the button text to indicate submission
+
+        // Prepare the form data
+        var formData = $(this).serialize();  
+
+        // Check if the form is for adding or editing by inspecting the action URL
+        var isEdit = $(this).attr('action').includes('edit_post'); 
+
+        // Send the form data using AJAX
+        $.ajax({
+            url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Show success alert with SweetAlert for Add or Edit
+                    Swal.fire({
+                        icon: 'success',
+                        title: isEdit ? 'Post Report Updated!' : 'Post Report Added!',
+                        text: response.message,
+                    }).then(() => {
+                        window.location.href = "{% url 'post_report' %}";  // Redirect to the department page
+                    });
+                } else {
+                    // Show error alert if something goes wrong
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: response.message,
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'An error occurred, please try again.',
+                });
+            },
+            complete: function() {
+                // You can keep the button disabled if needed, or re-enable it if necessary
+                // submitButton.prop('disabled', false);  // Re-enable the button after the request completes
+                // submitButton.text(isEdit ? 'Update' : 'Submit');  // Reset the button text if necessary
+            }
+        });
+    });
+});
+</script>
+<script>
+  $(document).ready(function() {
+    // 1) Initialize your custom dropdowns:
+    create_custom_dropdowns();
+
+    // 2) Cache your elements:
+    var $postTypeSelect     = $('#postTypeSelect');
+    var $numberOfPostField  = $('#numberOfPostField');
+    var $numberOfReelField  = $('#numberOfReelField');
+    var $inputPosts         = $('[name="no_of_post"]');
+    var $inputReels         = $('[name="no_of_reel"]');
+
+    // 3) Your toggle function:
+    function togglePostFields() {
+      // hide both
+      $numberOfPostField.hide();
+      $numberOfReelField.hide();
+      // clear both
+      $inputPosts.val('');
+      $inputReels.val('');
+
+      // show the one you need
+      if ($postTypeSelect.val() === 'POST') {
+        $numberOfPostField.show();
+      } else if ($postTypeSelect.val() === 'REEL') {
+        $numberOfReelField.show();
+      }
+    }
+
+    // 4) Bind it to the (custom) select’s change:
+    $postTypeSelect.on('change', togglePostFields);
+
+    // 5) Run it once on load (and re-populate if you’re in edit mode):
+    togglePostFields();
+    if ($postTypeSelect.val() === 'POST') {
+      $inputPosts.val('{{ post.no_of_post|default:"" }}');
+    } else if ($postTypeSelect.val() === 'REEL') {
+      $inputReels.val('{{ post.no_of_reel|default:"" }}');
+    }
+  });
+</script>
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

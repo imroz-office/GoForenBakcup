@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% load static %}
+{% block start %}
+<div class="content-body">
+	<div class="container-fluid">
+        <div id="reportForm"  style="">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="ec-cat-list card card-default mb-24px">
+                        <div class="card-body">
+                            <div class="row ec-vendor-uploads">
+                                <div class="col-lg-12">
+                                    <div class="ec-vendor-upload-detail">
+                                        <form class="form row g-3" id="addtaskForm" action="{% url 'attendance_count' %}" method="post">
+                                            {% csrf_token %}
+                                            <div class="col-lg-3">
+                                                <label for="inputRemark" class="form-label">From Date</label>
+                                                <div class="input-group clockpicker">
+                                                    <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                    <input required type="date" class="form-control slug-title" name="from_date">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <label for="inputRemark" class="form-label">To Date</label>
+                                                <div class="input-group clockpicker">
+                                                    <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                                    <input required type="date" class="form-control slug-title" name="to_date">
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="emp_id" value="{{ data.emp_id }}">  
+                                            <div class="col-lg-3">
+                                                <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
+                                                <button type="reset" class="btn btn-secondary">Clear</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+
+{% if from_date %}
+<div class="row">
+    <div class="col-xl-12 col-lg-12">
+        <div class="ec-cat-list card card-default mb-24px">
+            <div class="card-body">
+                <div class="row ec-vendor-uploads">
+                    <div class="col-lg-12">
+                        <div class="ec-vendor-upload-detail">
+                            <h3>Salary Details for {{ data.name }}</h3>
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th>From Date</th>
+                                        <td>{{ from_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>To Date</th>
+                                        <td>{{ to_date }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Days</th>
+                                        <td>{{ total_month_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Days Worked</th>
+                                        <td>{{ total_days_worked }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Sundays</th>
+                                        <td>{{ sunday_attendances }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Leaves</th>
+                                        <td>{{ leave_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Full Days</th>
+                                        <td>{{ full_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Half Days</th>
+                                        <td>{{ half_days }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Late Punches (after 9:00 AM)</th>
+                                        <td>{{ late_punches }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Early Punches (before 6:00 PM)</th>
+                                        <td>{{ early_punches }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Overtime</th>
+                                        <td>
+                                            {% if overtime_hours or overtime_remaining_minutes %}
+                                                {{ overtime_hours }} hours {{ overtime_remaining_minutes }} minutes
+                                            {% else %}
+                                                0
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div>
+{% endif %}
+
+{% if from_date %}
+    <a class="btn btn-primary mb-4" href="{% url 'salary_slip' %}" target="_blank">Salary Slip</a>
+{% endif %}
+    
+    <a class="btn btn-primary mb-4" onclick="toggleDetails()">View details</a>
+
+        <div id="details" style="display:none;">
+            <div class="row">
+                <div class="col-xl-12 col-lg-12">
+                    <div class="ec-cat-list card card-default mb-24px">
+                        <div class="card-body">
+                            <div class="row ec-vendor-uploads">
+                                <div class="col-lg-12">
+                                    <div class="ec-vendor-upload-detail">
+                                        <h3>All Attendance Entries</h3>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Punch In</th>
+                                                    <th>Punch Out</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for attendance in attendances %}
+                                                <tr>
+                                                    <td>{{ attendance.date }}</td>
+                                                    <td>{{ attendance.punch_in }}</td>
+                                                    <td>{{ attendance.punch_out }}</td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="3">No attendance records found for the selected date range.</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div> 
+                                </div> 
+                            </div> 
+                        </div> 
+                    </div> 
+                </div> 
+            </div> 
+        </div>
+    </div>
+</div>
+{% if messages %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        {% for message in messages %}
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ message }}',
+            });
+        {% endfor %}
+    </script>
+{% endif %}
+
+<script>
+function toggleDetails() {
+    var details = document.getElementById('details');
+    if (details.style.display === "none") {
+        details.style.display = "block";
+    } else {
+        details.style.display = "none";
+    }
+}
+</script>
+{% endblock %}

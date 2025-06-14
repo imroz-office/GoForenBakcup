@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+
+<style>
+	.form-select {
+		display: block;
+		padding: 10px 15px;
+		width: 100%;
+
+		-moz-padding-start: calc(0.75rem - 3px);
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #888888;
+		background-color: #F3F0EC;
+		background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+		background-repeat: no-repeat;
+		background-position: right 0.75rem center;
+		background-size: 16px 12px;
+		border: 1px solid #E6E6E6;
+		border-radius: 6px;
+		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+		appearance: none;
+	}
+</style>
+
+
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>Invoice</h1>
+						<!--<p class="breadcrumbs"><span><a href="/sit_crm/dashboard/">Home</a></span>-->
+						<!--	<span><i class="mdi mdi-chevron-right"></i></span>Master-->
+						<!--</p>-->
+					</div>
+					<div>
+					    <!--<a href="{% url 'invoice_listing' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+         <!--                   <i class="bi bi-file-earmark-text-fill"></i> Invoice List-->
+         <!--               </a>-->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--<div class="row">-->
+
+		<!--</div>-->
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<h4>Create Invoicer</h4>
+							<br><br>
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+								    
+									<form class="form row g-3" action="{%url 'create_invoice'%}" method="post">
+                                        {% csrf_token %}
+
+                                        <input type="hidden" name="rv_id" value="{{ rv_id }}">
+                                        <div class="col-lg-4">
+                                            <h6>From</h6>
+                                            <label class="form-label">Select Company..</label>
+                                            <select name="company_name" aria-label="Select Company" required
+                                                id="compaName" class="form-select form-select-solid"
+                                                style="background-color: #ebebeb4a;">
+                                                <option value="">Select Company..</option>
+                                                {% for company in company_list %}
+                                                <option value="{{ company.com_name }}"
+                                                    data-address="{{ company.address }}"
+                                                    data-mobile="{{ company.mobile }}"
+                                                    data-gst_no="{{ company.gst_no }}">{{ company.com_name }}</option>
+                                                {% endfor %}
+                                            </select>
+
+                                            <input type="text" required class="form-control slug-title" name="address1"
+                                                placeholder="Enter Address" id="addressInput">
+                                            <input type="text" required class="form-control slug-title" name="mobile"
+                                                placeholder="Enter Contact Number" id="contactInput" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        </div>
+
+                                        <div class="col-lg-4">
+                                            <h6>To</h6>
+                                            <label class="form-label">Select a Client..</label>
+                                            <select name="client_name" aria-label="Select Client" required
+                                                id="clientSelect" class="form-select form-select-solid"
+                                                style="background-color: #ebebeb4a;">
+
+                                                {% for payment in payments %}
+                                                {% if forloop.first %}
+                                                <option value="{{payment.name }}">{{ payment.name }}</option>
+                                            </select>
+
+                                            <input type="email" required class="form-control slug-title" name="cMail"
+                                                placeholder="Client Email" id="inputMail" value="{{client_email}}">
+                                            <input type="text" required class="form-control slug-title" name="cNumber" maxlength="10" minlength="10" pattern="[0-9]*" value="{{ payment.mobile }}"
+                                                placeholder="Client Contact Number" id="inputNumber" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                            <input type="text" required class="form-control slug-title" name="cAddress" value="{{ payment.address }}"
+                                                placeholder="Client Address" id="inputAddress">
+                                            <input type="text" required class="form-control slug-title" name="cGst" value="{{ payment.gst_no }}"
+                                                placeholder="Client GST" id="inputGst">
+                                                {% endif %}
+                                                {% endfor %}
+                                            <!--<input type="text" required class="form-control slug-title" name="cState"-->
+                                            <!--    placeholder="Client State" id="inputState"-->
+                                            <!--    oninput="checkClientState(this)"-->
+                                            <!--    value="{{ invoice.clientState|default:'' }}">-->
+                                            <!--<label class="form-label">Select State..</label>-->
+                                            <select name="cState" aria-label="Select State" required class="form-select form-select-solid" style="background-color: #ebebeb4a;" oninput="checkClientState(this)" id="inputState">
+
+                                                <option value="">Select State..</option>
+                                                {% for s in states %}
+                                                    <option value="{{ s.state }}" {% if client_state == s.state %}selected{% else %}{% endif %}>{{ s.state }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-lg-2"></div>
+
+                                        <div class="col-lg-2">
+                                            <h6>Details</h6>
+                                            <label for="invoiceNo" class="form-label">Invoice No.</label>
+                                            <input type="text" required class="form-control slug-title" name="invoiceNo"
+                                                placeholder="Enter Invoice ID" id="invoiceNoInput"
+                                                value="{{ invoice_number }}">
+
+                                            <label for="invoiceDate" class="form-label">Date :</label>
+                                            <input type="date" class="form-control" name="invoiceDate"
+                                                placeholder="mm/dd/yyyy">
+
+
+                                            <label for="gstInput" class="form-label">GST No.</label>
+                                            <input type="text" required class="form-control slug-title" name="gst_no"
+                                                placeholder="Enter GST Number" id="gstInput">
+                                        </div>
+
+                                        <div class="col-lg-12">
+                                            <h6>Products</h6>
+                                            <table class="table" id="productTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sr</th>
+                                                        <th>Product</th>
+                                                        <th>Unit of Measure</th>
+                                                        <th>Qty</th>
+                                                        <th>HSN</th>
+                                                        <th>Rate</th>
+                                                        <th>Taxable Amount</th>
+                                                        <th>GST%</th>
+                                                        <th>GST Amount</th>
+                                                        <th>Total Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for payment in payments %}
+                                                    <tr>
+                                                        <td>{{ forloop.counter }}</td>
+                                                        <td>
+                                                            <select name="product"
+                                                                class="form-select form-select-solid">
+                                                                <option value="{{ payment.perticular }}">{{ payment.perticular }}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select name="unitOfMeasure"
+                                                                class="form-select form-select-solid">
+                                                                <option value="{{ payment.unit }}">{{ payment.unit }}
+                                                                </option>
+                                                            </select>
+                                                        </td>
+                                                        <td><input type="text" class="form-control" name="quantity" oninput="this.value = this.value.replace(/[^0-9]/g, ''); calculateRow(this);"
+                                                                value="{{ payment.quantity }}"
+                                                                onchange="calculateRow(this)"></td>
+                                                        <td><input type="text" class="form-control" name="hsn"
+                                                                value="9983" readonly></td>
+                                                        <td><input type="text" class="form-control" name="rate" oninput="this.value = this.value.replace(/[^0-9]/g, ''); calculateRow(this);"
+                                                                value="{{ payment.price }}"
+                                                                onchange="calculateRow(this)"></td>
+                                                        <td><input type="text" class="form-control" name="taxableAmount"
+                                                                readonly></td>
+                                                        <td><input type="text" class="form-control" name="gstPercentage"
+                                                                value="18" readonly></td>
+                                                        <td><input type="text" class="form-control" name="gstAmount"
+                                                                readonly></td>
+                                                        <td><input type="text" class="form-control" name="totalAmount"
+                                                                readonly></td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            <!--<button type="button" class="btn btn-secondary" onclick="addRow()">Add Row</button>-->
+                                        </div>
+
+                                        <div class="col-lg-8"></div>
+                                        <div class="col-lg-4">
+                                            <table class="table" id="gstSummaryTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>GST Type</th>
+                                                        <th>Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>CGST</td>
+                                                        <td id="cgstAmount">{{ invoice.cgst|default:'₹0.00' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>SGST</td>
+                                                        <td id="sgstAmount">{{ invoice.sgst|default:'₹0.00' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>IGST</td>
+                                                        <td id="igstAmount">{{ invoice.igst|default:'₹0.00' }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Grand Total</td>
+                                                        <td id="grandTotalAmount">{{ invoice.grandAmount|default:'₹0.00'}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+<script>
+document.getElementById('compaName').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const address = selectedOption.getAttribute('data-address');
+    const mobile = selectedOption.getAttribute('data-mobile');
+    const gst_no = selectedOption.getAttribute('data-gst_no');
+    
+    document.getElementById('addressInput').value = address || '';
+    document.getElementById('contactInput').value = mobile || '';
+    document.getElementById('gstInput').value = gst_no || '';
+});
+
+document.getElementById('clientSelect').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const state = selectedOption.getAttribute('data-state');
+    document.getElementById('inputState').value = state || '';
+});
+
+function updateProductDetails(selectElement) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const hsnCode = selectedOption.getAttribute('data-hsn');
+    const gstNumber = selectedOption.getAttribute('data-gst');
+    const row = selectElement.closest('tr');
+    row.querySelector('input[name="hsn"]').value = hsnCode;
+    row.querySelector('input[name="gstPercentage"]').value = gstNumber;
+
+    calculateRow(row.querySelector('input[name="quantity"]'));
+    calculateGSTTotals(); // Recalculate total GST
+}
+
+function calculateRow(input) {
+    const row = input.closest('tr');
+    const quantity = parseFloat(row.querySelector('input[name="quantity"]').value) || 0;
+    const rate = parseFloat(row.querySelector('input[name="rate"]').value) || 0;
+    const gstPercentage = parseFloat(row.querySelector('input[name="gstPercentage"]').value) || 0;
+
+    const taxableAmount = quantity * rate;
+    row.querySelector('input[name="taxableAmount"]').value = taxableAmount.toFixed(2);
+
+    const gstAmount = (taxableAmount * gstPercentage) / 100;
+    row.querySelector('input[name="gstAmount"]').value = gstAmount.toFixed(2);
+
+    const totalAmount = taxableAmount + gstAmount;
+    row.querySelector('input[name="totalAmount"]').value = totalAmount.toFixed(2);
+
+    calculateGSTTotals(); // Recalculate total GST
+}
+
+function calculateGSTTotals() {
+    let totalCGST = 0;
+    let totalSGST = 0;
+    let totalIGST = 0;
+    let grandTotal = 0;
+
+    const rows = document.querySelectorAll('#productTable tbody tr');
+    rows.forEach(row => {
+        const quantity = parseFloat(row.querySelector('input[name="quantity"]').value) || 0;
+        const rate = parseFloat(row.querySelector('input[name="rate"]').value) || 0;
+        const gstPercentage = parseFloat(row.querySelector('input[name="gstPercentage"]').value) || 0;
+        const totalAmount = parseFloat(row.querySelector('input[name="totalAmount"]').value) || 0;
+
+        grandTotal += totalAmount;
+
+        // Assuming GST percentage is the same for CGST and SGST if in Gujarat
+        if (document.getElementById('inputState').value.toLowerCase() === 'gujarat') {
+            totalCGST += (quantity * rate * (gstPercentage / 200)); // Divided by 2 for CGST
+            totalSGST += (quantity * rate * (gstPercentage / 200)); // Divided by 2 for SGST
+        } else {
+            totalIGST += (quantity * rate * gstPercentage) / 100;
+        }
+    });
+
+    document.getElementById('cgstAmount').innerText = `₹${totalCGST.toFixed(2)}`;
+    document.getElementById('sgstAmount').innerText = `₹${totalSGST.toFixed(2)}`;
+    document.getElementById('igstAmount').innerText = `₹${totalIGST.toFixed(2)}`;
+    document.getElementById('grandTotalAmount').innerText = `₹${grandTotal.toFixed(2)}`;
+}
+
+function deleteRow(button) {
+    const row = button.closest('tr');
+    row.parentNode.removeChild(row);
+    calculateGSTTotals(); // Recalculate totals after deletion
+}
+
+function addRow() {
+    const tbody = document.querySelector('#productTable tbody');
+    const rowCount = tbody.rows.length + 1;
+
+    const newRow = `
+        <tr>
+            <td>${rowCount}</td>
+            <td>
+                <select name="product" class="form-select form-select-solid" onchange="updateProductDetails(this)">
+                    <option value="">Select a Product...</option>
+                    {% for p in products %}
+                    <option value="{{ p.pro_name }}" data-hsn="{{ p.hsn_code }}" data-gst="{{ p.gst_no }}">{{ p.pro_name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <select name="unitOfMeasure" class="form-select form-select-solid">
+                    <option value="">Unit of Measure</option>
+                    {% for p in units %}
+                    <option value="{{ p.unit_of_measurment }}">{{ p.unit_of_measurment }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td><input type="number" class="form-control" name="quantity" placeholder="Enter Quantity" onchange="calculateRow(this)"></td>
+            <td><input type="text" class="form-control" name="hsn" placeholder="HSN Code" readonly></td>
+            <td><input type="text" class="form-control" name="rate" placeholder="Rate" onchange="calculateRow(this)"></td>
+            <td><input type="text" class="form-control" name="taxableAmount" placeholder="Tax Amount" readonly></td>
+            <td><input type="text" class="form-control" name="gstPercentage" placeholder="GST" readonly></td>
+            <td><input type="text" class="form-control" name="gstAmount" placeholder="GST Amount" readonly></td>
+            <td><input type="text" class="form-control" name="totalAmount" placeholder="Total" readonly></td>
+            <td><button type="button" class="btn btn-danger" onclick="deleteRow(this)"><i class="fa-solid fa-trash"></i></button></td>
+        </tr>
+    `;
+
+    tbody.insertAdjacentHTML('beforeend', newRow);
+}
+
+function checkClientState(input) {
+    const state = input.value.toLowerCase();
+    const gstRows = document.querySelectorAll('#gstSummaryTable tbody tr');
+    
+    if (state === 'gujarat') {
+        document.getElementById('cgstAmount').parentNode.style.display = '';
+        document.getElementById('sgstAmount').parentNode.style.display = '';
+        document.getElementById('igstAmount').parentNode.style.display = 'none';
+    } else {
+        document.getElementById('cgstAmount').parentNode.style.display = 'none';
+        document.getElementById('sgstAmount').parentNode.style.display = 'none';
+        document.getElementById('igstAmount').parentNode.style.display = '';
+    }
+
+    calculateGSTTotals(); // Recalculate totals based on state change
+}
+</script>
+
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+        // Select all rows where the calculation needs to be performed (you can modify this selector as needed)
+        const rows = document.querySelectorAll('table tbody tr'); 
+    
+        // Call calculateRow for each row
+        rows.forEach(row => {
+            // Find the input elements within the row, and pass the row to calculateRow
+            calculateRow({ closest: () => row });
+        });
+
+    });
+    
+    
+ window.onload = function() {
+        const inputElement = document.getElementById('inputState');
+        if (inputElement) {
+            checkClientState(inputElement);  // Call the function on page load based on the initially selected state
+        }
+    };
+
+</script>
+
+
+{% endblock %}

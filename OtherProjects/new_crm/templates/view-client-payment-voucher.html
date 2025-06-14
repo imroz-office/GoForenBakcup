@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    {% for record in data %}
+                    {% if forloop.first %}
+                        <h1 class="h3">{{ record.name }} - Receipt Voucher Details</h1>
+                    {% endif %}
+                    {% endfor %}
+                    <div>
+                        <a href="{% url 'payment_voucher' %}" class="btn btn-primary me-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Voucher Details</h2>
+                    <div class="list-group">
+                        {% for record in data %}
+                            {% if forloop.first %}
+                                {% if record.client_type %}
+                                <div class="list-group-item">
+                                    <strong>Client Type :</strong> {{ record.client_type }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.name %}
+                                <div class="list-group-item">
+                                    <strong>Client Name:</strong> {{ record.name }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.comp_name %}
+                                <div class="list-group-item">
+                                    <strong>Company Name:</strong> {{ record.comp_name }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.mobile %}
+                                <div class="list-group-item">
+                                    <strong>Mobile:</strong> {{ record.mobile }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.address %}
+                                <div class="list-group-item">
+                                    <strong>Address:</strong> {{ record.address }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.gst_no %}
+                                <div class="list-group-item">
+                                    <strong>GST Number:</strong> {{ record.gst_no }}
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Other non-repetitive fields like Payment Mode, Bank Name, etc. -->
+                                {% if record.payment_mode %}
+                                <div class="list-group-item">
+                                    <strong>Mode of Payment :</strong> {{ record.payment_mode }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.online_payment_method %}
+                                <div class="list-group-item">
+                                    <strong>Select Online Payment Method :</strong> {{ record.online_payment_method }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.bank_name %}
+                                <div class="list-group-item">
+                                    <strong>Bank Name :</strong> {{ record.bank_name }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.cheque_no %}
+                                <div class="list-group-item">
+                                    <strong>Cheque No :</strong> {{ record.cheque_no }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.cheque_amount %}
+                                <div class="list-group-item">
+                                    <strong>Cheque Amount :</strong> {{ record.cheque_amount }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.cheque_date %}
+                                <div class="list-group-item">
+                                    <strong>Date of Cheque :</strong> {{ record.cheque_date|date:"d-m-Y" }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.payment_date %}
+                                <div class="list-group-item">
+                                    <strong>Payment Date :</strong> {{ record.payment_date|date:"d-m-Y" }}
+                                </div>
+                                {% endif %}
+                                
+                                {% if record.total_amount %}
+                                <div class="list-group-item">
+                                    <strong>Total Amount :</strong> {{ record.total_amount }}
+                                </div>
+                                {% endif %}
+                            {% endif %}
+                            <hr>
+                            <!-- Display fields that are multiple (Particular, GST%, Quantity, etc.) -->
+                            <div class="list-group-item">
+                                <strong>Particular :</strong> {{ record.perticular }}
+                            </div>
+                            
+                            <div class="list-group-item">
+                                <strong>GST% :</strong> {{ record.gst_per }}
+                            </div>
+                            
+                            <div class="list-group-item">
+                                <strong>Quantity :</strong> {{ record.quantity }}
+                            </div>
+                            
+                            <div class="list-group-item">
+                                <strong>Unit Measure :</strong> {{ record.unit }}
+                            </div>
+                            
+                            <div class="list-group-item">
+                                <strong>Price :</strong> {{ record.price }}
+                            </div>
+                            
+                            <div class="list-group-item">
+                                <strong>Total :</strong> {{ record.total }}
+                            </div>
+                            
+                            <div class="list-group-item">
+                                <strong>Remark :</strong> {{ record.remark }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

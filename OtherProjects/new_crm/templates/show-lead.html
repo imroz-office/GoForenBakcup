@@ -1,0 +1,2270 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+{% if request.GET.success4 %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'success',
+            title: 'Successfully Converted to Lead!',
+            text: 'The Lead record has been added.',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to the desired page after confirmation
+                window.location.href =  "{% url 'lead_list' %}";
+            }
+        });
+    });
+</script>
+{% endif %}
+<!--date range css start -->
+<style>
+
+    .daterangepicker .drp-buttons {
+    display: flex !important;
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<style>
+/* Chatbox (modal) */
+.chatbox1 {
+    width: 21.25rem;
+    height: 100vh;
+    position: fixed;
+    right: -31.25rem;  /* Initially offscreen */
+    top: 0;
+    z-index: 999;
+    background: #fff;
+    box-shadow: 0rem 0rem 1.875rem 0rem rgba(82, 63, 105, 0.15);
+    transition: all 0.8s ease-in-out;
+    overflow: hidden;  /* Prevent scrollbars */
+}
+
+/* Active class: Slide chatbox to the right */
+.chatbox1.active {
+    right: 0;
+    display: block;
+}
+
+/* Header and close button inside the chatbox */
+.chatbox1 .chatbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 17px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbox1 .chatbox-close1 {
+    cursor: pointer;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 1000;
+    width:12%;
+    margin: 2px 2px 2px 153px;
+}
+
+.custom-tab-1 {
+    padding: 10px 17px;
+    height: calc(100vh - 120px);  /* Subtract header and footer height */
+    overflow-y: auto;  /* Enable scroll for form */
+}
+.btn{
+    padding:0.438rem 1rem;
+}
+/* Form field styling */
+form {
+    margin: 0;
+}
+  #alert-container {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 1050;  /* Ensure the alert is above other content */
+      width: auto;
+  }
+
+</style> 
+
+
+<div class="content-body">
+	<div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="width:20%">
+                    <h1>Manage Lead</h1>
+                </div>
+            <div class="d-flex" style="display: flex; align-items: center; width:fit-content;">
+                {% if "1" in session_roleid or "6" in session_roleid %}
+<!--<a href="javascript:void(0);" class="btn btn-primary" id="sendRemindersBtn" style="margin-right:15px"><i class="bi bi-whatsapp" style="margin-right:7px"></i>Tomorrow's meeting reminders</a>-->
+
+
+<!-- Div to hold the messages -->
+<div id="alert-container"></div>
+
+<!--<script>-->
+<!--document.getElementById('sendRemindersBtn').addEventListener('click', function() {-->
+    <!--// Perform the AJAX request-->
+<!--    fetch("{% url 'send_tomorrow_meeting_reminders' %}")-->
+<!--        .then(response => response.json())-->
+<!--        .then(data => {-->
+            <!--// Create Bootstrap alert HTML-->
+<!--            const alertClass = data.success ? "alert-success" : "alert-danger";-->
+<!--            const alertMessage = data.success ? data.message : data.message;-->
+
+<!--            const alertHtml = `-->
+<!--                <div class="alert ${alertClass} alert-dismissible fade show" role="alert">-->
+<!--                    ${alertMessage}-->
+<!--                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            `;-->
+
+            <!--// Inject the alert into the DOM-->
+<!--            const alertContainer = document.getElementById('alert-container');-->
+            <!--alertContainer.innerHTML = alertHtml; // Replace previous messages-->
+
+            <!--// Optionally, you can set a timer to remove the alert after a few seconds-->
+<!--            setTimeout(function() {-->
+<!--                const alert = alertContainer.querySelector('.alert');-->
+<!--                if (alert) {-->
+<!--                    alert.classList.remove('show');-->
+<!--                }-->
+            <!--}, 5000);  // Fade out after 5 seconds (optional)-->
+<!--        })-->
+<!--        .catch(error => {-->
+            <!--// Handle errors-->
+<!--            const alertHtml = `-->
+<!--                <div class="alert alert-danger alert-dismissible fade show" role="alert">-->
+<!--                    An error occurred. Please try again.-->
+<!--                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            `;-->
+<!--            const alertContainer = document.getElementById('alert-container');-->
+            <!--alertContainer.innerHTML = alertHtml; // Replace previous messages-->
+<!--        });-->
+<!--});-->
+<!--</script>-->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Get today's date string in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+
+    // Check if the function has already run today
+    const lastRunDate = localStorage.getItem("whatsappReminderLastRun");
+
+    if (lastRunDate !== today) {
+        // Call the fetch function
+        fetch("{% url 'send_tomorrow_meeting_reminders' %}")
+            .then(response => response.json())
+            .then(data => {
+                // Create Bootstrap alert HTML
+                const alertClass = data.success ? "alert-success" : "alert-danger";
+                const alertMessage = data.message;
+
+                const alertHtml = `
+                    <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                        ${alertMessage}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                `;
+
+                // Inject the alert into the DOM
+                const alertContainer = document.getElementById('alert-container');
+                if (alertContainer) {
+                    alertContainer.innerHTML = alertHtml;
+                }
+
+                // Set timer to auto-dismiss
+                setTimeout(() => {
+                    const alert = alertContainer?.querySelector('.alert');
+                    if (alert) {
+                        alert.classList.remove('show');
+                    }
+                }, 5000);
+
+                // Save today's date to localStorage
+                localStorage.setItem("whatsappReminderLastRun", today);
+            })
+            .catch(error => {
+                const alertHtml = `
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        An error occurred. Please try again.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                `;
+                const alertContainer = document.getElementById('alert-container');
+                if (alertContainer) {
+                    alertContainer.innerHTML = alertHtml;
+                }
+            });
+    }
+});
+</script>
+
+                <li type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=".bd-example-modal-sm" style="margin-right: 15px;"><i class="fa-solid fa-cloud-arrow-up" style="margin-right:7px"></i>Excel</li>
+                <!--<li type="button" class="btn btn-primary" id="showFormBtn" style="margin-right: 15px;"><i class="fa-solid fa-download" style="margin-right:7px"></i>Download </li>-->
+                {% endif %}
+                <a href="{% url 'addlead' %}" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu" style="margin-right: 15px;background:green;border:1px solid green;">
+                    <i class="bi bi-plus-circle" style="font-size: 1rem;margin-right:7px"></i> Add 
+                </a>
+                
+                <form method="POST" id="deleteSelectedForm" action="{% url 'delete_select_leads' %}">
+                                    {% csrf_token %}
+                                    
+                                    {% if "1" in session_roleid or "6" in session_roleid %}
+				                    <button type="submit" class="btn btn-primary " id="deleteSelectedBtn" style="margin-right:15px;background:#c71717;border:1px solid #c71717;"><i class="fa-solid fa-trash" style="margin-right:7px"></i>Delete</button>
+				                    <button type="button" class="btn btn-primary" onclick="assignSelectedLeads()" style="margin-right:15px"><i class="fas fa-tasks" style="margin-right:7px"></i>Assign</button>
+				                    {% endif %}
+                                    
+                <!--<li type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+                <!--    <a class="nav-link bell-link1" href="javascript:void(0);">-->
+                <!--        <i class="bi bi-funnel-fill"></i> Filter-->
+                <!--    </a>-->
+                <!--</li>-->
+                
+                 <li type="button" class="btn btn-primary" id="showFormBtn1" style="margin-right: 15px;"><i class="bi bi-funnel-fill"></i>Filter</li>
+            </div>
+        </div>
+    </div>
+</div>
+
+					<!-- excel Download -->
+<div id="reportForm"  style="display:none;">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail row">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'lead_excel' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="col-lg-3">
+                                        <label for="inputRemark" class="form-label">From Date</label>
+                                           <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="date" class="form-control slug-title" name="from_date">
+                                    </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-3">
+                                        <label for="inputRemark" class="form-label">To Date</label>
+                                           <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="date" class="form-control slug-title" name="to_date">
+                                    </div>
+                                    </div>
+                                    <div class="col-lg-3" style="margin-top:27px">
+                                        <button type="submit" class="btn btn-primary">Download</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+			<!-- excel Download end -->
+
+    <!--FILTER CODE START  -->
+        <div id="reportForm1" style="display:none;position:relative;z-index:1">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'lead_list' %}" method="get"> 
+                                 {% csrf_token %}
+                                <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                         <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="date_range" value="{{ request.GET.date_range }}">
+                                    </div>
+                                </div>
+                                </div>
+                                
+                                
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Status</label>
+                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+                                    <select name="status" aria-label="Select a Status" data-placeholder="Select a Segment..." id="status" class="form-select form-select-solid" style="background-color: #ebebeb4a;" value="{{ request.GET.status }}">
+										<option value="">Select a status...</option>
+										{% for s in statuses %}
+                                            <option value="{{ s.status }}" {% if request.GET.status == s.status %}selected{% endif %}>{{ s.status }}</option>
+                                        {% endfor %}
+									</select>
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Company Name</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    <input type="text" class="form-control slug-title" name="business_name" id="business_name" placeholder="Search By Company Name " value="{{ request.GET.business_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Client Name</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    <input type="text" class="form-control slug-title" name="c_name" id="c_name" placeholder="Search By Client Client Name " value="{{ request.GET.c_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Email</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                    <input type="text" class="form-control slug-title" name="email" id="email" placeholder="Search By email" value="{{ request.GET.email }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Mobile Number</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                    <input type="text" class="form-control slug-title" name="mobile" id="mobile" placeholder="Search By Mobile Number" value="{{ request.GET.mobile }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Office No. & Building name</label>
+                                    	 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                    <input type="text" class="form-control slug-title" name="house_no" id="house_no" placeholder="Search By House no. & Building name" value="{{ request.GET.house_no }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Area</label>
+                                    <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fas fa-map-signs"></i></span>
+                                        <select name="area" aria-label="Select a City" id="area" value="{{ request.GET.area }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                            <option value="">Select Area</option>
+                                            {% for i in areas %}
+                                                <option value="{{ i.area_name }}">{{ i.area_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Address</label>
+                                    				 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="address" id="address" placeholder="Search By Address " value="{{ request.GET.address }}">
+                                </div>
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">City</label>
+                                    	 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map"></i></span>
+                                    <select name="city" aria-label="Select a City" id="city" value="{{ request.GET.city }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select City</option>
+                                        {% for city in cites %}
+                                            <option value="{{ city.city }}" {% if request.GET.city == city.city %}selected{% endif %}>{{ city.city }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Country</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                             
+                                    <input type="text" class="form-control slug-title" name="country" id="country" placeholder="Search By Country " value="{{ request.GET.country }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Pincode</label>
+                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
+                                    <input type="text" class="form-control slug-title" name="pincode" id="pincode" placeholder="Search By Pincode " value="{{ request.GET.pincode }}">
+                                </div>
+                                </div>
+                                <!--<div class="col-lg-4">-->
+                                <!--    <label for="inputEmail4" class="form-label">State</label>-->
+                                <!--    	 <div class="input-group clockpicker">-->
+                                <!--              <span class="input-group-text"><i class="fas fa-globe"></i></span>-->
+                                <!--    <select name="state" aria-label="Select a City" id="state" value="{{ request.GET.state }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">-->
+                                <!--        <option value="">Select City</option>-->
+                                <!--        {% for city in cites %}-->
+                                <!--            <option value="{{ city.state }}">{{ city.state }}</option>-->
+                                <!--        {% endfor %}-->
+                                <!--    </select>-->
+                                <!--</div>-->
+                                <!--</div>-->
+                                
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Business Segment</label>
+                                     <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                        <select name="segment" aria-label="Select a Segment"  value="{{ request.GET.segment }}" data-placeholder="Select a Segment..." id="segment" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+											<option value="">Select a Segment...</option>
+											{%for i in busi_seg%}
+												<option value="{{i.name}}" {% if request.GET.segment == i.name %}selected{% endif %}>{{i.name}}</option>
+											{% endfor %}
+										</select>
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Source of Lead</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-dice-d20"></i></span>
+                                             
+									<select name="source" aria-label="Select a Source" data-placeholder="Select a Source..." id="source" value="{{ request.GET.source }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select a Source...</option>
+    									{%for i in sources%}
+    									    <option value="{{i.lead_Type}}" {% if request.GET.source == i.lead_Type %}selected{% endif %}>{{i.lead_Type}}</option>
+    									{% endfor %}
+    								</select>
+    								</div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Remark</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+                                             
+                                    <input type="text" class="form-control slug-title" name="remark" id="remark" placeholder="Search By Remark " value="{{ request.GET.remark }}">
+                                </div>
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Next Followup Date</label>
+                                    	 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                    <input type="date" class="form-control slug-title" name="next_followup_date" id="next_followup_date" placeholder="Search By Remark " value="{{ request.GET.next_followup_date }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Inquiry For</label>
+                                    <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fas fa-running"></i></span>
+                                        <select name="inqu_for" aria-label="Select a Segment" data-placeholder="Select a Segment..." id="inqu_for" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+												<option value="">Select a Inquiry For...</option>
+												{%for i in inq_for%}
+													<option value="{{i.name}}" {% if request.GET.inqu_for == i.name %}selected{% endif %}>{{i.name}}</option>
+												{% endfor %}
+										</select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <label for="inputEmail4" class="form-label">Assign</label>
+                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>
+                                    <select name="assign_to" aria-label="Select a Segment" data-placeholder="Select a Segment..." id="assign_to" class="form-select form-select-solid" style="background-color: #ebebeb4a;" value="{{ request.GET.assign_to }}">
+										<option value="">Select a name...</option>
+										{%for i in assign_name%}
+											<option value="{{ i.userId }}" {% if request.GET.assign_to == i.userId|stringformat:"s" %}selected{% endif %}>{{ i.name }}</option>
+										{% endfor %}
+									</select>
+                                </div>
+                                </div>
+                               
+                                 <div style="display:flex;justify-content:end">
+                                     <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="submit" name="download" value="excel" id="downloadExcel" class="btn btn-primary" style="width:100%">
+                                            Download Excel
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="submit" class="btn btn-primary" id="submitFilter" style="width:100%">Submit</button>
+                                    </div> 
+                                    <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="button" id="resetButton" class="btn btn-primary" onclick="resetForm();" style="width:100%">Reset</button>
+                                    </div>
+                                </div>  
+                                
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+  document.getElementById('showFormBtn1').addEventListener('click', function() {
+    var form = document.getElementById('reportForm1');
+    // If hidden (or first time), fade in
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+      form.animate(
+        [
+          { opacity: 0, transform: 'translateY(-10px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+    } 
+    // Otherwise, fade out then hide
+    else {
+      var anim = form.animate(
+        [
+          { opacity: 1, transform: 'translateY(0)' },
+          { opacity: 0, transform: 'translateY(-10px)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in',
+          fill: 'forwards'
+        }
+      );
+      anim.onfinish = function() {
+        form.style.display = 'none';
+      };
+    }
+  });
+</script>
+<!--FILTER CODE END  -->
+
+<div class="col-xl-12 active-p" >
+			<div class="tab-content" id="pills-tabContent">
+				<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+					<div class="card" >
+					    <div class="card-body px-0">
+						    <div class="table-responsive active-projects user-tbl  dt-filter">
+    							<table id="user-tbl" class="display table">
+    								<thead>
+    									<tr>
+    									   <th>
+                                				<div class="custom-control d-inline custom-checkbox">
+                                					<input type="checkbox" class="form-check-input" id="checkAll" required="">
+                                					<label class="form-check-label" for="checkAll"></label>
+                                				</div>
+                                			</th>
+    										<th>id</th>
+    										<th>Inquiry For</th>
+    										<th>Company Name</th>
+    										<th>Client Name</th>
+    										<th>Status</th>
+    										<th>Followup Date</th>
+    										<th>Add By</th>
+    										<th>Lead created Date</th>
+    										<th>Action</th>
+    									</tr>
+    								</thead>
+    								<tbody>
+    								    {% for i in data %}
+    									<tr>
+    										<td>
+    											<div class="form-check custom-checkbox">
+    												<input type="checkbox" class="form-check-input" name="selected_leads" value="{{ i.l_id }}" id="customCheckBox{{ i.l_id }}">
+    												<label class="form-check-label" for="customCheckBox2"></label>
+    											</div>
+    										</td>
+    										<td>{{ forloop.counter }}</td>
+    										<td>{{ i.inqu_for }}</td>
+                                            <td>
+                                                {% if i.business_name|length > 20 %}
+                                                    {{ i.business_name|slice:":20" }}...
+                                                {% else %}
+                                                    {{ i.business_name }}
+                                                {% endif %}
+                                            </td>
+    
+    										<td>{{ i.c_name }}</td>
+    										<td>
+                                                {% if i.status == "Fresh" %}
+                                                    <span class="badge bg-primary">Fresh</span>
+                                                {% elif i.status == "Contacted" %}
+                                                    <span class="badge bg-info text-dark">Contacted</span>
+                                                {% elif i.status == "Meeting" %}
+                                                    <span class="badge bg-warning text-dark">Meeting</span>
+                                                {% elif i.status == "Contracted" %}
+                                                    <span class="badge bg-success">Contracted</span>
+                                                {% elif i.status == "Onhold" %}
+                                                    <span class="badge bg-secondary">On Hold</span>
+                                                {% elif i.status == "Lost" %}
+                                                    <span class="badge bg-danger">Lost</span>
+                                                {% elif i.status == "Quotation" %}
+                                                    <span class="badge bg-dark">Quotation</span>
+                                                {% else %}
+                                                    <span class="badge bg-light text-dark">{{ i.status|default:"Pending" }}</span>
+                                                {% endif %}
+                                            </td>
+    										<td>{{ i.next_followup_date|date:'d-m-Y' }}</td>
+    										<td>
+                                                {{ i.add_by_name }}
+                                                {% if i.assign_to %}
+                                                    <br><small class="text-muted">Assigned: {{ i.lead_assign_name }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ i.create_time|date:"d-m-Y H:i:s" }}</td>
+                                            <td>
+                                                <div class="d-flex  gap-1 justify-content-end">
+                                                    <a href="{% url 'lead_update_view' i.l_id %}" class="btn  bg-dark  btn-infohadow" title="Follow Up"  > 
+                                                        <i class="fas fa-user-clock " style="color:#fff"></i>
+                                                    </a>
+                                                    <a href="{% url 'lead_view' i.l_id %}" class="btn btn-info btn-xs shadow" title="View">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                    <a href="{% url 'edit_lead' i.l_id %}" class="btn btn-primary btn-xs shadow" title="Edit">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0);" onclick="confirmDelete(event, '{{ i.l_id }}')" class="btn btn-danger btn-xs shadow" title="Delete">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+    								    {% endfor %}
+    								</tbody>
+    							</table>
+                            </form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+			
+				
+ <!--upload excel pop up  -->
+<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Upload Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="form row g-3" action="{% url 'upload_lead' %}" method="post" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+                    <div class="col-12">
+                        <label for="excel" class="form-label">Upload Excel</label>
+                        <input type="file" name="file" class="form-control" id="excel" required />
+                    </div>
+                    
+                    <div class="col-12">
+                        <label for="status" class="form-label">Status</label>
+                        <div class="input-group clockpicker">
+                            <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>
+                            <select name="lead_status" class="form-select form-select-solid" aria-label="Select a Status" style="background-color: #ebebeb4a;" required>
+                                <option value="">Select Status</option>
+                                {% for s in statuses %}
+                                    <option value="{{s.status}}">{{s.status}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <a href="/new_crm/media/others/lead_sample_excel.xlsx" class="btn btn-link" download>
+                            <i class="fas fa-download"></i> Download Sample Excel
+                        </a>
+                    </div>
+                    
+                    <!--<div class="col-12">-->
+                    <!--    <label for="status" class="form-label">Assign To</label>-->
+                    <!--     <div class="input-group clockpicker">-->
+                    <!--                          <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>-->
+                    <!--    <select name="assign_to" id="status" class="form-select form-select-solid" aria-label="Select a Status" style="background-color: #ebebeb4a;" required>-->
+                    <!--        <option value="">Assign to</option>-->
+                    <!--        {% for i in assign_name %}-->
+                    <!--            <option value="{{ i.userId }}">{{ i.name }}</option>-->
+                    <!--        {% endfor %}-->
+                    <!--    </select>-->
+                    <!--    </div>-->
+                    <!--</div>-->
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary w-100">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+ <!--end upload excel pop up  -->
+
+							<!-- excel Download -->
+<div id="reportForm"  style="display:none;">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail row">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'lead_excel' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="col-lg-3">
+                                        <label for="inputRemark" class="form-label">From Date</label>
+                                           <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="date" class="form-control slug-title" name="from_date">
+                                    </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-3">
+                                        <label for="inputRemark" class="form-label">To Date</label>
+                                           <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="date" class="form-control slug-title" name="to_date">
+                                    </div>
+                                    </div>
+                                    <div class="col-lg-3" style="margin-top:27px">
+                                        <button type="submit" class="btn btn-primary">Download</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+			<!-- excel Download end -->
+				<!--model side Filter-->
+				<div class="chatbox1" id="filterModal">
+                    <!--<div class="chatbox-close1">-->
+           
+                    <!--         </div>-->
+                    <div class="custom-tab-2">
+                        <div style="display:flex">
+                        <h4 style="margin: 10px 0px -7px 17px;">Filter</h4>
+                        
+                        <button class="chatbox-close1">&times;</button>
+                        </div>
+                        <hr>
+                        <div class="custom-tab-1" style="margin: 0px 17px 0px 17px;" >
+                            
+                            <form class="form row g-3" action="{% url 'lead_list' %}" method="get" id="filterForm">
+                                {% csrf_token %}
+                                <div class="col-lg-12">
+                                    <label for="fromDate" class="form-label">From Date</label>
+                                      <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                    <input type="date" class="form-control slug-title" name="fromDate" id="fromDate" value="{{ request.GET.fromDate }}" >
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="toDate" class="form-label">To Date</label>
+                                      <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                    <input type="date" class="form-control slug-title" name="toDate" id="toDate" value="{{ request.GET.toDate }}" >
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Status</label>
+                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+                                    <select name="status" aria-label="Select a Status" data-placeholder="Select a Segment..." id="status" class="form-select form-select-solid" style="background-color: #ebebeb4a;" value="{{ request.GET.status }}">
+										<option value="">Select a status...</option>
+										{% for s in statuses %}
+                                            <option value="{{s.status}}">{{s.status}}</option>
+                                        {% endfor %}
+									</select>
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Company Name</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    <input type="text" class="form-control slug-title" name="business_name" id="business_name" placeholder="Search By Company Name " value="{{ request.GET.business_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Client Name</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                    <input type="text" class="form-control slug-title" name="c_name" id="c_name" placeholder="Search By Client Client Name " value="{{ request.GET.c_name }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Email</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                    <input type="text" class="form-control slug-title" name="email" id="email" placeholder="Search By email" value="{{ request.GET.email }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Mobile Number</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                    <input type="text" class="form-control slug-title" name="mobile" id="mobile" placeholder="Search By Mobile Number" value="{{ request.GET.mobile }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">House no. & Building name</label>
+                                    	 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                    <input type="text" class="form-control slug-title" name="house_no" id="house_no" placeholder="Search By House no. & Building name" value="{{ request.GET.house_no }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Address</label>
+                                    				 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="address" id="address" placeholder="Search By Address " value="{{ request.GET.address }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Area</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-signs"></i></span>
+                                    <input type="text" class="form-control slug-title" name="area" id="area" placeholder="Search By Area " value="{{ request.GET.area }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">City</label>
+                                    	 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map"></i></span>
+                                    <select name="city" aria-label="Select a City" id="city" value="{{ request.GET.city }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select City</option>
+                                        {% for city in cites %}
+                                            <option value="{{ city.city }}">{{ city.city }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Pincode</label>
+                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
+                                    <input type="text" class="form-control slug-title" name="pincode" id="pincode" placeholder="Search By Pincode " value="{{ request.GET.pincode }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">State</label>
+                                    	 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                    <select name="state" aria-label="Select a City" id="state" value="{{ request.GET.state }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select City</option>
+                                        {% for city in cites %}
+                                            <option value="{{ city.state }}">{{ city.state }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Country</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                             
+                                    <input type="text" class="form-control slug-title" name="country" id="country" placeholder="Search By Country " value="{{ request.GET.country }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Segment</label>
+                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                    <input type="text" class="form-control slug-title" name="segment" id="segment" placeholder="Search By Segment " value="{{ request.GET.segment }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Remark</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+                                             
+                                    <input type="text" class="form-control slug-title" name="remark" id="remark" placeholder="Search By Remark " value="{{ request.GET.remark }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Source</label>
+                                    <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-dice-d20"></i></span>
+                                             
+									<select name="source" aria-label="Select a Source" data-placeholder="Select a Source..." id="source" value="{{ request.GET.source }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                        <option value="">Select a Source...</option>
+    									{%for i in sources%}
+    									    <option value="{{i.lead_Type}}">{{i.lead_Type}}</option>
+    									{% endfor %}
+    								</select>
+    								</div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Next Followup Date</label>
+                                    	 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                    <input type="date" class="form-control slug-title" name="next_followup_date" id="next_followup_date" placeholder="Search By Remark " value="{{ request.GET.next_followup_date }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Stage</label>
+                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-running"></i></span>
+                                    <input type="text" class="form-control slug-title" name="stage_by" id="stage_by" placeholder="Search By Stage " value="{{ request.GET.stage_by }}">
+                                </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <label for="inputEmail4" class="form-label">Assign</label>
+                                     <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>
+                                    <select name="assign_to" aria-label="Select a Segment" data-placeholder="Select a Segment..." id="assign_to" class="form-select form-select-solid" style="background-color: #ebebeb4a;" value="{{ request.GET.assign_to }}">
+										<option value="">Select a name...</option>
+										{%for i in assign_name%}
+											<option value="{{i.userId}}">{{i.name}}</option>
+										{% endfor %}
+									</select>
+                                </div>
+                                </div>
+                        </div>
+                    </div><br>
+                    
+                    <div style="display:flex;">
+                        <div class="col-lg-6" style="margin: 0px 0 0 15px;">
+                            <button type="submit" style="width:89%" class="btn btn-primary">Submit</button>
+                        </div> 
+                        <div class="col-lg-6" style="margin: 0px 0 0 15px;">
+                            <button type="button" id="resetButton" style="width:89%" class="btn btn-primary" onclick="resetForm();">Reset</button>
+                        </div>
+                    </div>  
+                        </form>
+                </div>
+				<!--end side Filter-->
+			
+			
+
+	
+		
+<script>
+    // Function to handle assigning leads to a user
+    function assignSelectedLeads() {
+        var selectedLeads = [];
+        
+        // Collect selected leads' IDs from checked checkboxes
+        document.querySelectorAll('input[name="selected_leads"]:checked').forEach(function(checkbox) {
+            selectedLeads.push(checkbox.value);
+        });
+
+        // If no leads are selected, show an alert
+        if (selectedLeads.length === 0) {
+            Swal.fire({ 
+                icon: 'warning',
+                title: 'No leads selected',
+                text: 'Please select at least one lead to assign.',
+                showConfirmButton: true
+            });
+            return; // Stop execution if no leads are selected
+        }
+
+        // Fetch the list of users to assign (this can be dynamically populated)
+       
+        var users = [
+         {%for i in assign_name%}
+    		{ id:'{{i.userId}}',name:'{{i.name}}' },
+    	{% endfor %}
+            // You can populate this list dynamically via Django context or AJAX
+        ];
+
+        // Generate the dropdown options for users
+        var options = users.map(function(user) {
+            return `<option value="${user.id}">${user.name}</option>`;
+        }).join('');
+
+        // Show the SweetAlert modal with the user dropdown
+        Swal.fire({
+            title: 'Assign Selected Leads',
+            html: `
+                <label for="userDropdown">Select a user:</label>
+                <select id="userDropdown" class="form-control">
+                    <option value="">Select a user</option>
+                    ${options}
+                </select>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Assign',
+            cancelButtonText: 'Cancel',
+            preConfirm: () => {
+                const selectedUserId = document.getElementById('userDropdown').value;
+                if (!selectedUserId) {
+                    Swal.showValidationMessage('Please select a user!');
+                    return false;
+                }
+                return selectedUserId;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const selectedUserId = result.value;
+                // Call the function to assign selected leads to the selected user
+                assignLeadsToUser(selectedLeads, selectedUserId);
+            }
+        });
+    }
+
+    // Function to handle sending the assignment data to the server (via AJAX)
+    function assignLeadsToUser(leads, userId) {
+        // Display a loading message
+        Swal.fire({
+            icon: 'info',
+            title: 'Assigning Leads...',
+            text: 'Please wait while the leads are being assigned.',
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+        // AJAX request to send the leads and user ID for assignment
+        fetch("{% url 'assign_lead' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                leads: leads,  // List of selected leads
+                user_id: userId // Selected user
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('Assigned!', 'The selected leads have been successfully assigned.', 'success');
+            } else {
+                Swal.fire('Error', 'There was an issue assigning the leads. Please try again.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'There was an issue assigning the leads. Please try again.', 'error');
+        });
+    }
+</script>
+
+<script>
+    // Select/Deselect all checkboxes
+    document.getElementById('checkAll').addEventListener('change', function() {
+        var checkboxes = document.querySelectorAll('input[name="selected_leads"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    // Handle form submission
+    document.getElementById('deleteSelectedForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting immediately
+
+        var selectedLeads = [];
+        
+        // Get all selected checkboxes
+        document.querySelectorAll('input[name="selected_leads"]:checked').forEach(function(checkbox) {
+            selectedLeads.push(checkbox.value);
+        });
+
+        // If no checkbox is selected, alert the user
+        if (selectedLeads.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No leads selected',
+                text: 'Please select at least one lead to delete.',
+                showConfirmButton: true
+            });
+        } else {
+            // Show SweetAlert confirmation before deletion
+            Swal.fire({
+                icon: 'warning',
+                title: 'Are you sure?',
+                text: 'You will not be able to undo this action!',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Append selected leads to the form before submission
+                    var hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'leads_to_delete';
+                    hiddenInput.value = JSON.stringify(selectedLeads);
+                    this.appendChild(hiddenInput);
+
+                    // Now, submit the form after confirmation
+                    this.submit();
+                }
+            });
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+    function confirmDelete(event, leadId) {
+        event.preventDefault();  // Prevent the default link behavior
+
+        // Show the confirmation SweetAlert
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This lead will be permanently deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Proceed with the deletion by sending an AJAX request
+                deleteLead(leadId);
+            }
+        });
+    }
+
+    function deleteLead(leadId) {
+        // Make the AJAX request to the Django view
+        fetch("{% url 'delete_lead' '0' %}".replace('0', leadId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for security
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success SweetAlert after deletion
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'The lead has been deleted successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Optionally, reload the page or remove the row from the table
+                    location.reload();
+                });
+            }
+        })
+        .catch(error => {
+            // Handle error if the deletion failed
+            Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong while deleting the lead.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+</script>
+
+<script>
+    function resetForm() {
+        // Clear all form fields
+        document.getElementById('date_range').value = '';
+        document.getElementById('status').value = '';
+        document.getElementById('business_name').value = '';
+        document.getElementById('c_name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('mobile').value = '';
+        document.getElementById('house_no').value = '';
+        document.getElementById('area').value = '';
+        document.getElementById('address').value = '';
+        document.getElementById('city').value = '';
+        document.getElementById('country').value = '';
+        document.getElementById('pincode').value = '';
+        document.getElementById('segment').value = '';
+        document.getElementById('source').value = '';
+        document.getElementById('remark').value = '';
+        document.getElementById('next_followup_date').value = '';
+        document.getElementById('inqu_for').value = '';
+        document.getElementById('assign_to').value = '';
+
+        // Submit the form with cleared parameters
+        document.getElementById('filterForm').submit();
+    }
+    
+    const form = document.getElementById('addtaskForm');
+
+    function isAnyFilterFilled() {
+        const fieldsToCheck = form.querySelectorAll('input:not([type="hidden"]), select');
+        for (const field of fieldsToCheck) {
+            if (field.value.trim() !== '') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    document.getElementById('submitFilter').addEventListener('click', function (e) {
+        e.preventDefault(); // ✅ prevent default submit
+
+        if (!isAnyFilterFilled()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Filters Selected!',
+                text: 'Please select or enter at least one filter to search.',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            form.submit(); // ✅ now it will only submit if valid
+        }
+    });
+
+    document.getElementById('downloadExcel').addEventListener('click', function (e) {
+        e.preventDefault(); // ✅ prevent default submit
+
+        if (!isAnyFilterFilled()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Filters Selected!',
+                text: 'Please select or enter at least one filter before downloading Excel.',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            // Add download=excel hidden input if not already present
+            if (!form.querySelector('input[name="download"]')) {
+                const downloadInput = document.createElement('input');
+                downloadInput.type = 'hidden';
+                downloadInput.name = 'download';
+                downloadInput.value = 'excel';
+                form.appendChild(downloadInput);
+            }
+
+            form.submit(); // ✅ only submits when valid
+        }
+    });
+</script>
+<script>
+    // Function to reset the form
+    function resetForm() {
+        // Select all the form elements (input, select, etc.)
+        const form = document.getElementById('filterForm');
+        
+        // Reset the form fields to empty
+        form.reset();
+        
+        // Optionally, reset the form's action to clear the URL parameters
+        window.location.href = window.location.pathname; // This will reload the page without query parameters
+    }
+
+    // Optional: You could add event listeners to your buttons to handle form submission and reset if needed
+    document.getElementById('resetButton').addEventListener('click', function (e) {
+        resetForm(); // Call reset form function
+    });
+
+    // You may want to submit the form via AJAX for a smoother experience, but this requires more code.
+</script>
+<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    // Handle Chatbox Open and Close
+    var handleChatbox = function () {
+        $('.chatbox1').addClass('active'); // Show chatbox
+    };
+
+    // Attach event listener for opening the chatbox
+    $('.bell-link1').on('click', function () {
+        handleChatbox();
+    });
+
+    // Attach event listener for closing the chatbox
+    $('.chatbox-close1').on('click', function () {
+        $('.chatbox1').removeClass('active'); // Hide chatbox
+    });
+});
+
+</script>
+
+<script>
+  document.getElementById('showFormBtn').addEventListener('click', function() {
+    var form = document.getElementById('reportForm');
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';  // Show the form
+    } else {
+      form.style.display = 'none';   // Hide the form
+    }
+  });
+</script>
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent the form from submitting the default way
+
+        var formData = new FormData(this); // Collect form data
+
+        // Make an AJAX request to upload the file
+        fetch("{% url 'upload_lead' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Display success SweetAlert
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Upload Successful!',
+                    text: data.message
+                }).then(() => {
+                    // Optionally, you can refresh or close modal after success
+                    window.location.reload(); // To reload the page
+                    // Or you could close the modal here
+                    var modal = bootstrap.Modal.getInstance(document.querySelector('.bd-example-modal-sm'));
+                    modal.hide();
+                });
+            } else {
+                // Display error SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Failed',
+                    text: 'There was an issue processing the file. Please try again.'
+                });
+            }
+        })
+        .catch(error => {
+            // Handle any network errors
+            Swal.fire({
+                icon: 'error',
+                title: 'Something went wrong!',
+                text: 'Please try again later.'
+            });
+        });
+    });
+</script>
+<script>
+    
+
+(function($) {
+    /* "use strict" */
+	
+ var dzChartlist = function(){
+	
+	var screenWidth = $(window).width();
+	let draw = Chart.controllers.line.__super__.draw; //draw shadow
+
+	var chartBar = function(){
+		var options = {
+			  series: [
+				{
+					name: 'Week',
+					data: [50, 90, 90,50],
+					//radius: 12,	
+				}, 
+				{
+				  name: 'Week',
+				  data: [80, 40, 55,40]
+				}, 
+				
+			],
+				chart: {
+				type: 'bar',
+				height: 120,
+				
+				toolbar: {
+					show: false,
+				},
+				
+			},
+			plotOptions: {
+			  bar: {
+				horizontal: false,
+				columnWidth: '80%',
+				endingShape: "rounded",
+				borderRadius: 8,
+			  },
+			  
+			},
+			states: {
+			  hover: {
+				filter: 'none',
+			  }
+			},
+			colors:['var(--primary)', 'var(--primary)'],
+			dataLabels: {
+			  enabled: false,
+			  offsetY: -30
+			},
+			
+			legend: {
+				show: false,
+				fontSize: '12px',
+				labels: {
+					colors: '#000000',
+					
+					},
+				markers: {
+				width: 15,
+				height: 18,
+				strokeWidth: 5,
+				strokeColor: '#fff',
+				fillColors: undefined,
+				radius: 12,	
+				}
+			},
+			stroke: {
+			  show: true,
+			  width:14,
+			  curve: 'smooth',
+			  lineCap: 'round',
+			  colors: ['transparent']
+			},
+			grid: {
+				show: false,
+				xaxis: {
+					lines: {
+						show: false,
+					}
+				},
+				 yaxis: {
+						lines: {
+							show: false
+						}
+					},  				
+			},
+			xaxis: {
+				categories: ['JAN', 'FEB', 'MAR', 'APR', 'MAY'],
+				labels: {
+					show: false,
+					style: {
+						colors: '#A5AAB4',
+						fontSize: '14px',
+						fontWeight: '500',
+						fontFamily: 'poppins',
+						cssClass: 'apexcharts-xaxis-label',
+					},
+				},
+				crosshairs: {
+					show: false,
+				},
+				axisBorder: {
+					show: false,
+				},
+				axisTicks: {
+					show: false,
+				}, 			
+			},
+			yaxis: {
+				labels: {
+				show: false,
+					offsetX:-16,
+				   style: {
+					  colors: '#000000',
+					  fontSize: '13px',
+					   fontFamily: 'poppins',
+					  fontWeight: 100,
+					  cssClass: 'apexcharts-xaxis-label',
+				  },
+			  },
+			},
+			};
+
+			var chartBar1 = new ApexCharts(document.querySelector("#chartBar"), options);
+			chartBar1.render();
+	}
+	var NewCustomers = function(){
+		var options = {
+		  series: [
+			{
+				name: 'Month',
+				data: [100,300, 200, 250, 200, 240, 180,230,200, 250, 300],
+				/* radius: 30,	 */
+			}, 				
+		],
+			chart: {
+			type: 'area',
+			height: 100,
+			toolbar: {
+				show: false,
+			},
+			zoom: {
+				enabled: false
+			},
+			sparkline: {
+				enabled: true
+			}
+			
+		},
+		
+		colors:['var(--primary)'],
+		dataLabels: {
+		  enabled: false,
+		},
+
+		legend: {
+			show: false,
+		},
+		stroke: {
+		  show: true,
+		  width: 3,
+		  curve:'smooth',
+		  colors:['var(--primary)'],
+		},
+		
+		grid: {
+			show:false,
+			borderColor: '#eee',
+			padding: {
+				top: 0,
+				right: 0,
+				bottom: 0,
+				left: -1
+
+			}
+		},
+		states: {
+                normal: {
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                },
+                hover: {
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                },
+                active: {
+                    allowMultipleDataPointsSelection: false,
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                }
+            },
+		xaxis: {
+			categories: ['Jan', 'feb', 'Mar', 'Apr', 'May', 'June', 'July','August', 'Sept','Oct'],
+			axisBorder: {
+				show: false,
+			},
+			axisTicks: {
+				show: false
+			},
+			labels: {
+				show: false,
+				style: {
+					fontSize: '12px',
+				}
+			},
+			crosshairs: {
+				show: false,
+				position: 'front',
+				stroke: {
+					width: 1,
+					dashArray: 3
+				}
+			},
+			tooltip: {
+				enabled: true,
+				formatter: undefined,
+				offsetY: 0,
+				style: {
+					fontSize: '12px',
+				}
+			}
+		},
+		yaxis: {
+			show: false,
+		},
+		fill: {
+		  opacity: 0.9,
+		  colors:'var(--primary)',
+		  type: 'gradient', 
+		  gradient: {
+			colorStops:[ 
+				
+				{
+				  offset: 0,
+				  color: 'var(--primary)',
+				  opacity: .8
+				},
+				{
+				  offset: 0.6,
+				  color: 'var(--primary)',
+				  opacity: .6
+				},
+				{
+				  offset: 100,
+				  color: 'white',
+				  opacity: 0
+				}
+			  ],
+			  
+			}
+		},
+		tooltip: {
+			enabled:false,
+			style: {
+				fontSize: '12px',
+			},
+			y: {
+				formatter: function(val) {
+					return "$" + val + " thousands"
+				}
+			}
+		}
+		};
+
+		var chartBar1 = new ApexCharts(document.querySelector("#NewCustomers"), options);
+		chartBar1.render();
+	 
+	}
+
+	var Active = function(){
+		var options = {
+		  series: [
+			{
+				name: 'Net Profit',
+				data: [100,400, 200, 250, 200, 150, 180,230,200, 250, 300],
+				/* radius: 30,	 */
+			}, 				
+		],
+			chart: {
+			type: 'area',
+			height: 100,
+			toolbar: {
+				show: false,
+			},
+			zoom: {
+				enabled: false
+			},
+			sparkline: {
+				enabled: true
+			}
+			
+		},
+		
+		colors:['var(--secondary)'],
+		dataLabels: {
+		  enabled: false,
+		},
+
+		legend: {
+			show: false,
+		},
+		stroke: {
+		  show: true,
+		  width: 3,
+		  curve:'smooth',
+		  colors:['var(--secondary)'],
+		},
+		
+		grid: {
+			show:false,
+			borderColor: '#eee',
+			padding: {
+				top: 0,
+				right: 0,
+				bottom: 0,
+				left: -1
+
+			}
+		},
+		states: {
+                normal: {
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                },
+                hover: {
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                },
+                active: {
+                    allowMultipleDataPointsSelection: false,
+                    filter: {
+                        type: 'none',
+                        value: 0
+                    }
+                }
+            },
+		xaxis: {
+			categories: ['Jan', 'feb', 'Mar', 'Apr', 'May', 'June', 'July','August', 'Sept','Oct'],
+			axisBorder: {
+				show: false,
+			},
+			axisTicks: {
+				show: false
+			},
+			labels: {
+				show: false,
+				style: {
+					fontSize: '12px',
+				}
+			},
+			crosshairs: {
+				show: false,
+				position: 'front',
+				stroke: {
+					width: 1,
+					dashArray: 3
+				}
+			},
+			tooltip: {
+				enabled: true,
+				formatter: undefined,
+				offsetY: 0,
+				style: {
+					fontSize: '12px',
+				}
+			}
+		},
+		yaxis: {
+			show: false,
+		},
+		fill: {
+		  opacity: 0.9,
+		  colors:'var(--secondary)',
+		  type: 'gradient', 
+		  gradient: {
+			colorStops:[ 
+				
+				{
+				  offset: 0,
+				  color: 'var(--secondary)',
+				  opacity: .8
+				},
+				{
+				  offset: 0.6,
+				  color: 'var(--secondary)',
+				  opacity: .6
+				},
+				{
+				  offset: 100,
+				  color: 'white',
+				  opacity: 0
+				}
+			  ],
+			  
+			}
+		},
+		tooltip: {
+			enabled:false,
+			style: {
+				fontSize: '12px',
+			},
+			y: {
+				formatter: function(val) {
+					return "$" + val + " thousands"
+				}
+			}
+		}
+		};
+
+		var chartBar1 = new ApexCharts(document.querySelector("#Active"), options);
+		chartBar1.render();
+	 
+	}
+
+	var activityChart = function(){
+		var optionsTimeline = {
+			chart: {
+				type: "bar",
+				height: 230,
+				stacked: true,
+				toolbar: {
+					show: false
+				},
+				sparkline: {
+					//enabled: true
+				},
+				offsetX:0,
+			},
+			series: [
+				 {
+					name: "New Clients",
+					data: [180, 150, 200, 100, 150, 180, 150,170,115,190,140,80,70,90,120,50,90,100,200,300,180,200,150]
+				}
+			],
+			
+			plotOptions: {
+				bar: {
+					columnWidth: "25%",
+					endingShape: "rounded",
+					startingShape: "rounded",
+					 borderRadius: 5,
+					
+					colors: {
+						backgroundBarColors: ['#F8F8F8', '#F8F8F8', '#F8F8F8', '#F8F8F8','#F8F8F8','#F8F8F8','#F8F8F8','#F8F8F8','#F8F8F8','#F8F8F8','#F8F8F8','#F8F8F8'],
+						backgroundBarOpacity: 1,
+						backgroundBarRadius: 5,
+					},
+
+				},
+				distributed: true
+			},
+			colors:['var(--primary)'],
+			grid: {
+				show:false,
+				borderColor:'#F8F8F8'
+			},
+			legend: {
+				show: false
+			},
+			fill: {
+			  opacity: 1
+			},
+			dataLabels: {
+				enabled: false,
+				colors: ['#000'],
+				dropShadow: {
+				  enabled: true,
+				  top: 1,
+				  left: 1,
+				  blur: 1,
+				  opacity: 1
+			  }
+			},
+			xaxis: {
+			 categories: ['S', 'M', 'T', 'W', 'T', 'F', 'S','S','M','T','W','T','F','S','M','T','W','T','F','S','M','T','W'],
+			  labels: {
+			   style: {
+				  colors: '#787878',
+				  fontSize: '13px',
+				  fontFamily: 'poppins',
+				  fontWeight: 100,
+				  cssClass: 'apexcharts-xaxis-label',
+				},
+			  },
+			  crosshairs: {
+				show: false,
+			  },
+			  axisBorder: {
+				  show: false,
+				},
+			},
+			
+			yaxis: {
+				show: false
+			},
+			
+			tooltip: {
+				x: {
+					show: true
+				}
+			}
+		};
+		var chartTimelineRender =  new ApexCharts(document.querySelector("#activityChart"), optionsTimeline);
+		 chartTimelineRender.render();	
+	}
+	
+	
+ 
+	/* Function ============ */
+		return {
+			init:function(){
+			},
+			
+			
+			load:function(){
+				
+				chartBar();
+				NewCustomers();
+				Active();
+				activityChart();
+				
+			},
+			
+			resize:function(){
+	
+			}
+		}
+	
+	}();
+
+	
+		
+	jQuery(window).on('load',function(){
+		setTimeout(function(){
+			dzChartlist.load();
+		}, 1000); 
+		
+	});
+
+     
+
+})(jQuery);
+
+</script>
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+<!--filter script end -->
+
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

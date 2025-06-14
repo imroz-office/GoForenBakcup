@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+<style>
+    .form-select {
+        display: block;
+        padding: 10px 15px;
+        width: 100%;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #888888;
+        background-color: #F3F0EC;
+        background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+        border: 1px solid #E6E6E6;
+        border-radius: 6px;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        appearance: none;
+    }
+</style>
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between;">
+                    <div>
+                        <h1>{{ is_edit|yesno:"Edit Data,Add Data" }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-12 col-lg-12">
+                <div class="ec-cat-list card card-default mb-24px">
+                    <div class="card-body">
+                        <div class="row ec-vendor-uploads">
+                            <div class="col-lg-12">
+                                <div class="ec-vendor-upload-detail">
+                                    <form class="form row g-3" action="#" method="post">
+                                        {% csrf_token %}
+
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Select Client</label>
+                                            <select name="client_id" required class="form-select" style="background-color: #ebebeb4a;">
+                                                <option value="">Select Client</option>
+                                                {% for client in clients %}
+                                                    <option value="{{ client.clt_id }}">{{ client.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Select Project</label>
+                                            <select name="product" required class="form-select" style="background-color: #ebebeb4a;">
+                                                <option value="">Select Project</option>
+                                                {% for project in projects %}
+                                                    <option value="{{ project.pro_name }}">{{ project.pro_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Amount</label>
+                                            <input type="text" name="amount" required class="form-control" placeholder="Enter Amount" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        </div>
+                                        
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary">{{ is_edit|yesno:"Update,Submit" }}</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>-->
+<!--<script>-->
+<!--document.getElementById("addPendingForm").addEventListener("submit", function(event) {-->
+<!--    event.preventDefault(); -->
+
+<!--    const submitButton = document.querySelector('button[type="submit"]');-->
+<!--    submitButton.disabled = true;-->
+<!--    submitButton.innerText = 'Submitting...';-->
+
+<!--    const formData = new FormData(this);-->
+
+<!--    fetch("{% url 'add_client_pro' %}", {-->
+<!--        method: "POST",-->
+<!--        body: formData-->
+<!--    })-->
+<!--    .then(response => response.json())-->
+<!--    .then(data => {-->
+<!--        Swal.fire({-->
+<!--            icon: data.status === 'success' ? 'success' : 'error',-->
+<!--            title: data.status === 'success' ? 'Success!' : 'Error!',-->
+<!--            text: data.message,-->
+<!--        }).then(() => {-->
+<!--            if (data.status === 'success') {-->
+<!--                window.location.href = "{% url 'add_client_project' %}"; -->
+<!--            } else {-->
+<!--                submitButton.disabled = false;-->
+<!--                submitButton.innerText = 'Submit';-->
+<!--            }-->
+<!--        });-->
+<!--    })-->
+<!--    .catch(() => {-->
+<!--        Swal.fire({-->
+<!--            icon: 'error',-->
+<!--            title: 'Oops...',-->
+<!--            text: 'An unexpected error occurred.',-->
+<!--        });-->
+<!--        submitButton.disabled = false;-->
+<!--        submitButton.innerText = 'Submit';-->
+<!--    });-->
+<!--});-->
+<!--</script>-->
+{% endblock %}

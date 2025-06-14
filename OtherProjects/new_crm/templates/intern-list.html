@@ -1,0 +1,1206 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+ <!--date range css start -->
+<style>
+    .daterangepicker .drp-buttons {
+    display: flex !important;
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<style>
+
+.btn-dots-icon {
+    background: none; /* Remove button background */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Ensure cursor is pointer */
+}
+</style>
+
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 80px;
+  height: 25px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ca2222;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height:18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2ab934;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(55px);
+  -ms-transform: translateX(55px);
+  transform: translateX(55px);
+}
+
+/*------ ADDED CSS ---------*/
+.on {
+  display: none;
+}
+
+.on, .off {
+  color: white;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 60%;
+  font-size: 10px;
+  font-family: Verdana, sans-serif;
+  user-select:none;
+}
+.on {
+  color: white;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 40%;
+  font-size: 10px;
+  font-family: Verdana, sans-serif;
+  user-select:none;
+}
+input:checked + .slider .on {
+  display: block;
+}
+
+input:checked + .slider .off {
+  display: none;
+}
+
+/*--------- END --------*/
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+		</style>	
+
+<style>
+  .user-stats-box {
+    background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    color: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .user-stats-box h5 {
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .stat-tag {
+    display: inline-block;
+    margin: 10px 15px 0 0;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+  }
+
+  .stat-tag.active {
+    background-color: rgba(40, 167, 69, 0.7);
+  }
+
+  .stat-tag.inactive {
+    background-color: rgba(220, 53, 69, 0.7);
+  }
+
+  .stat-tag.total {
+    background-color: rgba(0, 123, 255, 0.7);
+  }
+</style>
+
+<style>
+/* Chatbox (modal) */
+.chatbox1 {
+    width: 21.25rem;
+    height: 100vh;
+    position: fixed;
+    right: -31.25rem;  /* Initially offscreen */
+    top: 0;
+    z-index: 999;
+    background: #fff;
+    box-shadow: 0rem 0rem 1.875rem 0rem rgba(82, 63, 105, 0.15);
+    transition: all 0.8s ease-in-out;
+    overflow: hidden;  /* Prevent scrollbars */
+}
+
+/* Active class: Slide chatbox to the right */
+.chatbox1.active {
+    right: 0;
+    display: block;
+}
+
+/* Header and close button inside the chatbox */
+.chatbox1 .chatbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 17px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbox1 .chatbox-close1 {
+    cursor: pointer;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 1000;
+    width:12%;
+    margin: 2px 2px 2px 153px;
+}
+
+.custom-tab-1 {
+    padding: 10px 17px;
+    height: calc(100vh - 120px);  /* Subtract header and footer height */
+    overflow-y: auto;  /* Enable scroll for form */
+}
+
+/* Form field styling */
+form {
+    margin: 0;
+}
+
+/* Styling for the submit button */
+button {
+    width: 89%;
+    margin: 0 auto;
+}
+
+</style>
+
+<div class="content-body">
+	<!-- row -->
+	<div class="container-fluid">
+			<div class="row">
+			        <!-- <div class="col-xl-12">-->
+					<!--	<div class="card">-->
+					<!--		<div class="card-body">-->
+					<!--			<div class="row task" >-->
+					<!--			    	<div class="col-xl-4 col-sm-4 col-6 ">-->
+					<!--					<div class="task-summary">-->
+					<!--						<div class="d-flex align-items-baseline ">-->
+					<!--							<h2 class="text-success count">22</h2>-->
+					<!--							<span>Active</span>-->
+					<!--						</div>	-->
+					<!--						<p>Tasks assigne</p>-->
+					<!--					</div>-->
+					<!--				</div>-->
+					<!--					<div class="col-xl-4 col-sm-4 col-6 ">-->
+					<!--					<div class="task-summary">-->
+					<!--						<div class="d-flex align-items-baseline ">-->
+					<!--							<h2 class="text-danger count">10</h2>-->
+					<!--							<span>Inactive</span>-->
+					<!--						</div>	-->
+					<!--						<p>Tasks assigne</p>-->
+					<!--					</div>-->
+					<!--				</div>-->
+					<!--				    <div class="col-xl-4 col-sm-4 col-6 ">-->
+					<!--					<div class="task-summary">-->
+					<!--						<div class="d-flex align-items-baseline">-->
+					<!--							<h2 class="text-primary count">32</h2> -->
+					<!--							<span>All Users</span>-->
+					<!--						</div>-->
+					<!--						<p>Tasks assigne</p>-->
+					<!--					</div>-->
+					<!--				</div>-->
+					<!--		</div>-->
+					<!--	</div>-->
+					<!--</div>-->
+				<div class="main-div">
+					<div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between;">
+					    <div>
+							<h1>Manage Intern</h1>
+						</div>
+					    <div>
+                            <a href="{% url 'deactivate_completed_interns' %}" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">Deactive Completed Interns</a>
+					        <li type="button" class="btn btn-primary" id="showFormBtn"><i class="fa-solid fa-download" style="margin-right:7px"></i>Download Report</li>
+                            <a href="{% url 'add_intern' %}" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">+ Add Intern</a>
+                            <!--<li type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+                            <!--    <a class="nav-link bell-link1" href="javascript:void(0);">-->
+                            <!--        <i class="bi bi-funnel-fill"></i> Filter-->
+                            <!--    </a>-->
+                            <!--</li>-->
+                              <li type="button" class="btn btn-primary" id="showFormBtn1" style="margin-right: 15px;"><i class="bi bi-funnel-fill"></i>Filter</li>
+                        </div>
+				    </div>
+				</div>
+			</div>
+		   <!--FILTER CODE START  -->
+        <div id="reportForm1" style="display:none;">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'intern_list' %}" method="get">
+
+                                 {% csrf_token %}
+                                <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                        <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="fromDate" />
+                                    </div>
+                                    </div>
+                                </div>
+                                
+                               <div class="col-lg-4">
+    <label for="emp_id" class="form-label">Intern ID</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-id-badge"></i></span>
+        <input type="text" class="form-control slug-title" name="emp_id"
+            placeholder="Enter Intern ID" id="emp_id" value="{{ request.GET.emp_id }}">
+    </div>
+</div>
+
+<div class="col-lg-4">
+    <label for="name" class="form-label">Intern Name</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+        <input type="text" class="form-control slug-title" name="name"
+            oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');"
+            placeholder="Enter Intern Name" id="name" value="{{ request.GET.name }}">
+    </div>
+</div>
+
+<div class="col-lg-4">
+    <label for="email" class="form-label">Email ID</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+        <input type="email" class="form-control slug-title" name="email"
+            placeholder="Enter Email ID" id="email" value="{{ request.GET.email }}">
+    </div>
+</div>
+
+<div class="col-lg-4">
+    <label for="ph_no" class="form-label">Mobile Number</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+        <input type="text" minlength="10" maxlength="10" pattern="[0-9]*"
+            class="form-control slug-title" name="ph_no"
+            placeholder="Enter Mobile Number" id="ph_no" value="{{ request.GET.ph_no }}"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+    </div>
+</div>
+
+<!--<div class="col-lg-4">-->
+<!--    <label for="alt_ph_no" class="form-label">Alternative Mobile Number</label>-->
+<!--    <div class="input-group">-->
+<!--        <span class="input-group-text"><i class="fa-solid fa-phone-volume"></i></span>-->
+<!--        <input type="text" maxlength="10" minlength="10" pattern="[0-9]*"-->
+<!--            class="form-control slug-title" name="alt_ph_no"-->
+<!--            placeholder="Enter Alternative Mobile Number" id="alt_ph_no" value="{{ request.GET.alt_ph_no }}"-->
+<!--            oninput="this.value = this.value.replace(/[^0-9]/g, '');">-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="col-lg-4">
+    <label for="address" class="form-label">Address</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-location-dot"></i></span>
+        <input type="text" class="form-control slug-title" name="address"
+            placeholder="Enter Address" id="address" value="{{ request.GET.address }}">
+    </div>
+</div>
+
+<!--<div class="col-md-4">-->
+<!--    <label class="form-label">Select a Shift</label>-->
+<!--    <div class="input-group">-->
+<!--        <span class="input-group-text"><i class="fa-solid fa-clock"></i></span>-->
+<!--        <select name="shift" id="shift" class="form-select form-select-solid fw-bolder">-->
+<!--            <option value="">Select a Shift..</option>-->
+<!--            {% for s in shifts %}-->
+                <!--<option value="{{ s.shift }}">{{ s.shift }}</option>-->
+<!--                <option value="{{ s.shift }}" {% if request.GET.shift == s.shift %}selected{% endif %}>{{ s.shift }}</option>-->
+<!--            {% endfor %}-->
+<!--        </select>-->
+<!--    </div>-->
+<!--</div>-->
+<!--  <div class="col-lg-4">-->
+<!--    <label class="form-label">Shift Time</label>-->
+<!--     <div class="input-group clockpicker">-->
+<!--<span class="input-group-text"><i class="fa-solid fa-clock"></i></span>-->
+<!--    <select  name="shift" aria-label="Select Intern Type"  data-placeholder="Select Intern Type..." class="form-select form-select-solid" style="background-color: #ebebeb4a;" >-->
+<!--        <option value="">Select Attendance Time...</option>-->
+<!--        <option value="15:30 - 20:00" {% if request.GET.shift == "15:30 - 20:00" %}selected{% endif %}>15:30 - 20:00</option>-->
+<!--        <option value="09:00 - 18:00" {% if request.GET.shift == "09:00 - 18:00" %}selected{% endif %}>09:00 - 18:00</option>-->
+<!--        <option value="10:00 - 19:00" {% if request.GET.shift == "10:00 - 19:00" %}selected{% endif %}>10:00 - 19:00</option>-->
+<!--    </select>-->
+<!--</div>-->
+<!--</div>-->
+
+<!--<div class="col-lg-4">-->
+<!--    <label for="emp_type" class="form-label">Intern Type</label>-->
+<!--    <div class="input-group">-->
+<!--        <span class="input-group-text"><i class="fa-solid fa-user-tie"></i></span>-->
+<!--        <input type="text" class="form-control slug-title" name="emp_type"-->
+<!--            placeholder="Enter Intern Type" id="emp_type" value="{{ request.GET.emp_type }}">-->
+<!--    </div>-->
+<!--</div>-->
+
+<div class="col-lg-4">
+    <label for="join_date" class="form-label">Date Of Joining</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-calendar-plus"></i></span>
+        <input type="date" class="form-control slug-title" name="join_date"
+            id="join_date" value="{{ request.GET.join_date|date:'Y-m-d'|default:'' }}">
+    </div>
+</div>
+
+<div class="col-lg-4">
+    <label for="date_of_birth" class="form-label">Date Of Birth</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-cake-candles"></i></span>
+        <input type="date" class="form-control slug-title" name="date_of_birth"
+            id="date_of_birth" value="{{ request.GET.date_of_birth|date:'Y-m-d'|default:'' }}">
+    </div>
+</div>
+
+<!--<div class="col-lg-4">-->
+<!--    <label for="anniversary_date" class="form-label">Anniversary Date</label>-->
+<!--    <div class="input-group">-->
+<!--        <span class="input-group-text"><i class="fa-solid fa-heart"></i></span>-->
+<!--        <input type="date" class="form-control slug-title" name="anniversary_date"-->
+<!--            id="anniversary_date" value="{{ request.GET.anniversary_date|date:'Y-m-d'|default:'' }}">-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div class="col-lg-4">-->
+<!--    <label for="aadhar_number" class="form-label">Aadhar card</label>-->
+<!--    <div class="input-group">-->
+<!--        <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>-->
+<!--        <input type="text" pattern="[0-9]*" class="form-control slug-title" name="aadhar_number"-->
+<!--            placeholder="Enter Aadhar card No." id="aadhar_number" value="{{ request.GET.aadhar_number }}"-->
+<!--            oninput="this.value = this.value.replace(/[^0-9]/g, '');">-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div class="col-lg-4">-->
+<!--    <label for="bank_name" class="form-label">Bank Name</label>-->
+<!--    <div class="input-group">-->
+<!--        <span class="input-group-text"><i class="fa-solid fa-building-columns"></i></span>-->
+<!--        <input type="text" class="form-control slug-title" name="bank_name"-->
+<!--            placeholder="Enter Bank Name" id="bank_name" value="{{ request.GET.bank_name }}"-->
+<!--            oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');">-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div class="col-lg-4">-->
+<!--    <label for="acc_num" class="form-label">Bank Account Number</label>-->
+<!--    <div class="input-group">-->
+<!--        <span class="input-group-text"><i class="fa-solid fa-hashtag"></i></span>-->
+<!--        <input type="text" class="form-control slug-title" name="acc_num"-->
+<!--            placeholder="Enter Bank Account Number" id="acc_num" value="{{ request.GET.acc_num }}"-->
+<!--            oninput="this.value = this.value.replace(/[^0-9]/g, '');">-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div class="col-lg-4">-->
+<!--    <label for="ifsc_code" class="form-label">Bank IFSC Code</label>-->
+<!--    <div class="input-group">-->
+<!--        <span class="input-group-text"><i class="fa-solid fa-code"></i></span>-->
+<!--        <input type="text" class="form-control slug-title" name="ifsc_code"-->
+<!--            placeholder="Enter Bank IFSC Code" id="ifsc_code" value="{{ request.GET.ifsc_code }}">-->
+<!--    </div>-->
+<!--</div>-->
+
+                               
+                                 <div style="display:flex;justify-content:end">
+                                    <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div> 
+                                    <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="button" id="resetButton" class="btn btn-primary" onclick="resetForm();">Reset</button>
+                                    </div>
+                                </div>  
+                                
+                            
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+  document.getElementById('showFormBtn1').addEventListener('click', function() {
+    var form = document.getElementById('reportForm1');
+    // If hidden (or first time), fade in
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+      form.animate(
+        [
+          { opacity: 0, transform: 'translateY(-10px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+    } 
+    // Otherwise, fade out then hide
+    else {
+      var anim = form.animate(
+        [
+          { opacity: 1, transform: 'translateY(0)' },
+          { opacity: 0, transform: 'translateY(-10px)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in',
+          fill: 'forwards'
+        }
+      );
+      anim.onfinish = function() {
+        form.style.display = 'none';
+      };
+    }
+  });
+</script>
+
+        <!--FILTER CODE END  -->
+
+<div id="reportForm" style="display:none;">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'intern_excel' %}" method="post">
+                                    {% csrf_token %}
+                                      <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                         <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="fromDate" />
+                                    </div>
+                                </div>
+                                </div>
+                                    <!--<div class="col-lg-3">-->
+                                    <!--    <label for="inputRemark" class="form-label">From Date</label>-->
+                                    <!--    <input type="date" class="form-control slug-title" name="from_date">-->
+                                    <!--</div>-->
+                                    
+                                    <!--<div class="col-lg-3">-->
+                                    <!--    <label for="inputRemark" class="form-label">To Date</label>-->
+                                    <!--    <input type="date" class="form-control slug-title" name="to_date">-->
+                                    <!--</div>-->
+                                    
+                                    <div class="col-lg-3">
+                                        <button type="submit" class="btn btn-primary" style="margin-top:27px">Download</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+			
+			<div class="col-xl-12 active-p">
+			    						<div class="card">
+							<div class="card-body">
+								<div class="row task" >
+								    	<div class="col-xl-4 col-sm-4 col-6 ">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline ">
+												<h2 class="text-success count">{{ active_user }}</h2>
+												<span>Active</span>
+											</div>	
+											<!--<p>Tasks assigne</p>-->
+										</div>
+									</div>
+										<div class="col-xl-4 col-sm-4 col-6 ">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline ">
+												<h2 class="text-danger count">{{ inactive_user }}</h2>
+												<span>Inactive</span>
+											</div>	
+											<!--<p>Tasks assigne</p>-->
+										</div>
+									</div>
+									    <div class="col-xl-4 col-sm-4 col-6 ">
+										<div class="task-summary">
+											<div class="d-flex align-items-baseline">
+												<h2 class="text-primary count">{{ all_user }}</h2> 
+												<span>All Users</span>
+											</div>
+											<!--<p>Tasks assigne</p>-->
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+					    </div>
+
+				<div class="tab-content" id="pills-tabContent">
+					<div class="tab-pane fade show active" id="pills-list" role="tabpanel"
+						aria-labelledby="pills-list-tab">
+					    
+						<div class="row">
+						    
+						    {% for i in intern%}
+							<div class="col-xl-3 col-lg-4 col-sm-6">
+                                <div class="card" data-emp-id="{{ i.emp_id }}">
+                                    <div class="card-body position-relative"> <!-- Add position-relative -->
+                                     
+                                      <div class="form-check form-switch position-absolute top-0 end-0 m-2">
+                                        <!--<input-->
+                                        <!--  class="form-check-input"-->
+                                        <!--  type="checkbox"-->
+                                        <!--  role="switch"-->
+                                        <!--  id="switchUser{{ i.user_id }}"-->
+                                        <!--  {% if i.is_active %}checked{% endif %}-->
+                                        <!--  onchange="toggleActiveUser({{ i.user_id }})"-->
+                                        <!-->
+                                        <!--<label class="form-check-label" for="switchUser{{ i.user_id }}"></label>-->
+                                        
+                                        <label class="form-check-label switch" for="switchUser{{ i.user_id }}">
+                                             <input class="form-check-input"
+                                          type="checkbox"
+                                          role="switch"
+                                          id="switchUser{{ i.user_id }}"
+                                          {% if i.is_active %}checked{% endif %}
+                                          onchange="toggleActiveUser({{ i.user_id }})">
+                                             <div class="slider round">
+                                                <span class="on">Active</span>
+                                                <span class="off">Inactive</span>
+                                              </div>
+                                            </label>
+                                      </div>
+                                      
+                                        <div class="card-use-box">
+                                            <div class="crd-bx-img">
+                                                {% if i.photo %}
+                                                <img src="/new_crm/media/{{i.photo}}" class="rounded-circle" alt="" style="max-width: 100%;">
+                                                {% else %}
+                                                <img src="/sit_crm/assets/img/user/uimage.png" class="rounded-circle" alt="" style="max-width: 100%;">
+                                                {% endif %}
+                                                <div class="active"></div>
+                                            </div>
+                                            
+                                            <div class="card__text">
+                                                
+                                                <h4 class="mb-0">{{i.name|default:""}} {{i.middle_name|default:""}} {{i.last_name|default:""}}</h4>
+                                                <p class="mb-0">{{i.ph_no}}</p>
+                                                <p>{{i.role_name}}</p>
+                                           
+                                                
+                                                  <a class="btn btn-sm ms-2" href="{% url 'intern_details' i.emp_id %}" style="background:gray;border:1px solid gray;color:white">
+                                                <i class="fa fa-eye me-1"></i> Details
+                                            </a>
+                                            
+                                                	<a class="btn btn-primary btn-sm ms-2" href="{% url 'edit_intern' i.emp_id %}">
+                                                <i class="fa fa-pencil me-1"></i> Edit
+                                            </a>
+
+                                            <a href="javascript:void(0)" class="btn btn-danger btn-sm ms-2" onclick="confirmDelete(event, '{{ i.emp_id }}')">
+                                                <i class="fa fa-trash me-1"></i> Delete
+                                            </a>
+                                                
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+						</div>
+						
+					</div>
+				</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+
+<script>
+    function confirmDelete(event, emp_id) {
+        event.preventDefault();  // Prevent the default action (which might be triggering the link directly)
+
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this Intern?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send an AJAX request to delete the Intern
+                $.ajax({
+                    url: "{% url 'delete_intern_onboarding' 0 %}".replace('0', emp_id),  // delete_intern_onboarding
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',  // Include the CSRF token for security
+                        'emp_id': emp_id  // Send the Intern ID to delete
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success SweetAlert
+                            Swal.fire({
+                                title: 'Deleted!',
+                                text: 'The Intern "' + response.name + '" has been deleted.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(function() {
+                                // Redirect to the Intern list page
+                                window.location.href = "{% url 'intern_list' %}";
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Something went wrong. Please try again.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'An error occurred while processing your request: ' + error,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+
+
+<!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    // Handle Chatbox Open and Close
+    var handleChatbox = function () {
+        $('.chatbox1').addClass('active'); // Show chatbox
+    };
+
+    // Attach event listener for opening the chatbox
+    $('.bell-link1').on('click', function () {
+        handleChatbox();
+    });
+
+    // Attach event listener for closing the chatbox
+    $('.chatbox-close1').on('click', function () {
+        $('.chatbox1').removeClass('active'); // Hide chatbox
+    });
+});
+
+</script>
+<script>
+  document.getElementById('showFormBtn').addEventListener('click', function() {
+    var form = document.getElementById('reportForm');
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';  // Show the form
+    } else {
+      form.style.display = 'none';   // Hide the form
+    }
+  });
+</script>
+<script>
+		$(document).ready(function() {
+
+		  var counters = $(".count");
+		  var countersQuantity = counters.length;
+		  var counter = [];
+
+		  for (i = 0; i < countersQuantity; i++) {
+			counter[i] = parseInt(counters[i].innerHTML);
+		  }
+
+		  var count = function(start, value, id) {
+			var localStart = start;
+			setInterval(function() {
+			  if (localStart < value) {
+				localStart++;
+				counters[id].innerHTML = localStart;
+			  }
+			}, 500);
+		  }
+
+		  for (j = 0; j < countersQuantity; j++) {
+			count(0, counter[j], j);
+		  }
+		});	
+	</script>
+<script>
+function toggleActiveUser(user_id) {
+    $.ajax({
+        url: "{% url 'toggle_active_user' 0 %}".replace('0', user_id),
+        type: 'POST',
+        data: {
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'User status updated successfully.',
+                    icon: 'success',
+                    timer: 1000,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: response.error || 'Something went wrong.',
+                    icon: 'error'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Request failed: ' + error,
+                icon: 'error'
+            });
+        }
+    });
+}
+</script>
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+<!--filter script end -->
+
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+
+<script>
+
+function resetForm() {
+    window.location.href = "{% url 'intern_list' %}";
+}
+
+</script>
+
+<!--search select end -->
+{% endblock %}

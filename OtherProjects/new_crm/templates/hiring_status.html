@@ -1,0 +1,937 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+
+
+<style>
+
+/* Chatbox (modal) */
+<!--.chatbox1 {-->
+<!--    width: 21.25rem;-->
+<!--    height: 100vh;-->
+<!--    position: fixed;-->
+    right: -31.25rem;  /* Initially offscreen */
+<!--    top: 0;-->
+<!--    z-index: 999;-->
+<!--    background: #fff;-->
+<!--    box-shadow: 0rem 0rem 1.875rem 0rem rgba(82, 63, 105, 0.15);-->
+<!--    transition: all 0.8s ease-in-out;-->
+    overflow: hidden;  /* Prevent scrollbars */
+<!--}-->
+
+/* Active class: Slide chatbox to the right */
+<!--.chatbox1.active {-->
+<!--    right: 0;-->
+<!--    display: block;-->
+<!--}-->
+
+/* Header and close button inside the chatbox */
+<!--.chatbox1 .chatbox-header {-->
+<!--    display: flex;-->
+<!--    justify-content: space-between;-->
+<!--    align-items: center;-->
+<!--    padding: 10px 17px;-->
+<!--    background: #f8f9fa;-->
+<!--    border-bottom: 1px solid #ddd;-->
+<!--}-->
+
+<!--.chatbox1 .chatbox-close1 {-->
+<!--    cursor: pointer;-->
+<!--    background: #e74c3c;-->
+<!--    color: #fff;-->
+<!--    border: none;-->
+<!--    padding: 5px 10px;-->
+<!--    border-radius: 50%;-->
+<!--    font-size: 18px;-->
+<!--    z-index: 1000;-->
+<!--    width:12%;-->
+<!--    margin: 2px 2px 2px 153px;-->
+<!--}-->
+
+<!--.custom-tab-1 {-->
+<!--    padding: 10px 17px;-->
+    height: calc(100vh - 120px);  /* Subtract header and footer height */
+    overflow-y: auto;  /* Enable scroll for form */
+<!--}-->
+
+/* Form field styling */
+/*<!--form {-->*/
+/*<!--    margin: 0;-->*/
+/*<!--}-->*/
+</style> 
+<style>
+.custom-tab-1{
+    overflow:visible;
+}
+.chatbox1 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    max-width: 95%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    display: none; /* Hidden by default */
+    padding: 20px;
+}
+
+.chatbox1.active {
+    display: block;
+}
+
+.chatbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.chatbox-close1 {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chatbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    display: none;
+}
+
+.chatbox-overlay.active {
+    display: block;
+}
+</style>
+<!--view style start-->
+ <style>
+/* Container card style - subtle glow */
+.card.h-auto {
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+  border: none;
+  background-color: #fff;
+}
+
+/* Tabs - Rounded with smooth color transition */
+.custom-tab-1 .nav-tabs {
+  border-bottom: none;
+  display: flex;
+  gap: 14px;
+  padding-left: 12px;
+}
+
+.custom-tab-1 .nav-tabs .nav-link {
+  border: none;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  color: #444;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  box-shadow: 0 4px 8px rgba(199, 210, 254, 0.4);
+  transition: all 0s ease;
+}
+
+.custom-tab-1 .nav-tabs .nav-link:hover {
+  background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 100%);
+  color: white;
+box-shadow: 0 6px 14px rgba(34, 43, 64, 0.7);
+
+
+}
+
+.custom-tab-1 .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #222b40 0%, #3b4c73 100%);
+
+  color: white;
+  box-shadow: 0 8px 18px rgba(99, 102, 241, 0.9);
+}
+
+/* Table - card style rows with gradient and shadow */
+.table.table-bordered {
+  border-collapse: separate;
+  border-spacing: 0 16px; /* space between rows */
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+}
+
+.table.table-bordered tr {
+  background: linear-gradient(135deg, #fef9ff 0%, #ede9fe 100%);
+  box-shadow: 0 6px 18px rgba(156, 163, 175, 0.12);
+  border-radius: 14px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: table-row; /* keep table behavior */
+}
+
+.table.table-bordered tr:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+}
+
+.table.table-bordered td {
+  padding: 14px 26px;
+  border: none !important;
+  vertical-align: middle;
+  color: #3730a3;
+  font-weight: 600;
+  background: transparent;
+  border-radius: 14px;
+}
+
+.table.table-bordered tr td:first-child {
+  width: 35%;
+  color: #222b40c7;
+  font-weight: 700;
+}
+
+.table.table-bordered tr td:last-child {
+  color: #1e1b4b;
+  font-weight: 500;
+}
+
+/* Modal - softer round corners and shadows */
+.modal-content {
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(79, 70, 229, 0.25);
+  border: none;
+}
+
+.modal-header {
+  background: #eef2ff;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  font-weight: 700;
+  color: #4338ca;
+}
+
+.modal-footer {
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+}
+
+.modal-body textarea.form-control {
+  border-radius: 14px;
+  border: 1.5px solid #a5b4fc;
+  font-size: 15px;
+  resize: none;
+  transition: border-color 0.3s ease;
+}
+
+.modal-body textarea.form-control:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 10px #6366f1;
+}
+</style>
+<!--view style end-->
+<!--search select style start -->
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<div class="content-body">
+	<div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="width:40%">
+                    <h1>Update Applicant Status</h1>
+                </div>
+            <div class="d-flex" style="display: flex; align-items: center; width:fit-content;">
+                     	 <a href="{% url 'hiring_list' %}" class="btn btn-primary mt-3"><i class="fa-solid fa-backward"></i> Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
+					<!--form before-->
+<!--					<div class="col-xl-12 active-p">-->
+<!--					<div class="tab-content" id="pills-tabContent">-->
+<!--						<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">-->
+<!--						  <div class="card h-auto" style="margin-top:20px">-->
+<!--                            <div class="card-body">-->
+<!--                                <div class="profile-tab">-->
+<!--                                    <div class="custom-tab-1">-->
+<!--                                        <ul class="nav nav-tabs">-->
+<!--                                            <li class="nav-item"><a href="#my-posts" data-bs-toggle="tab" class="nav-link active show">Applicant details</a>-->
+<!--                                            </li>-->
+                                           
+<!--                                        </ul>-->
+<!--                                        <div class="tab-content">-->
+                      
+<!--                        <div id="my-posts" class="tab-pane fade active show" style="margin-top:25px">-->
+<!--  <table class="table table-bordered">-->
+<!--    <tr>-->
+<!--      <td><strong>Full Name</strong></td>-->
+<!--       <td>{{ hiring.full_name }}</td>-->
+<!--    </tr>-->
+    
+<!--    <tr>-->
+<!--      <td><strong>Email :</strong></td>-->
+<!--      <td>{{ hiring.email }}</td>-->
+<!--    </tr>-->
+<!--      <tr>-->
+<!--      <td><strong>Mobile :</strong></td>-->
+<!--      <td>{{ hiring.mobile }}</td>-->
+<!--    </tr>-->
+<!--      <tr>-->
+<!--      <td><strong>Qualification :</strong></td>-->
+<!--     <td>{{ hiring.qualification }}</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--      <td><strong>Applying For :</strong></td>-->
+<!--      <td>{{ hiring.applying_for }}</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--      <td><strong>Preferred Tech :</strong></td>-->
+<!--      <td>{{ hiring.preferred_technology }}</td>-->
+<!--    </tr>-->
+<!--     {% if hiring.applying_for != "employee" %}-->
+<!--    <tr>-->
+<!--      <td><strong>College :</strong></td>-->
+<!--      <td>{{ hiring.clg_name }}</td>-->
+<!--    </tr>-->
+   
+<!--    <tr>-->
+<!--      <td><strong>Internship Duration :</strong></td>-->
+<!--       <td>{{ hiring.internship_duration }}</td>-->
+<!--    </tr>-->
+<!--     {% elif hiring.applying_for == "employee" %}-->
+     
+<!--    <tr>-->
+<!--      <td><strong>Last Company :</strong></td>-->
+<!--     <td>{{ hiring.last_company }}</td>-->
+<!--    </tr>-->
+    
+<!--    <tr>-->
+<!--      <td><strong>Last CTC :</strong></td>-->
+<!--       <td>{{ hiring.last_CTC }}</td>-->
+<!--    </tr>-->
+<!--    <tr>-->
+<!--      <td><strong>Expected Salary :</strong></td>-->
+<!--       <td>{{ hiring.expected_salary }}</td>-->
+<!--    </tr>-->
+<!--      {% endif %}-->
+<!--    <tr>-->
+     
+<!--      <td><strong>Apply date :</strong></td>-->
+<!--      <td>{{ hiring.apply_date }}</td>-->
+<!--    </tr>-->
+    
+    
+<!--    <tr>-->
+     
+<!--      <td><strong>Applied form :</strong></td>-->
+<!--      <td>{{ hiring.applied_from_company }}</td>-->
+<!--    </tr>-->
+    
+<!--    <tr>-->
+     
+<!--      <td><strong>Status :</strong></td>-->
+<!--      <td>{{ hiring.status }}</td>-->
+<!--    </tr>-->
+<!--     {% if hiring.status == "pending" %}-->
+                                
+<!--                                {% elif hiring.status == "interview scheduled" or hiring.status == "interview done" %}-->
+<!--     <tr>-->
+     
+<!--      <td><strong>Interview Date :</strong></td>-->
+<!--      <td>{{ hiring.interview_date }}</td>-->
+<!--    </tr>-->
+<!--     <tr>-->
+     
+<!--      <td><strong>Interview Time :</strong></td>-->
+<!--  <td>{{ hiring.interview_time }}</td>-->
+<!--    </tr>-->
+<!--     {% elif hiring.status == "selected" %}-->
+     
+<!--      <tr>-->
+     
+<!--      <td><strong>Joining Date :</strong></td>-->
+<!--  <td>{{ hiring.joining_date }}</td>-->
+<!--    </tr>-->
+<!--     {% elif hiring.status == "on-hold" or hiring.status == "rejected" %}-->
+<!--     <tr>-->
+     
+<!--      <td><strong>Remark :</strong></td>-->
+<!--     <td>{{ hiring.reason }}</td>-->
+<!--    </tr>-->
+<!--     {% endif %}-->
+<!--     <tr>-->
+     
+<!--      <td><strong>Uploaded CV :</strong></td>-->
+<!--       <td>-->
+<!--                                        {% if hiring.uploaded_cv %}-->
+<!--                                            <a href="/new_crm{{ hiring.uploaded_cv.url }}" target="_blank">View CV</a>-->
+<!--                                        {% else %}-->
+<!--                                            No CV uploaded-->
+<!--                                        {% endif %}-->
+<!--                                    </td>-->
+<!--    </tr>-->
+    
+<!--  </table>-->
+<!--</div>-->
+<!--                     	 <a href="{% url 'hiring_list' %}" class="btn btn-primary mt-3">Back to List</a>-->
+                                            
+                                  
+
+                                            
+                                                 
+                     
+<!--                                        </div>-->
+<!--                                    </div>-->
+							
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+						
+<!--						</div>-->
+<!--					</div>-->
+<!--					</div>-->
+
+
+					<div class="col-xl-12 active-p">
+					<div class="tab-content" id="pills-tabContent">
+						<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+						  <div class="card h-auto" style="margin-top:20px">
+                            <div class="card-body">
+                                <div class="profile-tab">
+                                    <div class="custom-tab-1">
+                                        <ul class="nav nav-tabs">
+                                            <li class="nav-item"><a href="#my-posts" data-bs-toggle="tab" class="nav-link active show">Update Applicant Status</a>
+                                            </li>
+                                           
+                                        </ul>
+                                        <div class="tab-content">
+                      
+                        <div id="my-posts" class="tab-pane fade active show col-md-12" style="margin-top:25px">
+
+    <div class="custom-tab-1 col-md-12">
+        <form method="POST" action="{% url 'update_applicant_status' hiring.hiring_id %}">
+            {% csrf_token %}
+            <div class="form-group col-md-6">
+                <label>Status</label>
+                <select name="status" id="status" class="form-select" aria-label="Default select example" required>
+                    
+                    <option value="">-- Select Status --</option>
+                    {% for s in statuses %}
+                    <option value="{{s.status}}" {% if hiring.status == s.status %}selected{% endif %}>
+                        {{s.status.title}}
+                    </option>
+                    {% endfor %}
+                    
+                    <!--<option value="interview" {% if hiring.status == "interview" %}selected{%endif%}>Interview</option>-->
+                    <!--<option value="selected" {% if hiring.status == "selected" %}selected{%endif%}>Selected</option>-->
+                    <!--<option value="on-hold" {% if hiring.status == "on-hold" %}selected{%endif%}>On-hold</option>-->
+                    <!--<option value="rejected" {% if hiring.status == "rejected" %}selected{%endif%}>Rejected</option>-->
+                </select>
+            </div>
+
+            <div class="form-group col-md-6" id="joiningDateGroup" style="display:none;">
+                <label>Joining Date</label>
+                <input type="date" name="joining_date" class="form-control" value="{{ hiring.joining_date }}">
+            </div>
+
+            <div class="form-group col-md-6" id="interviewDateGroup" style="display:none;">
+                <label>Interview Date</label>
+                <input type="date" name="interview_date" class="form-control" value="{{ hiring.interview_date }}">
+            </div>
+           
+            <div class="col-md-6"  id="headGroup" style="display:none;">
+                <label class="form-label">Select a Head</label>
+                <div style="display:flex;">
+                  <div class="input-group clockpicker">
+                                <span class="input-group-text"><i class="fas fa-user-secret"></i></span>
+                   
+                <select name="head"   id="automatic-selection" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                        <option value="">Select a Head..</option>
+                    {% for u in users %}
+                        <option value="{{ u.userId }}" {% if u.userId == user.head_id %}selected{% endif %}>{{ u.name }}</option>
+                    {% endfor %}
+                </select>
+             </div>
+                </div>
+            </div>
+
+            <div class="form-group col-md-6" id="interviewTimeGroup" style="display:none;">
+                <label>Interview Time</label>
+                <input type="time" name="interview_time" class="form-control" value="{{ hiring.interview_time }}">
+            </div>
+
+            <div class="form-group col-md-6" id="reasonField" style="display:none;">
+                <label>Remark</label>
+                <textarea name="reason" class="form-control" rows="3">{{ hiring.reason|default:'' }}</textarea>
+            </div>
+
+            <div class="form-group col-md-6" >
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+            </div>
+        </form>
+    </div>
+
+
+
+</div>
+                                        </div>
+                                    </div>
+							
+                                </div>
+                            </div>
+                        </div>
+						
+						</div>
+					</div>
+					</div>
+				
+				</div>
+			</div>
+			
+<!-- Overlay (dark background) -->
+<div class="chatbox-overlay" id="chatboxOverlay"></div>
+
+<!-- Centered Popup Form -->
+<!--<div class="chatbox1" id="chatbox">-->
+<!--    <div class="chatbox-header">-->
+<!--        <h5>Update Applicant Status</h5>-->
+<!--        <button class="chatbox-close1" id="closeChatbox">&times;</button>-->
+<!--    </div>-->
+<!--    <div class="custom-tab-1">-->
+<!--        <form method="POST" action="{% url 'update_applicant_status' hiring.hiring_id %}">-->
+<!--            {% csrf_token %}-->
+<!--            <div class="form-group">-->
+<!--                <label>Status</label>-->
+<!--                <select name="status" id="status" class="form-select" aria-label="Default select example" required>-->
+                    
+<!--                    <option value="">-- Select Status --</option>-->
+<!--                    {% for s in statuses %}-->
+<!--                    <option value="{{s.status}}" {% if hiring.status == s.status %}selected{% endif %}>-->
+<!--                        {{s.status.title}}-->
+<!--                    </option>-->
+<!--                    {% endfor %}-->
+                    
+                    <!--<option value="interview" {% if hiring.status == "interview" %}selected{%endif%}>Interview</option>-->
+                    <!--<option value="selected" {% if hiring.status == "selected" %}selected{%endif%}>Selected</option>-->
+                    <!--<option value="on-hold" {% if hiring.status == "on-hold" %}selected{%endif%}>On-hold</option>-->
+                    <!--<option value="rejected" {% if hiring.status == "rejected" %}selected{%endif%}>Rejected</option>-->
+<!--                </select>-->
+<!--            </div>-->
+
+<!--            <div class="form-group" id="joiningDateGroup" style="display:none;">-->
+<!--                <label>Joining Date</label>-->
+<!--                <input type="date" name="joining_date" class="form-control" value="{{ hiring.joining_date }}">-->
+<!--            </div>-->
+
+<!--            <div class="form-group" id="interviewDateGroup" style="display:none;">-->
+<!--                <label>Interview Date</label>-->
+<!--                <input type="date" name="interview_date" class="form-control" value="{{ hiring.interview_date }}">-->
+<!--            </div>-->
+
+<!--            <div class="form-group" id="interviewTimeGroup" style="display:none;">-->
+<!--                <label>Interview Time</label>-->
+<!--                <input type="time" name="interview_time" class="form-control" value="{{ hiring.interview_time }}">-->
+<!--            </div>-->
+
+<!--            <div class="form-group" id="reasonField" style="display:none;">-->
+<!--                <label>Remark</label>-->
+<!--                <textarea name="reason" class="form-control" rows="3">{{ hiring.reason|default:'' }}</textarea>-->
+<!--            </div>-->
+
+<!--            <button type="submit" class="btn btn-primary mt-3">Submit</button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+<script>
+$(document).ready(function () {
+    create_custom_dropdowns();
+
+    function updateFormFields() {
+        const selected = $('#status').val();
+
+        $('#reasonField').hide();
+        $('#interviewDateGroup').hide();
+        $('#interviewTimeGroup').hide();
+        $('#joiningDateGroup').hide();
+        $('#headGroup').hide();
+
+        if (selected === 'interview scheduled') {
+            $('#interviewDateGroup').show();
+            $('#interviewTimeGroup').show();
+        } else if (selected === 'rejected' || selected === 'on-hold'|| selected === 'interview done') {
+            $('#reasonField').show();
+        } else if (selected === 'selected') {
+            $('#joiningDateGroup').show();
+            $('#headGroup').show();
+        }
+    }
+
+    // Initial run in case there's a preselected value
+    updateFormFields();
+
+    // Bind change event after custom dropdowns are ready
+    $('#status').on('change', updateFormFields);
+
+    // Also re-run when opening the popup
+    $('#popupform').on('click', function () {
+        $('#chatbox').addClass('active');
+        $('#chatboxOverlay').addClass('active');
+        setTimeout(updateFormFields, 50); // allow DOM to render first
+    });
+
+    // Close handlers
+    $('#closeChatbox, #chatboxOverlay').on('click', function () {
+        $('#chatbox').removeClass('active');
+        $('#chatboxOverlay').removeClass('active');
+    });
+});
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tdElements = document.querySelectorAll('td');
+
+        tdElements.forEach(td => {
+            const text = td.textContent.trim();
+            const regex = /^\d{4}-\d{2}-\d{2}$/;
+
+            if (regex.test(text)) {
+                const parts = text.split('-');
+                const year = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10) - 1; // months are 0-based
+                const day = parseInt(parts[2], 10);
+
+                const dateObj = new Date(year, month, day);
+
+                if (!isNaN(dateObj.getTime())) {
+                    const options = { year: 'numeric', month: 'long', day: '2-digit' };
+                    td.textContent = dateObj.toLocaleDateString('en-US', options);
+                }
+            }
+        });
+    });
+</script>
+			
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+{% endblock %}

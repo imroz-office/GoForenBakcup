@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+
+
+<style>
+	.form-select {
+		display: block;
+		padding: 10px 15px;
+		width: 100%;
+
+		-moz-padding-start: calc(0.75rem - 3px);
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #888888;
+		background-color: #F3F0EC;
+		background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e);
+		background-repeat: no-repeat;
+		background-position: right 0.75rem center;
+		background-size: 16px 12px;
+		border: 1px solid #E6E6E6;
+		border-radius: 6px;
+		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+		appearance: none;
+	}
+</style>
+
+
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>Convert Lead</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<h4>convert Lead</h4>
+							<br><br>
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+									<form class="form row g-3" action="{% url 'add_lead' %}" method="post">
+									    {% csrf_token %}
+									    {% for lead in lead%}
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Client Name</label>
+											<input type="text" required class="form-control slug-title" name="c_name"
+												placeholder="Client Name" id="inputEmail4" value="{{ lead.name|default:'' }}">
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Client Mobile Number</label>
+											<input type="tel" required maxlength="10" minlength="10"
+												class="form-control slug-title" name="ph_no"
+												placeholder="Client Mobile Number" id="inputEmail4" value="{{ lead.mobile|default:'' }}">
+										</div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Address</label>
+											<input type="text" required class="form-control slug-title" name="add2"
+												placeholder="Client Address" id="inputEmail4" value="{{ lead.address|default:'' }}">
+										</div>
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Area</label>
+											<input type="text" required class="form-control slug-title" name="add3"
+												placeholder="Client Address" id="inputEmail4" value="{{ lead.area|default:'' }}">
+										</div>
+
+										<div class="col-lg-6">
+											<label class="form-label">Select City</label>
+											<select name="city" aria-label="Select a City" required data-placeholder="Select a City..." id="citySelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+											
+												{% if lead.city %}
+                                                    <option value="{{ lead.city }}">{{ lead.city }}</option>
+                                                {% else %} 
+                                                    <option value="">Select a City...</option>
+                                                {% endif %}
+												{%for i in cites%}
+													<option value="{{i.city}}">{{i.city}}</option>
+												{% endfor %}
+											</select>
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Pincode</label>
+											<input type="text" required class="form-control slug-title" name="pincode"
+												placeholder="Pincode" id="inputEmail4" >
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">State</label>
+											<input type="text" required class="form-control slug-title" name="state"
+												placeholder="State" id="stateInput"  value="{{ lead.state|default:'' }}">
+										</div>
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Country</label>
+											<input type="text" required class="form-control slug-title" name="country"
+												placeholder="Country" id="countryInput" >
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Source</label>
+											<input type="text" required class="form-control slug-title" name="source"
+												placeholder="Source" id="inputEmail" >
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Stage By.....</label>
+											<input type="text" required class="form-control slug-title" name="stage_by"
+												placeholder="Enter Stage By" id="stateInput">
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Remark</label>
+											<input type="text" required class="form-control slug-title" name="remark"
+												placeholder="Remark" id="stateInput" value="{{ lead.remark|default:'' }}">
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Next Followup Date</label>
+											<input type="date" required class="form-control slug-title"
+												name="n_f_date" placeholder="Next Followup Date" id="countryInput">
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Client Business Name</label>
+											<input type="text" required class="form-control slug-title" name="email"
+												placeholder="Client Business Name" id="inputEmail" value="{{ lead.c_name|default:'' }}">
+										</div>
+
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Payment</label>
+											<input type="text" required class="form-control slug-title" name="payment"
+												placeholder="Payment" id="stateInput">
+										</div>
+
+										<div class="col-lg-12">
+											<button type="submit" class="btn btn-primary">Submit</button>
+										</div>
+										{% endfor %}
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+</div>
+
+
+{% endblock %}

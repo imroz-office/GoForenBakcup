@@ -1,0 +1,846 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+<!--search select style start -->
+
+<!--date range css start -->
+<style>
+    .daterangepicker .drp-buttons {
+    display: flex !important;
+    justify-content: end;
+    align-items: center;
+    padding: 8px;
+}
+
+.daterangepicker .drp-buttons .btn {
+    width: auto !important;
+    min-width: 80px;
+    margin: 0 5px;
+}
+.daterangepicker select {
+  display: inline-block !important;
+  width: auto !important;
+}
+</style>
+<!--date range css end -->
+
+
+<style>
+
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+<!--search select style end -->
+<style>
+/* Chatbox (modal) */
+.chatbox1 {
+    width: 21.25rem;
+    height: 100vh;
+    position: fixed;
+    right: -31.25rem;  /* Initially offscreen */
+    top: 0;
+    z-index: 999;
+    background: #fff;
+    box-shadow: 0rem 0rem 1.875rem 0rem rgba(82, 63, 105, 0.15);
+    transition: all 0.8s ease-in-out;
+    overflow: hidden;  /* Prevent scrollbars */
+}
+
+/* Active class: Slide chatbox to the right */
+.chatbox1.active {
+    right: 0;
+    display: block;
+}
+
+/* Header and close button inside the chatbox */
+.chatbox1 .chatbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 17px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbox1 .chatbox-close1 {
+    cursor: pointer;
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 18px;
+    z-index: 1000;
+    width:12%;
+    margin: 2px 2px 2px 153px;
+}
+
+.custom-tab-1 {
+    padding: 10px 17px;
+    height: calc(100vh - 120px);  /* Subtract header and footer height */
+    overflow-y: auto;  /* Enable scroll for form */
+}
+
+/* Form field styling */
+form {
+    margin: 0;
+}
+</style> 
+
+
+<div class="content-body">
+	<div class="container-fluid">
+        <div class="row">
+            <div class="main-div">
+                <div class="breadcrumb-wrapper breadcrumb-contacts" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="width:30%">
+                    <h1>Manage Applicants</h1>
+                </div>
+            <div class="d-flex" style="display: flex; align-items: center; width:fit-content;">
+
+                 <a href="{% url 'add_hiring' %}" type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu" style="margin-right: 15px;background:green;border:1px solid green;">
+                    <i class="bi bi-plus-circle" style="font-size: 1rem;margin-right:7px"></i> Add 
+                </a>
+              <li type="button" class="btn btn-primary" id="showFormBtn1" style="margin-right: 15px;"><i class="bi bi-funnel-fill"></i>Filter</li>
+            <!--<a href="{% url 'hiring_list' %}" type="button" class="btn btn-danger right-sidebar-in content-sidebar-menu">Clear</a>-->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--filter-->
+        <div id="reportForm1" style="display:none;position:relative;z-index:1">
+    <div class="row">
+    	<div class="col-xl-12 col-lg-12">
+    		<div class="ec-cat-list card card-default mb-24px">
+    			<div class="card-body">
+    				<div class="row ec-vendor-uploads">
+    					<div class="col-lg-12">
+    						<div class="ec-vendor-upload-detail">
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'hiring_list' %}" method="get">
+
+                                 {% csrf_token %}
+                                <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                        <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="fromDate" />
+                                    </div>
+                                    </div>
+                                </div>
+                                
+
+<div class="col-lg-4">
+    <label for="name" class="form-label">Applicant Name</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+        <input type="text" class="form-control slug-title" name="full_name"
+            oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');"
+            placeholder="Enter Applicant's Name" id="full_name" value="{{ request.GET.full_name }}">
+    </div>
+</div>
+
+<div class="col-lg-4">
+    <label for="email" class="form-label">Email ID</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+        <input type="email" class="form-control slug-title" name="email"
+            placeholder="Enter Email ID" id="email" value="{{ request.GET.email }}">
+    </div>
+</div>
+
+<div class="col-lg-4">
+    <label for="mobile" class="form-label">Mobile Number</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-phone"></i></span>
+        <input type="text" minlength="10" maxlength="10" pattern="[0-9]*"
+            class="form-control slug-title" name="mobile"
+            placeholder="Enter Mobile Number" id="mobile" value="{{ request.GET.mobile }}"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+    </div>
+</div>
+
+
+<!-- add select input for these -->
+<!-- Applied From Company -->
+<div class="col-lg-4">
+    <label for="applied_from_company" class="form-label">Applied From Company</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-building"></i></span>
+        <select class="form-select" name="applied_from_company" id="applied_from_company">
+            <option value="">Select Company</option>
+            <!-- Add your options here -->
+             <!--<option value="Success Innovative Technologies Pvt Ltd" {% if request.GET.applied_from_company == 'Success Innovative Technologies Pvt Ltd' %}selected{% endif %}>Success Innovative Technologies Pvt Ltd</option> -->
+            {% for c in company_list %}
+             <option value="{{c.com_name}}" {% if request.GET.applied_from_company == 'com_name' %}selected{% endif %}>{{c.com_name}}</option> 
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Applying For -->
+<div class="col-lg-4">
+    <label for="applying_for" class="form-label">Applying For</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-briefcase"></i></span>
+        <select class="form-select" name="applying_for" id="applying_for">
+            <option value="">Select Position</option>
+            <!-- Add your options here -->
+             <option value="intern" {% if request.GET.applying_for == 'intern' %}selected{% endif %}>Intern</option> 
+             <option value="employee" {% if request.GET.applying_for == 'employee' %}selected{% endif %}>Employee</option> 
+        </select>
+    </div>
+</div>
+
+<!-- Status -->
+<div class="col-lg-4">
+    <label for="status" class="form-label">Status</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-info-circle"></i></span>
+        <select class="form-select" name="status" id="status">
+            <option value="">Select Status</option>
+            <!-- Add your options here -->
+            {% for s in applicant_status %}
+             <option value="{{s.status}}" {% if request.GET.status == '{{s.status}}' %}selected{% endif %}>{{s.status.title}}</option> 
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Preferred Technology -->
+<div class="col-lg-4">
+    <label for="preferred_technology" class="form-label">Preferred Technology</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-laptop-code"></i></span>
+        <select class="form-select" name="preferred_technology" id="preferred_technology">
+            <option value="">Select Technology</option>
+            <!-- Add your options here -->
+             <option value="Frontend" {% if request.GET.preferred_technology == 'Frontend' %}selected{% endif %}>Frontend</option> 
+             <option value="Backend" {% if request.GET.preferred_technology == 'Backend' %}selected{% endif %}>Backend</option> 
+        </select>
+    </div>
+</div>
+
+<!-- Apply Date -->
+<div class="col-lg-4">
+    <label for="apply_date" class="form-label">Apply Date</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-calendar-day"></i></span>
+        <input type="date" class="form-control" name="apply_date" id="apply_date"
+               placeholder="Apply Date" value="{{ request.GET.apply_date }}">
+    </div>
+</div>
+
+<!-- Apply Time -->
+<div class="col-lg-4">
+    <label for="apply_time" class="form-label">Apply Time</label>
+    <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-clock"></i></span>
+        <input type="time" class="form-control" name="apply_time" id="apply_time"
+               placeholder="Apply Time" value="{{ request.GET.apply_time }}">
+    </div>
+</div>
+
+                               <div style="display:flex;justify-content:end">
+                                    <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="submit" class="btn btn-primary" style="width:100%">Submit</button>
+                                    </div> 
+                                    <div class="col-lg-2" style="margin: 0px 0 0 15px;">
+                                        <button type="button" id="resetButton" class="btn btn-primary" onclick="resetForm();" style="width:100%">Reset</button>
+                                    </div>
+                                </div>  
+                                            
+                            
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end filter-->
+
+
+					<!--form before-->
+					<div class="col-xl-12 active-p">
+					<div class="tab-content" id="pills-tabContent">
+						<div class="tab-pane fade show active" id="pills-colm" role="tabpanel" aria-labelledby="pills-colm-tab">
+							<div class="card">
+								<div class="card-body px-0">
+								    <div class="table-responsive active-projects user-tbl  dt-filter"> {% csrf_token %}
+                                        <table id="user-tbl" class="display table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sr. NO.</th>
+                                                    <th>Full Name</th>
+                                                    <!--<th>Email</th>-->
+                                                    <th>Mobile</th>
+                                                    <!--<th>Qualification</th>-->
+                                                    <th>Applying For</th>
+                                                    
+                                                    <th>Applied Date</th>
+                                                    <th>Interview Date</th>
+                                                    <th>Status</th>
+                                                    
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for i in hiring %}
+                                                <tr>
+                                                    <td>{{forloop.counter}}</td>
+                                                    <!--<td>{{ i.full_name|striptags|slice:":20" }}...</td>-->
+                                                    <td>
+                                                        {% with i.full_name|striptags as clean_name %}
+    {{ clean_name|slice:":20" }}{% if clean_name|length > 20 %}...{% endif %}
+{% endwith %}
+                                                        </td>
+                                                    <!--<td>{{ i.email }}</td>-->
+                                                    <td>{{ i.mobile }}</td>
+                                                    <!--<td>{{ i.qualification }}</td>-->
+                                                    <td>{{ i.applying_for }}</td>
+                                                    
+                                                    <td>{{ i.apply_date }}</td>
+                                                    <td>{{ i.interview_date }}</td>
+                                                	<td>
+                                                        {% if i.status == "pending" %}
+                                                            <span class="badge light" style="background-color:gray;">Pending</span>
+                                                        {% elif i.status == "interview scheduled" %}
+                                                            <span class="badge primary" style="background-color:teal;">Interview Scheduled</span>
+                                                        {% elif i.status == "interview done" %}
+                                                            <span class="badge primary" style="background-color:blue;">Interview Done</span>
+                                                        {% elif i.status == "selected" %}
+                                                            <span class="badge succes" style="background-color:green;">Selected</span>
+                                                        {% elif i.status == "on-hold" %}
+                                                            <span class="badge"  style="background-color:orange;">On-Hold</span>
+                                                        {% elif i.status == "rejected" %}
+                                                            <span class="badge dange" style="background-color:red;">Rejected</span>
+                                                        {% else %}
+                                                            <span class="badge ">{{ i.status }}</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    
+                                                    <!-- <td>-->
+        											<!--	<div class="dropdown">-->
+        											<!--		<div class="btn-link" data-bs-toggle="dropdown" aria-expanded="false">-->
+        											<!--			<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+        											<!--				<path d="M11 12C11 12.5523 11.4477 13 12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+        											<!--				<path d="M18 12C18 12.5523 18.4477 13 19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+        											<!--				<path d="M4 12C4 12.5523 4.44772 13 5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12Z" stroke="#737B8B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>-->
+        											<!--			</svg>-->
+        											<!--		</div>-->
+        											<!--		<div class="dropdown-menu dropdown-menu-right" style="">-->
+        											<!--			<a class="dropdown-item" href="{% url 'view_hiring' i.hiring_id %}">View</a> -->
+        											<!--		</div>-->
+        											<!--	</div>-->
+        											<!--</td>-->
+        											<td>
+                                                        <div class="d-flex  gap-1 justify-content-end">
+                                                            <a href="{% url 'hiring_status' i.hiring_id %}" class="btn  bg-dark btn-xs  btn-infohadow" title="Follow Up"  > 
+                                                                <i class="fas fa-user-clock " style="color:#fff"></i>
+                                                            </a>
+                                                            <a href="{% url 'view_hiring' i.hiring_id %}" class="btn btn-info btn-xs shadow" title="View"><i class="fa fa-eye"></i></a>
+                                                            <!--<a href="#" class="btn btn-primary btn-xs shadow" title="Edit"><i class="fa fa-pencil"></i></a>-->
+                                                            <a href="javascript:void(0);" onclick="confirmDelete(event, '{{ i.hiring_id }}')" class="btn btn-danger btn-xs shadow" title="Delete"><i class="fa fa-trash"></i></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+								</div>
+							   </div>
+							</div>
+						
+						</div>
+					</div>
+					</div>
+				
+				</div>
+			</div>
+			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+
+			<script>
+    function confirmDelete(event, leadId) {
+        event.preventDefault();  // Prevent the default link behavior
+
+        // Show the confirmation SweetAlert
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This lead will be permanently deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Proceed with the deletion by sending an AJAX request
+                deleteLead(leadId);
+            }
+        });
+    }
+
+    function deleteLead(leadId) {
+        // Make the AJAX request to the Django view
+        fetch("{% url 'delete_hiring' '0' %}".replace('0', leadId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token for security
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success SweetAlert after deletion
+                Swal.fire({
+                    title: 'Deleted!',
+                    text: 'The Applicant has been deleted successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Optionally, reload the page or remove the row from the table
+                    location.reload();
+                });
+            }
+        })
+        .catch(error => {
+            // Handle error if the deletion failed
+            Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong while deleting the Applicant.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+</script>
+
+			<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tdElements = document.querySelectorAll('td');
+
+        tdElements.forEach(td => {
+            const text = td.textContent.trim();
+            const regex = /^\d{4}-\d{2}-\d{2}$/;
+
+            if (regex.test(text)) {
+                const parts = text.split('-');
+                const year = parts[0];
+                const month = parts[1];
+                const day = parts[2];
+
+                td.textContent = `${day}-${month}-${year}`;
+            }
+        });
+    });
+</script>
+<!--search select start -->
+<script>
+    function create_custom_dropdowns() {
+        $('select').each(function (i, select) {
+            if (!$(this).next().hasClass('dropdown-select')) {
+                // Build the custom dropdown structure
+                $(this).after(
+                    '<div class="dropdown-select wide ' + ($(this).attr('class') || '') + '" tabindex="0">' +
+                        '<span class="current"></span>' +
+                        '<div class="list">' +
+                            '<div class="dd-search">' +
+                                '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+                            '</div>' +
+                            '<ul></ul>' +
+                            '<li class="no-results" style="display:none;">Not found</li>' +
+                        '</div>' +
+                    '</div>'
+                );
+
+                var dropdown = $(this).next();
+                var options = $(select).find('option');
+                var selected = $(this).find('option:selected');
+
+                dropdown.find('.current').html(selected.data('display-text') || selected.text());
+
+                options.each(function (j, o) {
+                    var display = $(o).data('display-text') || '';
+                    dropdown.find('ul').append(
+                        '<li class="option ' + ($(o).is(':selected') ? 'selected' : '') + '" data-value="' + $(o).val() + '" data-display-text="' + display + '">' + $(o).text() + '</li>'
+                    );
+                });
+            }
+        });
+    }
+
+    function filter(input) {
+        var $dd = $(input).closest('.dropdown-select');
+        var val = input.value.toLowerCase();
+        var $opts = $dd.find('ul > li.option');
+
+        $opts.each(function () {
+            var txt = $(this).text().toLowerCase();
+            $(this).toggle(txt.indexOf(val) > -1);
+        });
+
+        if ($opts.filter(':visible').length === 0) {
+            $dd.find('.no-results').show();
+        } else {
+            $dd.find('.no-results').hide();
+        }
+    }
+
+    // Event: Toggle dropdown open/close
+    $(document).on('click', '.dropdown-select', function (event) {
+        if ($(event.target).hasClass('dd-searchbox')) {
+            return;
+        }
+        $('.dropdown-select').not($(this)).removeClass('open');
+        $(this).toggleClass('open');
+        if ($(this).hasClass('open')) {
+            $(this).find('.option').attr('tabindex', 0);
+            $(this).find('.selected').focus();
+        } else {
+            $(this).find('.option').removeAttr('tabindex');
+            $(this).focus();
+        }
+    });
+
+    // Event: Close when clicking outside
+    $(document).on('click', function (event) {
+        if ($(event.target).closest('.dropdown-select').length === 0) {
+            $('.dropdown-select').removeClass('open');
+            $('.dropdown-select .option').removeAttr('tabindex');
+        }
+        event.stopPropagation();
+    });
+
+    // Event: Option click
+    $(document).on('click', '.dropdown-select .option', function (event) {
+        $(this).closest('.list').find('.selected').removeClass('selected');
+        $(this).addClass('selected');
+        var text = $(this).data('display-text') || $(this).text();
+        $(this).closest('.dropdown-select').find('.current').text(text);
+        $(this).closest('.dropdown-select').prev('select').val($(this).data('value')).trigger('change');
+    });
+
+    // Event: Keyboard support
+    $(document).on('keydown', '.dropdown-select', function (event) {
+        var focused_option = $($(this).find('.list .option:focus')[0] || $(this).find('.list .option.selected')[0]);
+
+        if (event.keyCode == 13) { // Enter
+            if ($(this).hasClass('open')) {
+                focused_option.trigger('click');
+            } else {
+                $(this).trigger('click');
+            }
+            return false;
+        } else if (event.keyCode == 40) { // Down
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.nextAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 38) { // Up
+            if (!$(this).hasClass('open')) {
+                $(this).trigger('click');
+            } else {
+                focused_option.prevAll(':visible').first().focus();
+            }
+            return false;
+        } else if (event.keyCode == 27) { // Esc
+            if ($(this).hasClass('open')) {
+                $(this).removeClass('open');
+            }
+            return false;
+        }
+    });
+
+    $(document).ready(function () {
+        create_custom_dropdowns();
+    });
+</script>
+<!--search select end -->
+
+
+    <script>
+  document.getElementById('showFormBtn1').addEventListener('click', function() {
+    var form = document.getElementById('reportForm1');
+    // If hidden (or first time), fade in
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+      form.animate(
+        [
+          { opacity: 0, transform: 'translateY(-10px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-out',
+          fill: 'forwards'
+        }
+      );
+    } 
+    // Otherwise, fade out then hide
+    else {
+      var anim = form.animate(
+        [
+          { opacity: 1, transform: 'translateY(0)' },
+          { opacity: 0, transform: 'translateY(-10px)' }
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in',
+          fill: 'forwards'
+        }
+      );
+      anim.onfinish = function() {
+        form.style.display = 'none';
+      };
+    }
+  });
+</script>
+<!--filter script start -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script>
+(function($) {
+    "use strict";
+    $('.input-daterange-timepicker').attr('placeholder', 'MM/DD/YYYY - MM/DD/YYYY');
+
+    $('.input-daterange-timepicker').daterangepicker({
+        autoUpdateInput: false, // Prevent default date from showing
+        timePicker: true,
+        timePickerIncrement: 30,
+        timePicker12Hour: true,
+        timePickerSeconds: false,
+        locale: {
+            format: 'MM/DD/YYYY h:mm A',
+            cancelLabel: 'Clear'
+        },
+        buttonClasses: ['btn', 'btn-sm'],
+        applyClass: 'btn-danger',
+        cancelClass: 'btn-inverse'
+    });
+
+    // Update the input manually on apply
+    $('.input-daterange-timepicker').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM/DD/YYYY h:mm A') + ' - ' + picker.endDate.format('MM/DD/YYYY h:mm A'));
+    });
+
+    // Clear input on cancel
+    $('.input-daterange-timepicker').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
+
+})(jQuery);
+</script>
+
+
+<script>
+
+function resetForm() {
+    window.location.href = "{% url 'hiring_list' %}";
+}
+
+</script>
+
+
+<!--filter script end -->
+
+{% endblock %}

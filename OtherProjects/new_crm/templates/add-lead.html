@@ -1,0 +1,870 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block start %}
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+
+<style>
+.input-group{
+    flex-wrap:nowrap;
+}
+@media(max-width:34em){
+  .main{
+    min-width:150px;
+    width:auto;
+  }
+}
+select {
+    display: none !important;
+}
+
+.dropdown-select {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#40FFFFFF', endColorstr='#00FFFFFF', GradientType=0);
+    background-color: #fff;
+    border-radius: 6px;
+    border: solid 1px #eee;
+    /*box-shadow: 0px 2px 5px 0px rgba(155, 155, 155, 0.5);*/ 
+    box-sizing: border-box;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: normal;
+    height: 42px;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 30px;
+    position: relative;
+    text-align: left !important;
+    transition: all 0.2s ease-in-out;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    white-space: nowrap;
+    width: auto;
+
+}
+
+.dropdown-select:focus {
+    background-color: #fff;
+}
+
+.dropdown-select:hover {
+    background-color: #fff;
+}
+
+.dropdown-select:active,
+.dropdown-select.open {
+    background-color: #fff !important;
+    border-color: #bbb;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) inset;
+}
+
+.dropdown-select:after {
+    height: 0;
+    width: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #777;
+    -webkit-transform: origin(50% 20%);
+    transform: origin(50% 20%);
+    transition: all 0.125s ease-in-out;
+    content: '';
+    display: block;
+    margin-top: -2px;
+    pointer-events: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+}
+
+.dropdown-select.open:after {
+    -webkit-transform: rotate(-180deg);
+    transform: rotate(-180deg);
+}
+
+.dropdown-select.open .list {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-select.open .option {
+    cursor: pointer;
+}
+
+.dropdown-select.wide {
+    width: 100%;
+}
+
+.dropdown-select.wide .list {
+    left: 0 !important;
+    right: 0 !important;
+}
+
+.dropdown-select .list {
+    box-sizing: border-box;
+    transition: all 0.15s cubic-bezier(0.25, 0, 0.25, 1.75), opacity 0.1s linear;
+    -webkit-transform: scale(0.75);
+    transform: scale(0.75);
+    -webkit-transform-origin: 50% 0;
+    transform-origin: 50% 0;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.09);
+    background-color: #fff;
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 3px 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid #ddd;
+}
+
+.dropdown-select .list:hover .option:not(:hover) {
+    background-color: transparent !important;
+}
+.dropdown-select .dd-search{
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0.5rem;
+}
+
+.dropdown-select .dd-searchbox{
+  width:100%;
+  height:40px;
+  padding:0.5rem;
+  border:1px solid #999;
+  border-color:#999;
+  border-radius:4px;
+  outline:none;
+}
+.dropdown-select .dd-searchbox:focus{
+  border-color:#222b40;
+}
+
+.dropdown-select .list ul {
+    padding: 0;
+}
+
+.dropdown-select .option {
+    cursor: default;
+    font-weight: 400;
+    line-height: 40px;
+    outline: none;
+    padding-left: 18px;
+    padding-right: 29px;
+    text-align: left;
+    transition: all 0.2s;
+    list-style: none;
+}
+
+.dropdown-select .option:hover,
+.dropdown-select .option:focus {
+    background-color: #f6f6f6 !important;
+}
+
+.dropdown-select .option.selected {
+    font-weight: 600;
+    color: #222b40;
+}
+
+.dropdown-select .option.selected:focus {
+    background: #f6f6f6;
+}
+
+.dropdown-select a {
+    color: #aaa;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-select a:hover {
+    color: #666;
+}
+</style>
+
+
+<div class="content-body">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="main-div">
+				<div class="breadcrumb-wrapper breadcrumb-contacts"
+					style="display: flex; justify-content: space-between;">
+					<div>
+						<h1>{{ is_edit|yesno:"Edit Lead,Add Lead" }}</h1>
+					</div>
+					   <div>
+                        <a href="{% url 'lead_list' %}" class="btn btn-primary me-2"><i class="fa-solid fa-backward" style="margin-right:7px"></i>Back</a>
+                    </div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xl-12 col-lg-12">
+				<div class="ec-cat-list card card-default mb-24px">
+					<div class="card-body">
+						<div class="row ec-vendor-uploads">
+							<!--<h4>{{ is_edit|yesno:"Edit Lead,Add Lead" }}</h4>-->
+							<!--<br><br>-->
+							<div class="col-lg-12">
+								<div class="ec-vendor-upload-detail">
+									<form id="addleadForm" class="form row g-3" action="{% if is_edit %}{% url 'edit_lead' lead.l_id %}{% else %}{% url 'add_lead' %}{% endif %}" method="post">
+									    {% csrf_token %}
+									    
+									    	
+									       <div class="col-lg-6" >
+									           <label for="inputEmail4" class="form-label">Company Name</label>
+                                            <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>
+                                               
+										
+											<input type="text" required class="form-control slug-title" name="business_name" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');"
+												placeholder="Enter Company Name" id="inputEmail" value="{{ lead.business_name|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Client Name</label>
+											
+											<div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                                               
+											<input type="text" required class="form-control slug-title" name="c_name"
+												placeholder="Enter Client Name" id="inputEmail4" value="{{ lead.c_name|default:'' }}" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '');">
+										</div>
+										</div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Email</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                             
+											<input type="email" class="form-control slug-title" name="email"
+												placeholder="Enter email" id="inputEmail4" value="{{ lead.email|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Mobile Number</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                                             
+												<input type="text" required maxlength="10" minlength="10" pattern="[0-9]*" class="form-control slug-title" name="ph_no" placeholder="Enter Mobile Number"
+												id="mobileNumber" value="{{ lead.mobile|default:'' }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+										</div>
+										</div>
+										
+<div id="clientFieldsWrapper">
+    {% if lead_clients %}
+        {% for client in lead_clients %}
+        <div class="row client-field-set">
+            <div class="col-lg-6">
+                <label class="form-label">Name</label>
+                <div class="input-group clockpicker">
+                    <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                    <input type="text" class="form-control slug-title" name="client_name[]" value="{{ client.name }}"
+                           placeholder="Enter Name">
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <label class="form-label">Mobile Number</label>
+                <div class="input-group clockpicker">
+                    <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                    <input type="text" maxlength="10" minlength="10" pattern="[0-9]*"
+                           class="form-control slug-title" name="client_mobile[]" value="{{ client.mobile }}"
+                           placeholder="Enter Mobile Number" >
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <!-- Fallback default fields -->
+        <div class="row client-field-set">
+            <div class="col-lg-6">
+                <label class="form-label">Name</label>
+                <div class="input-group clockpicker">
+                    <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
+                    <input type="text" class="form-control slug-title" name="client_name[]" placeholder="Enter Name"
+                           >
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <label class="form-label">Mobile Number</label>
+                <div class="input-group clockpicker">
+                    <span class="input-group-text"><i class="fas fa-mobile-alt"></i></span>
+                    <input type="text" maxlength="10" minlength="10" pattern="[0-9]*" class="form-control slug-title"
+                           name="client_mobile[]" placeholder="Enter Mobile Number"
+                           >
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+
+<!-- Add/Remove buttons (appear only once) -->
+<div class="col-lg-12 mt-2">
+    <button type="button" class="btn btn-primary add-client">+</button>
+    <button type="button" class="btn btn-danger remove-client">-</button>
+</div>
+
+<!-- JavaScript for dynamic add/remove -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const wrapper = document.getElementById('clientFieldsWrapper');
+        const addButton = document.querySelector('.add-client');
+        const removeButton = document.querySelector('.remove-client');
+
+        addButton.addEventListener('click', function () {
+            const firstFieldSet = document.querySelector('.client-field-set');
+            const clone = firstFieldSet.cloneNode(true);
+
+            // Clear input values in the cloned set
+            clone.querySelectorAll('input').forEach(input => input.value = '');
+
+            wrapper.appendChild(clone);
+        });
+
+        removeButton.addEventListener('click', function () {
+            const allFieldSets = wrapper.querySelectorAll('.client-field-set');
+            if (allFieldSets.length > 1) {
+                allFieldSets[allFieldSets.length - 1].remove();
+            } else {
+                alert("At least one client entry is required.");
+            }
+        });
+    });
+</script>
+
+										
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Office No. & Building name</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                             
+											<input type="text" required class="form-control slug-title" name="house_no"
+												placeholder="Enter Office No. & Building name" id="inputEmail4" value="{{ lead.house_no|default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-lg-6">
+                                            <label for="areaSelect" class="form-label">Area</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-map-signs"></i></span>
+                                                <select name="add3" required aria-label="Select a City" id="areaSelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                                    <option value="">Select Area</option>
+                                                    {% for i in areas %}
+                                                        <option value="{{ i.area_name }}" data-pincode="{{ i.pincode }}" {% if lead.area == i.area_name %}selected{% endif %}>{{ i.area_name }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Address</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                             
+											<input type="text" class="form-control slug-title" name="add2"
+												placeholder="Enter Address" id="inputEmail4" value="{{ lead.address|default:'' }}">
+												</div>
+										</div>
+
+									
+										<div class="col-lg-6">
+											<label class="form-label">Select City</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-map"></i></span>
+                                             
+											<select name="city" required aria-label="Select a City" id="citySelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+                                                <option value="">Select City</option>
+                                                {% for city in cites %}
+                                                    <option value="{{ city.city }}" data-country="{{ city.country }}" {% if lead.city == city.city %}selected{% endif %}>{{ city.city }}</option>
+                                                    <!--<option value="{{ data.clt_id }}" {% if lead.city == city.city %}selected{% endif %} >{{ data.name }}</option>-->
+                                                {% endfor %}
+                                            </select>
+                                            </div>
+										</div>
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Country</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                             
+											<input type="text" required class="form-control slug-title" name="country"
+												placeholder="Country" id="countryInput" value="{{ lead.country|default:'' }}" readonly>
+												</div>
+										</div>
+
+										<div class="col-lg-6">
+                                            <label for="pincodeInput" class="form-label">Pincode</label>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
+                                                <input type="text" class="form-control slug-title" name="pincode" maxlength="6" minlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                                    placeholder="Pincode" id="pincodeInput" value="{{ lead.pincode|default:'' }}">
+                                            </div>
+                                        </div>
+
+										<!--<div class="col-lg-6">-->
+										<!--	<label for="inputEmail4" class="form-label">State</label>-->
+										<!--	 <div class="input-group clockpicker">-->
+          <!--                                    <span class="input-group-text"><i class="fas fa-globe"></i></span>-->
+                                             
+										<!--	<input type="text" required class="form-control slug-title" name="state"-->
+										<!--		placeholder="State" id="stateInput" value="{{ lead.state|default:'' }}" readonly>-->
+										<!--</div>-->
+										<!--</div>-->
+										
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Business Segment</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                             
+											<select name="segment" aria-label="Select a Segment" required data-placeholder="Select a Segment..." id="citySelect1" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+											
+												<option value="">Select a Segment...</option>
+												{%for i in busi_seg%}
+													<option value="{{i.name}}" {% if lead.segment == i.name %}selected{% endif %}>{{i.name}}</option>
+												{% endfor %}
+											</select>
+											</div>
+										</div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Source of Lead</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-dice-d20"></i></span>
+                                             
+											<!--<input type="text" required class="form-control slug-title" name="source"-->
+											<!--	placeholder="Source" id="inputEmail" value="{{ lead.source|default:'' }}">-->
+											<select name="source" aria-label="Select a Source" required data-placeholder="Select a Source..." id="citySelect2" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+												<option value="">Select a Source...</option>
+												{%for i in sources%}
+												    <option value="{{i.lead_Type}}" {% if lead.source == i.lead_Type %}selected{% endif %}>{{i.lead_Type}}</option>
+												{% endfor %}
+											</select>
+											</div>
+										</div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Stage</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+                                             
+											<select name="status" aria-label="Select a status" required data-placeholder="Select a status..." id="statusSele" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+											
+												<option value="">Select a status...</option>
+												{% for i in statuses %}
+                                                    <option value="{{ i.status }}"
+                                                        {% if lead.status %}
+                                                            {% if lead.status == i.status %}selected{% endif %}
+                                                        {% else %}
+                                                            {% if i.status == "Fresh" %}selected{% endif %}
+                                                        {% endif %}
+                                                    >{{ i.status }}</option>
+                                                {% endfor %}
+											</select>
+											</div>
+										</div>
+										
+										<!--<div class="col-lg-6">-->
+										<!--	<label for="inputEmail4" class="form-label">Stage</label>-->
+										<!--	 <div class="input-group clockpicker">-->
+          <!--                                    <span class="input-group-text"><i class="fas fa-running"></i></span>-->
+                                             
+										<!--	<input type="text" required class="form-control slug-title" name="stage_by"-->
+										<!--		placeholder="Enter Stage" id="stageInput" value="{{ lead.stage_by|default:'' }}">-->
+										<!--		</div>-->
+										<!--</div>-->
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Remark</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+                                             
+											<input type="text" class="form-control slug-title" name="remark"
+												placeholder="Remark" id="RemarkInput" value="{{ lead.remark|default:'' }}">
+												</div>
+										</div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Followup Date</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                             
+											<input type="date" required class="form-control slug-title"
+												name="n_f_date" placeholder="Next Followup Date" id="countryInput" value="{{ lead.next_followup_date|date:'Y-m-d' |default:'' }}">
+										</div>
+										</div>
+										
+										<div class="col-lg-6">
+											<label for="inputEmail4" class="form-label">Inquiry For</label>
+											 <div class="input-group clockpicker">
+                                              <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>
+                                             
+											<select name="inqu_for" required aria-label="Select a Segment" data-placeholder="Select a Segment..." id="citySelect3" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
+												<option value="">Select a Inquiry For...</option>
+												{%for i in inq_for%}
+													<option value="{{i.name}}" {% if lead.inqu_for == i.name %}selected{% endif %}>{{i.name}}</option>
+												{% endfor %}
+											</select>
+											</div>
+										</div>
+										
+										<!--<div class="col-lg-6">-->
+										<!--	<label for="inputEmail4" class="form-label">Assign</label>-->
+										<!--	 <div class="input-group clockpicker">-->
+          <!--                                    <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>-->
+                                             
+										<!--	<select name="assign_to" aria-label="Select a Segment" data-placeholder="Select a Segment..." id="citySelect" class="form-select form-select-solid" style="background-color: #ebebeb4a;">-->
+										<!--		<option value="">Select a name...</option>-->
+										<!--		{%for i in assign_name%}-->
+										<!--			<option value="{{i.userId}}" {% if lead.assign_to == i.userId %}selected{% endif %}>{{i.name}}</option>-->
+										<!--		{% endfor %}-->
+										<!--	</select>-->
+										<!--	</div>-->
+										<!--</div>-->
+										
+										<div class="col-lg-12">
+											<button type="submit" class="btn btn-primary">{{ is_edit|yesno:"Update,Submit" }}</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+<script>
+//     $(document).ready(function() {
+//     $('#addleadForm').submit(function(e) {
+//         e.preventDefault();  // Prevent the default form submission
+
+//         // Disable the submit button to prevent further clicks
+//         var submitButton = $(this).find('button[type="submit"]');
+//         submitButton.prop('disabled', true);  // Disable the submit button
+//         submitButton.text('Submitting...');    // Optional: Change the button text to indicate submission
+
+//         // Prepare the form data
+//         var formData = $(this).serialize();  
+
+//         // Check if the form is for adding or editing by inspecting the action URL
+//         var isEdit = $(this).attr('action').includes('edit_lead'); 
+
+//         // Send the form data using AJAX
+//         $.ajax({
+//             url: $(this).attr('action'),  // Use the form's action URL for either add or edit
+//             type: "POST",
+//             data: formData,
+//             success: function(response) {
+//                 if (response.status === 'success') {
+//                     // Show success alert with SweetAlert for Add or Edit
+//                     Swal.fire({
+//                         icon: 'success',
+//                         title: isEdit ? 'Lead Updated!' : 'Lead Added!',
+//                         text: response.message,
+//                     }).then(() => {
+//                         window.location.href = "{% url 'lead_list' %}";  // Redirect to the department page
+//                     });
+//                 } else {
+//                     // Show error alert if something goes wrong
+//                     Swal.fire({
+//                         icon: 'error',
+//                         title: 'Oops...',
+//                         text: response.message,
+//                     });
+//                 }
+//             },
+//             error: function(xhr, status, error) {
+//                 // Handle errors
+//                 Swal.fire({
+//                     icon: 'error',
+//                     title: 'Oops...',
+//                     text: 'An error occurred, please try again.',
+//                 });
+//             },
+//             complete: function() {
+//                 // You can keep the button disabled if needed, or re-enable it if necessary
+//                 // submitButton.prop('disabled', false);  // Re-enable the button after the request completes
+//                 // submitButton.text(isEdit ? 'Update' : 'Submit');  // Reset the button text if necessary
+//             }
+//         });
+//     });
+// });
+
+document.getElementById("addleadForm").addEventListener("submit", function(event) { 
+    event.preventDefault();  // Prevent the default form submission
+
+    var submitButton = document.querySelector('button[type="submit"]');
+    submitButton.disabled = true;  // Disable the button to prevent multiple submissions
+    submitButton.innerText = 'Submitting...';  // Change button text to 'Submitting...'
+
+    var formData = new FormData(this);  // Gather form data
+
+    // Perform AJAX request
+    fetch("{% if is_edit %}{% url 'edit_lead' lead.l_id %}{% else %}{% url 'add_lead' %}{% endif %}", {
+        method: "POST",
+        body: formData,
+    })
+    .then(response => response.json())  // Parse the JSON response
+    .then(data => {
+        // Check if the response contains a success status
+        if (data.status === 'success') {
+            // Show SweetAlert success message with OK button
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: data.message,
+                confirmButtonText: 'OK',  // Show "OK" button
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect based on whether it's an edit or add form
+                    if ({% if is_edit %}true{% else %}false{% endif %}) {
+                        // Redirect to the lead list page after edit
+                        window.location.href = "{% url 'lead_list' %}";
+                    } else {
+                        // Reload the add form page after adding
+                        window.location.href = window.location.href;
+                    }
+                }
+            });
+        } else {
+            // Show SweetAlert error message if there's an issue
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+                showConfirmButton: true
+            }).then(() => {
+                // Re-enable the submit button in case of error
+                submitButton.disabled = false;
+                submitButton.innerText = 'Submit';  // Reset the button text
+            });
+        }
+    })
+    .catch(error => {
+        // Handle any network or other errors
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong!',
+            showConfirmButton: true
+        }).then(() => {
+            // Re-enable the submit button in case of error
+            submitButton.disabled = false;
+            submitButton.innerText = 'Submit';  // Reset the button text
+        });
+    });
+});
+</script>
+<!--{% if messages %}-->
+<!--  <ul class="messages">-->
+<!--    {% for message in messages %}-->
+<!--      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>-->
+<!--    {% endfor %}-->
+<!--  </ul>-->
+<!--{% endif %}-->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get references to the city select, state input, and country input
+        const citySelect = document.getElementById('citySelect');
+        // const stateInput = document.getElementById('stateInput');
+        const countryInput = document.getElementById('countryInput');
+        
+        // Listen for the change event on the city select
+        citySelect.addEventListener('change', function() {
+            // Get the selected city option
+            const selectedOption = citySelect.options[citySelect.selectedIndex];
+            
+            // Get the corresponding state and country from the data-state and data-country attributes
+            // const selectedState = selectedOption.getAttribute('data-state');
+            const selectedCountry = selectedOption.getAttribute('data-country');
+            
+            // Update the state and country input fields
+            // stateInput.value = selectedState;
+            countryInput.value = selectedCountry;
+        });
+    });
+</script>
+
+<script>
+    document.getElementById('areaSelect').addEventListener('change', function() {
+        // Get the selected option
+        var selectedOption = this.options[this.selectedIndex];
+        
+        // Get the pincode from the selected option's data-pincode attribute
+        var pincode = selectedOption.getAttribute('data-pincode');
+        
+        // Set the pincode input field with the corresponding pincode
+        document.getElementById('pincodeInput').value = pincode;
+    });
+</script>
+
+<script>
+  function create_custom_dropdowns() {
+    $('select').each(function () {
+      var $select = $(this);
+      if ($select.next().hasClass('dropdown-select')) return;
+
+      $select.after(
+        '<div class="dropdown-select wide ' + $select.attr('class') + '" tabindex="0">' +
+          '<span class="current"></span>' +
+          '<div class="list">' +
+            '<div class="dd-search">' +
+              '<input autocomplete="off" onkeyup="filter(this)" class="dd-searchbox" type="text" placeholder="Search…">' +
+            '</div>' +
+            '<ul></ul>' +
+            '<li class="no-results" style="display:none;">Not found</li>' +
+          '</div>' +
+        '</div>'
+      );
+
+      var $dropdown = $select.next();
+      var $options = $select.find('option');
+      var $selOpt = $options.filter(':selected');
+
+      $dropdown.find('.current').text($selOpt.data('display-text') || $selOpt.text());
+
+      $options.each(function () {
+        var $o = $(this);
+        var value = $o.val();
+        var text = $o.text();
+        var display = $o.data('display-text') || '';
+        var pincode = $o.data('pincode') || '';
+        var country = $o.data('country') || '';
+
+        $dropdown.find('ul').append(
+          '<li class="option ' + ($o.is(':selected') ? 'selected' : '') + '"' +
+          ' data-value="' + value + '"' +
+          ' data-display-text="' + display + '"' +
+          ' data-pincode="' + pincode + '"' +
+          ' data-country="' + country + '">' +
+          text +
+          '</li>'
+        );
+      });
+    });
+  }
+
+  function filter(input) {
+    var $dd = $(input).closest('.dropdown-select');
+    var val = input.value.toLowerCase();
+    var $opts = $dd.find('ul > li.option');
+
+    $opts.each(function () {
+      var txt = $(this).text().toLowerCase();
+      $(this).toggle(txt.indexOf(val) > -1);
+    });
+
+    $dd.find('.no-results').toggle($opts.filter(':visible').length === 0);
+  }
+
+  $(document).on('click', '.dropdown-select', function (e) {
+    if ($(e.target).hasClass('dd-searchbox')) return;
+    $('.dropdown-select').not(this).removeClass('open');
+    $(this).toggleClass('open');
+    if ($(this).hasClass('open')) {
+      $(this).find('.option').attr('tabindex', 0);
+      $(this).find('.selected').focus();
+    } else {
+      $(this).find('.option').removeAttr('tabindex');
+      $(this).focus();
+    }
+  });
+
+  $(document).on('click', function (e) {
+    if (!$(e.target).closest('.dropdown-select').length) {
+      $('.dropdown-select').removeClass('open')
+                           .find('.option').removeAttr('tabindex');
+    }
+  });
+
+  $(document).on('click', '.dropdown-select .option', function () {
+    var $opt = $(this);
+    var value = $opt.data('value');
+    var text = $opt.data('display-text') || $opt.text();
+    var pincode = $opt.data('pincode');
+    var country = $opt.data('country');
+
+    $opt.closest('ul').find('.selected').removeClass('selected');
+    $opt.addClass('selected');
+    $opt.closest('.dropdown-select').find('.current').text(text);
+    $opt.closest('.dropdown-select').removeClass('open');
+
+    var $sel = $opt.closest('.dropdown-select').prev('select');
+    $sel.val(value).trigger('change');
+
+    // Handle pincode update
+    if ($sel.is('#areaSelect')) {
+      $('#pincodeInput').val(pincode || '');
+    }
+
+    // Handle country update
+    if ($sel.is('#citySelect')) {
+      $('#countryInput').val(country || '');
+    }
+  });
+
+  $(document).on('keydown', '.dropdown-select', function (e) {
+    var $dd = $(this),
+        $opts = $dd.find('.option:visible'),
+        $focused = $opts.filter(':focus').add($opts.filter('.selected'));
+
+    switch (e.keyCode) {
+      case 13: // Enter
+        if ($dd.hasClass('open')) {
+          $focused.trigger('click');
+        } else {
+          $dd.trigger('click');
+        }
+        return false;
+      case 40: // Down
+        if (!$dd.hasClass('open')) {
+          $dd.trigger('click');
+        } else {
+          var $next = $focused.nextAll('.option:visible').first();
+          $next.focus();
+        }
+        return false;
+      case 38: // Up
+        if (!$dd.hasClass('open')) {
+          $dd.trigger('click');
+        } else {
+          var $prev = $focused.prevAll('.option:visible').first();
+          $prev.focus();
+        }
+        return false;
+      case 27: // Esc
+        if ($dd.hasClass('open')) {
+          $dd.removeClass('open');
+        }
+        return false;
+    }
+  });
+
+  $(document).ready(create_custom_dropdowns);
+</script>
+
+
+{% endblock %}
