@@ -205,7 +205,9 @@ select {
             <h1>{{user.name}} Details</h1>
           </div>
           <div>
-            <a href="{% url 'User' %}" class="btn btn-primary me-2"><i class="fa-solid fa-backward" style="margin-right:7px"></i>Back</a>
+            <!--<a href="{% url 'User' %}" class="btn btn-primary me-2"><i class="fa-solid fa-backward" style="margin-right:7px"></i>Back</a>-->
+            <a href="javascript:window.history.back();" class="btn btn-primary">Back</a>
+
           </div>
         </div>
       </div>

@@ -208,10 +208,11 @@ select {
                         
                     </div>
                     <div>
-                    <a href="{% url 'SMO' %}" type="button"
-							class="btn btn-primary right-sidebar-in content-sidebar-menu">
-							<i class="bi bi-person-fill" style="font-size: 1rem;"></i>View List
-						</a>
+                        <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-backward"></i> Back</a>
+      <!--              <a href="{% url 'SMO' %}" type="button"-->
+						<!--	class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+						<!--	<i class="bi bi-person-fill" style="font-size: 1rem;"></i>View List-->
+						<!--</a>-->
                     <!--<div>-->
                     <!--                   <a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
                     <!--                   <i class="bi bi-funnel-fill"></i> Filter-->
@@ -250,7 +251,7 @@ select {
                                         </div>
                                         
                                         <div class="col-lg-6">
-                                            <label for="company_name" class="form-label">Client Name</label>
+                                            <label for="company_name" class="form-label">Client Name <span style="color:red">*</span></label>
                                              <div class="input-group clockpicker">
                                                 <span class="input-group-text"><i class="fas fa-landmark"></i></span>
                                             <input type="text" required class="form-control slug-title" name="c_name" placeholder="Client Name" id="client_name" value="{{ lead.c_name|default:'' }}">
@@ -274,7 +275,7 @@ select {
                                         {% if is_edit and lead.plan_id %}
                                             <div class="col-lg-12" style="margin-top: 10px;">
                                                 <div class="col-lg-6">
-                                                    <label for="company_name" class="form-label">Start Date</label>
+                                                    <label for="company_name" class="form-label">Start Date <span style="color:red">*</span></label>
                                                      <div class="input-group clockpicker">
                                                         <span class="input-group-text"><i class="fas fa-landmark"></i></span>
                                                     <input type="date" required class="form-control slug-title" name="start_date" placeholder="Client Name" id="start_date" value="{{ lead.start_date|date:'Y-m-d'|default:'' }}">
@@ -283,7 +284,7 @@ select {
                                             
                                             <div class="col-lg-12" style="margin-top: 10px;">
                                                 <div class="col-lg-6">
-                                                    <label for="company_name" class="form-label">End Date</label>
+                                                    <label for="company_name" class="form-label">End Date <span style="color:red">*</span></label>
                                                      <div class="input-group clockpicker">
                                                         <span class="input-group-text"><i class="fas fa-landmark"></i></span>
                                                     <input type="date" required class="form-control slug-title" name="end_date" placeholder="Client Name" id="end_date" value="{{ lead.end_date|date:'Y-m-d'|default:'' }}">
@@ -292,7 +293,7 @@ select {
                                             
                                             <div class="col-lg-12" style="margin-top: 10px;">
                                                 <div class="col-lg-6">
-                                                    <label for="company_name" class="form-label">Number of Post</label>
+                                                    <label for="company_name" class="form-label">Number of Post <span style="color:red">*</span></label>
                                                      <div class="input-group clockpicker">
                                                         <span class="input-group-text"><i class="fas fa-landmark"></i></span>
                                                     <input type="text" required class="form-control slug-title" name="no_of_post" placeholder="Enter Number of Post" id="no_of_post" value="{{ lead.no_of_post|default:'' }}">
@@ -301,7 +302,7 @@ select {
                                             
                                             <div class="col-lg-12" style="margin-top: 10px;">
                                                 <div class="col-lg-6">
-                                                    <label for="company_name" class="form-label">Number of Reel</label>
+                                                    <label for="company_name" class="form-label">Number of Reel <span style="color:red">*</span></label>
                                                      <div class="input-group clockpicker">
                                                         <span class="input-group-text"><i class="fas fa-landmark"></i></span>
                                                     <input type="text" required class="form-control slug-title" name="no_of_reel" placeholder="Enter Number of Reel" id="no_of_reel" value="{{ lead.no_of_reel|default:'' }}">
@@ -311,7 +312,7 @@ select {
 
                                         
                                         <div class="col-lg-6">
-                                            <label for="company_name" class="form-label">Remark</label>
+                                            <label for="company_name" class="form-label">Remark <span style="color:red">*</span></label>
                                              <div class="input-group clockpicker">
                                                 <span class="input-group-text"><i class="fas fa-landmark"></i></span>
                                             <input type="text" required class="form-control slug-title" name="remark" placeholder="Enter Remark" value="{{ lead.remark|default:'' }}">

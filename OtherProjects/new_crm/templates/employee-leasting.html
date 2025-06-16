@@ -770,7 +770,7 @@ select {
 			    						<div class="card">
 							<div class="card-body">
 								<div class="row task" >
-								    	<div class="col-xl-2 col-sm-4 col-6 ">
+								    	<div class="col-xl-1 col-sm-4 col-6 ">
     										<div class="task-summary">
     											<div class="d-flex align-items-baseline ">
     												<h2 class="text-success count">{{ active_user }}</h2>
@@ -780,7 +780,7 @@ select {
     										</div>
     									</div>
     									
-										<div class="col-xl-2 col-sm-4 col-6 ">
+										<div class="col-xl-1 col-sm-4 col-6 ">
     										<div class="task-summary">
     											<div class="d-flex align-items-baseline ">
     												<h2 class="text-danger count">{{ inactive_user }}</h2>
@@ -790,11 +790,11 @@ select {
     										</div>
     									</div>
     									
-									    <div class="col-xl-2 col-sm-4 col-6 ">
+									    <div class="col-xl-1 col-sm-4 col-6 ">
     										<div class="task-summary">
     											<div class="d-flex align-items-baseline">
     												<h2 class="text-primary count">{{ all_user }}</h2> 
-    												<span>All Employees</span>
+    												<span>All</span>
     											</div>
     											<!--<p>Tasks assigne</p>-->
     										</div>
@@ -812,7 +812,16 @@ select {
 									    <div class="col-xl-3 col-sm-4 col-6 ">
     										<div class="task-summary">
     											<div class="d-flex align-items-baseline">
-    												<span>This Month's Salary : </span>
+    												<span>Salary to be Paid</span>
+    												<h2 class="text-primary">{{ total_salary_to_be_paid }}</h2> 
+    											</div>
+    											<!--<p>Tasks assigne</p>-->
+    										</div>
+    									</div>
+									    <div class="col-xl-3 col-sm-4 col-6 ">
+    										<div class="task-summary">
+    											<div class="d-flex align-items-baseline">
+    												<span>Paid Salary : </span>
     												<h2 class="text-primary">{{ this_month_salary }}</h2> 
     											</div>
     											<!--<p>Tasks assigne</p>-->
@@ -853,7 +862,7 @@ select {
                                         <!--  id="switchUser{{ i.user_id }}"-->
                                         <!--  {% if i.is_active %}checked{% endif %}-->
                                         <!--  onchange="toggleActiveUser({{ i.user_id }})"-->
-                                        <!-->
+                                        <!-- -->
                                         <!--<label class="form-check-label" for="switchUser{{ i.user_id }}"></label>-->
                                         
                                         <label class="form-check-label switch" for="switchUser{{ i.user_id }}">

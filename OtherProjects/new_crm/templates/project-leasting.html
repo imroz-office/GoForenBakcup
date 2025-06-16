@@ -275,10 +275,11 @@ select {
                         <h1>Project</h1>
                     </div>
                     <div>
-                        <a href="{% url 'project_list' %}" type="button"
-							class="btn btn-primary right-sidebar-in content-sidebar-menu">
-							<i class="bi bi-person-fill" style="font-size: 1rem;"></i>View Project
-						</a>
+                        <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-backward"></i> Back</a>
+      <!--                  <a href="{% url 'project_list' %}" type="button"-->
+						<!--	class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
+						<!--	<i class="bi bi-person-fill" style="font-size: 1rem;"></i>View Project-->
+						<!--</a>-->
                         <!--<a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i-->
                         <!--        class="bi bi-funnel-fill"></i> Filter </a>-->
                     </div>
@@ -327,7 +328,7 @@ select {
                                 <!--    </div>-->
                                 <!--</div>-->
                                     <div class="col-lg-6">
-                                        <label for="inputEmail4" class="form-label">Project Name</label>
+                                        <label for="inputEmail4" class="form-label">Project Name <span style="color:red">*</span></label>
                                           <div class="input-group clockpicker">
                                               <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
                                         <input type="text" required class="form-control slug-title" name="pj_name" oninput="this.value = this.value.replace(/[^A-Za-z _,/-]/g, '');"
@@ -335,7 +336,7 @@ select {
                                     </div>
                                 </div>
                                     <div class="col-lg-6">
-                                        <label class="form-label">Product</label>
+                                        <label class="form-label">Product <span style="color:red">*</span></label>
                                         <div class="input-group clockpicker">
                                               <span class="input-group-text"> <i class="fa-solid fa-vector-square"></i></span>
                                        

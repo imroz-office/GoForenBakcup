@@ -206,7 +206,9 @@ select {
                         <h1>{{ is_edit|yesno:"Edit User,Add User" }} {% if user.emp_type == "intern" %}( Intern ){% endif %}</h1>
                     </div>
                     <div class="d-flex align-items-center">
-                        <a href="{% url 'User' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-regular fa-address-book" style="margin-right:7px"></i>User list</a>
+                        <!-- <a href="{% url 'User' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-regular fa-address-book" style="margin-right:7px"></i>User list</a> -->
+<a href="javascript:window.history.back();" class="btn btn-primary">Back</a>
+
                     </div>
                 </div>
             </div>

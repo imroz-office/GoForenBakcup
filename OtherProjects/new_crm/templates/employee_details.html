@@ -230,7 +230,10 @@ select {
 						<h1>Employee Details of {{ data.name }} {{ data.middle_name|default:"" }} {{ data.last_name|default:"" }}</h1>
 					</div>
 					<div class="d-flex align-items-center">
-                        <a href="{% url 'employee_list' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu">Employee List</a>
+					    <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary right-sidebar-in content-sidebar-menu">
+                             <i class="fa-solid fa-backward"></i> Back
+                        </a>
+                        <!--<a href="{% url 'employee_list' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu">Employee List</a>-->
                     </div>
 					<!--<div>-->
 				 <!--       <a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->

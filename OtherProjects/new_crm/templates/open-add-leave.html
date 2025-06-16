@@ -232,6 +232,7 @@ select {
 						<h1>{{ is_edit|yesno:"Edit Leave Application,Add Leave Application" }}</h1>
 					</div>
 					<div>
+					    <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-backward"></i> Back</a>
 						<a href="{% url 'pending_leave' %}" type="button"
 							class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right:7px"></i>Pending Leave</a>
 						<a href="{% url 'approved_leave' %}" type="button"
@@ -254,7 +255,7 @@ select {
 										{% csrf_token %}
                                     
                                         <div class="col-lg-6" hidden>
-                                            <label for="inputName" class="form-label">Employee ID</label>
+                                            <label for="inputName" class="form-label">Employee ID <span style="color:red;">*</span></label>
                                              <div class="input-group clockpicker">
                                                         <span class="input-group-text"><i class="fa-solid fa-id-card"></i></span>
                                             <input type="text" required class="form-control slug-title" name="empid" placeholder="Enter Employee ID" id="inputName" 
@@ -284,7 +285,7 @@ select {
             
 {% if "1" in request.session.session_roleid or "9" in request.session.session_roleid %}
 <div class="col-lg-6">
-    <label class="form-label">Employee Name</label>
+    <label class="form-label">Employee Name <span style="color:red;">*</span></label>
     <div class="input-group clockpicker">
         <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
         <select 
@@ -319,7 +320,7 @@ select {
 
 											<!--<input type="text" required class="form-control" name="ename" hidden value="{{request.session.name}}">-->
 										<div class="col-lg-6">
-											<label class="form-label">Leave Type</label>
+											<label class="form-label">Leave Type <span style="color:red;">*</span></label>
 											<div class="input-group clockpicker">
                                         <span class="input-group-text"><i class="fa-solid fa-person-walking-arrow-right"></i></span>
 											<select name="leavetype" aria-label="Select Leave Type" required
@@ -339,7 +340,7 @@ select {
 										</div>
                                     </div>
 										<div class="col-lg-6">
-											<label for="inputName" class="form-label">Application Start Date</label>
+											<label for="inputName" class="form-label">Application Start Date <span style="color:red;">*</span></label>
 											 <div class="input-group clockpicker">
                                                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
 											<input type="date" required class="form-control" name="asdate"
@@ -348,7 +349,7 @@ select {
 										</div>
 
 										<div class="col-lg-6">
-											<label for="inputName" class="form-label">Application End Date</label>
+											<label for="inputName" class="form-label">Application End Date <span style="color:red;">*</span></label>
 											 <div class="input-group clockpicker">
                                                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
 											<input type="date" required class="form-control" name="aedate"
@@ -366,7 +367,7 @@ select {
 										<!--</div>-->
 
 										<div class="col-lg-6">
-											<label for="inputName" class="form-label">Reason</label>
+											<label for="inputName" class="form-label">Reason <span style="color:red;">*</span></label>
 											 <div class="input-group clockpicker">
                                                         <span class="input-group-text"><i class="fa-solid fa-message"></i></span>
 											<input type="text" required class="form-control" name="reson"
@@ -375,7 +376,7 @@ select {
                                         </div>
                                         
                                         <div class="col-lg-6">
-                                            <label class="form-label">Allocation of work</label>
+                                            <label class="form-label">Allocation of work <span style="color:red;">*</span></label>
                                             <div class="input-group clockpicker">
                                                 <span class="input-group-text"><i class="fas fa-user-alt"></i></span>
                                                 <select name="allocation_to" aria-label="Select Employee Name" required id="" class="form-select form-select-solid" style="background-color: #ebebeb4a;">

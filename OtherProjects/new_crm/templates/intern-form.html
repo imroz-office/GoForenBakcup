@@ -220,9 +220,10 @@ select {
 					<div>
 						<h1>{{ is_edit|yesno:"Edit Intern On Boarding,Intern On Boarding" }}</h1>
 					</div>
-					<div class="d-flex align-items-center">
-                        <a href="{% url 'intern_list' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu">Intern List</a>
-                    </div>
+    					<div class="d-flex align-items-center">
+    					    <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-backward"></i> Back</a>
+                            <!--<a href="{% url 'intern_list' %}" class="btn btn-primary right-sidebar-in content-sidebar-menu">Intern List</a>-->
+                        </div>
 					<!--<div>-->
 				 <!--       <a type="button" class="btn btn-primary right-sidebar-in content-sidebar-menu">-->
 				 <!--           <i class="bi bi-funnel-fill"></i> Filter-->

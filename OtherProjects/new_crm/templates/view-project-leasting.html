@@ -318,70 +318,83 @@ select {
     				<div class="row ec-vendor-uploads">
     					<div class="col-lg-12">
     						<div class="ec-vendor-upload-detail">
-                                <form class="form row g-3" id="addtaskForm" action="{% url 'project_list' %}" method="get"> 
-                                 {% csrf_token %}
-                                <div class="col-lg-4">
-                                    <div class="example">
-                                        <p class="mb-1">Date Range With Time</p>
-                                        <div class="input-group clockpicker">
-                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                                        <input type="text" class="form-control input-daterange-timepicker" name="fromDate" />
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <label for="inputEmail4" class="form-label">Project Name</label>
-                                     <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
-                                    <input type="text" class="form-control slug-title" name="pro_name" id="pro_name" placeholder="Search By Project Name" value="{{ request.GET.pro_name }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <label for="inputEmail4" class="form-label">Product</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"> <i class="fa-solid fa-vector-square"></i></span>
-                                    <select name="service" aria-label="Project Include" data-placeholder="Select a Product..." value="{{ request.GET.service }}"
-                                             id="service" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
-                                        <option value="">Select a Product...</option>
-                                        {% for p in products %}
-                                            <option value="{{ p.pro_name }}">{{ p.pro_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <label for="inputEmail4" class="form-label">Description</label>
-                                       <div class="input-group clockpicker">
-                                              <span class="input-group-text">   <i class="fa-solid fa-prescription-bottle"></i></span>
-                                    <input type="text" class="form-control slug-title" name="des" id="des" placeholder="Search By Project Name" value="{{ request.GET.des }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <label for="inputEmail4" class="form-label">Project Deadline Date</label>
-                                <div class="input-group clockpicker">
-                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                                    <input type="date" class="form-control slug-title" name="tech_date" id="tech_date" placeholder="Search By Project Deadline Date"  value="{{ request.GET.tech_date }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <label for="inputEmail4" class="form-label">Client Deadline Date</label>
-                              <div class="input-group clockpicker">
-                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                                    <input type="date" class="form-control slug-title" name="client_date" id="client_date" placeholder="Search By Client Deadline Date " value="{{ request.GET.client_date }}">
-                                </div>
-                                </div>
-                               
-                                 <div style="display:flex;justify-content:end">
-                        <div class="col-lg-2" style="margin: 0px 0 0 15px;">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div> 
-                        <div class="col-lg-2" style="margin: 0px 0 0 15px;">
-                            <button type="button" id="resetButton" class="btn btn-primary" onclick="resetForm();">Reset</button>
-                        </div>
-                    </div>  
-                                
-                            
-                                </form>
+<form class="form row g-3" id="addtaskForm" action="{% url 'project_list' %}" method="get">
+    {% csrf_token %}
+
+    <!-- Date Range Picker -->
+    <div class="col-lg-4">
+        <label class="form-label">Date Range</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+            <input type="text" class="form-control input-daterange-timepicker" name="fromDate"
+                   value="{{ request.GET.fromDate }}">
+        </div>
+    </div>
+
+    <!-- Project Name -->
+    <div class="col-lg-4">
+        <label class="form-label">Project Name</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
+            <input type="text" class="form-control" name="pro_name" placeholder="Search By Project Name"
+                   value="{{ request.GET.pro_name }}">
+        </div>
+    </div>
+
+    <!-- Product -->
+    <div class="col-lg-4">
+        <label class="form-label">Product</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-vector-square"></i></span>
+            <select name="service" class="form-select" style="background-color: #ebebeb4a;">
+                <option value="">Select a Product...</option>
+                {% for p in products %}
+                    <option value="{{ p.pro_name }}" {% if request.GET.service == p.pro_name %}selected{% endif %}>
+                        {{ p.pro_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="col-lg-4">
+        <label class="form-label">Description</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-prescription-bottle"></i></span>
+            <input type="text" class="form-control" name="des" placeholder="Search by Description"
+                   value="{{ request.GET.des }}">
+        </div>
+    </div>
+
+    <!-- Project Deadline -->
+    <div class="col-lg-4">
+        <label class="form-label">Project Deadline Date</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+            <input type="date" class="form-control" name="tech_date" value="{{ request.GET.tech_date }}">
+        </div>
+    </div>
+
+    <!-- Client Deadline -->
+    <div class="col-lg-4">
+        <label class="form-label">Client Deadline Date</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+            <input type="date" class="form-control" name="client_date" value="{{ request.GET.client_date }}">
+        </div>
+    </div>
+
+    <!-- Submit / Reset -->
+    <div style="display:flex;justify-content:end;margin-top:10px;">
+        <div class="col-lg-2" style="margin-left: 15px;">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <div class="col-lg-2" style="margin-left: 15px;">
+            <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+        </div>
+    </div>
+</form>
                             </div>
                         </div>
                     </div>
@@ -526,15 +539,15 @@ select {
     						<div class="ec-vendor-upload-detail">
                                 <form class="form row g-3" id="addtaskForm" action="{% url 'project_excel' %}" method="post">
                                     {% csrf_token %}
-                                     <div class="col-lg-4">
-                                    <div class="example">
-                                        <p class="mb-1">Date Range With Time</p>
-                                         <div class="input-group clockpicker">
-                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                                        <input type="text" class="form-control input-daterange-timepicker" name="from_date" />
+                                    <div class="col-lg-4">
+                                        <div class="example">
+                                            <p class="mb-1">Date Range With Time</p>
+                                            <div class="input-group clockpicker">
+                                                <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                                <input type="text" class="form-control input-daterange-timepicker" name="fromDate" />
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                </div>
                                     
                                     <!--<div class="col-lg-3">-->
                                     <!--    <label for="inputRemark" class="form-label">From Date</label>-->
@@ -1037,4 +1050,29 @@ $(document).ready(function () {
     });
 </script>
 <!--search select end -->
+
+<!-- Daterangepicker scripts (place in base or bottom of template) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+$(document).ready(function () {
+    $('.input-daterange-timepicker').daterangepicker({
+        timePicker: false,
+        locale: {
+            format: 'DD MMM YYYY'
+        }
+    });
+});
+
+// Reset Form
+function resetForm() {
+    document.getElementById("addtaskForm").reset();
+    $('.input-daterange-timepicker').val('');
+    window.location.href = "{% url 'project_list' %}";
+}
+</script>
+
+
 {% endblock %}

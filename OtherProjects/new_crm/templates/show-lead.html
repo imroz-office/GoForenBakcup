@@ -8,6 +8,19 @@
 {% if request.GET.success4 %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Hide any select dropdowns inside swal popup
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .swal2-container select,
+            .swal2-container .select2-container {
+                display: none !important;
+            }
+            .dropdown-select.wide{
+                display:none;
+            }
+        `;
+        document.head.appendChild(style);
+
         Swal.fire({
             icon: 'success',
             title: 'Successfully Converted to Lead!',
@@ -17,11 +30,12 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // Redirect to the desired page after confirmation
-                window.location.href =  "{% url 'lead_list' %}";
+                window.location.href = "{% url 'lead_list' %}";
             }
         });
     });
 </script>
+
 {% endif %}
 <!--date range css start -->
 <style>
@@ -952,202 +966,202 @@ document.addEventListener("DOMContentLoaded", function() {
 </div>
 			<!-- excel Download end -->
 				<!--model side Filter-->
-				<div class="chatbox1" id="filterModal">
+				<!--<div class="chatbox1" id="filterModal">-->
                     <!--<div class="chatbox-close1">-->
            
                     <!--         </div>-->
-                    <div class="custom-tab-2">
-                        <div style="display:flex">
-                        <h4 style="margin: 10px 0px -7px 17px;">Filter</h4>
+    <!--                <div class="custom-tab-2">-->
+    <!--                    <div style="display:flex">-->
+    <!--                    <h4 style="margin: 10px 0px -7px 17px;">Filter</h4>-->
                         
-                        <button class="chatbox-close1">&times;</button>
-                        </div>
-                        <hr>
-                        <div class="custom-tab-1" style="margin: 0px 17px 0px 17px;" >
+    <!--                    <button class="chatbox-close1">&times;</button>-->
+    <!--                    </div>-->
+    <!--                    <hr>-->
+    <!--                    <div class="custom-tab-1" style="margin: 0px 17px 0px 17px;" >-->
                             
-                            <form class="form row g-3" action="{% url 'lead_list' %}" method="get" id="filterForm">
-                                {% csrf_token %}
-                                <div class="col-lg-12">
-                                    <label for="fromDate" class="form-label">From Date</label>
-                                      <div class="input-group clockpicker">
-                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                                    <input type="date" class="form-control slug-title" name="fromDate" id="fromDate" value="{{ request.GET.fromDate }}" >
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="toDate" class="form-label">To Date</label>
-                                      <div class="input-group clockpicker">
-                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                                    <input type="date" class="form-control slug-title" name="toDate" id="toDate" value="{{ request.GET.toDate }}" >
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Status</label>
-                                     <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
-                                    <select name="status" aria-label="Select a Status" data-placeholder="Select a Segment..." id="status" class="form-select form-select-solid" style="background-color: #ebebeb4a;" value="{{ request.GET.status }}">
-										<option value="">Select a status...</option>
-										{% for s in statuses %}
-                                            <option value="{{s.status}}">{{s.status}}</option>
-                                        {% endfor %}
-									</select>
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Company Name</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>
-                                    <input type="text" class="form-control slug-title" name="business_name" id="business_name" placeholder="Search By Company Name " value="{{ request.GET.business_name }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Client Name</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-landmark"></i></span>
-                                    <input type="text" class="form-control slug-title" name="c_name" id="c_name" placeholder="Search By Client Client Name " value="{{ request.GET.c_name }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Email</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-at"></i></span>
-                                    <input type="text" class="form-control slug-title" name="email" id="email" placeholder="Search By email" value="{{ request.GET.email }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Mobile Number</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-at"></i></span>
-                                    <input type="text" class="form-control slug-title" name="mobile" id="mobile" placeholder="Search By Mobile Number" value="{{ request.GET.mobile }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">House no. & Building name</label>
-                                    	 <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-home"></i></span>
-                                    <input type="text" class="form-control slug-title" name="house_no" id="house_no" placeholder="Search By House no. & Building name" value="{{ request.GET.house_no }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Address</label>
-                                    				 <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                    <input type="text" class="form-control slug-title" name="address" id="address" placeholder="Search By Address " value="{{ request.GET.address }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Area</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-map-signs"></i></span>
-                                    <input type="text" class="form-control slug-title" name="area" id="area" placeholder="Search By Area " value="{{ request.GET.area }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">City</label>
-                                    	 <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-map"></i></span>
-                                    <select name="city" aria-label="Select a City" id="city" value="{{ request.GET.city }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
-                                        <option value="">Select City</option>
-                                        {% for city in cites %}
-                                            <option value="{{ city.city }}">{{ city.city }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Pincode</label>
-                                     <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
-                                    <input type="text" class="form-control slug-title" name="pincode" id="pincode" placeholder="Search By Pincode " value="{{ request.GET.pincode }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">State</label>
-                                    	 <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-globe"></i></span>
-                                    <select name="state" aria-label="Select a City" id="state" value="{{ request.GET.state }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
-                                        <option value="">Select City</option>
-                                        {% for city in cites %}
-                                            <option value="{{ city.state }}">{{ city.state }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Country</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-globe"></i></span>
+    <!--                        <form class="form row g-3" action="{% url 'lead_list' %}" method="get" id="filterForm">-->
+    <!--                            {% csrf_token %}-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="fromDate" class="form-label">From Date</label>-->
+    <!--                                  <div class="input-group clockpicker">-->
+    <!--                                    <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>-->
+    <!--                                <input type="date" class="form-control slug-title" name="fromDate" id="fromDate" value="{{ request.GET.fromDate }}" >-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="toDate" class="form-label">To Date</label>-->
+    <!--                                  <div class="input-group clockpicker">-->
+    <!--                                    <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>-->
+    <!--                                <input type="date" class="form-control slug-title" name="toDate" id="toDate" value="{{ request.GET.toDate }}" >-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Status</label>-->
+    <!--                                 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="far fa-comment-alt"></i></span>-->
+    <!--                                <select name="status" aria-label="Select a Status" data-placeholder="Select a Segment..." id="status" class="form-select form-select-solid" style="background-color: #ebebeb4a;" value="{{ request.GET.status }}">-->
+				<!--						<option value="">Select a status...</option>-->
+				<!--						{% for s in statuses %}-->
+    <!--                                        <option value="{{s.status}}">{{s.status}}</option>-->
+    <!--                                    {% endfor %}-->
+				<!--					</select>-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Company Name</label>-->
+    <!--                                <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="business_name" id="business_name" placeholder="Search By Company Name " value="{{ request.GET.business_name }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Client Name</label>-->
+    <!--                                <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-landmark"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="c_name" id="c_name" placeholder="Search By Client Client Name " value="{{ request.GET.c_name }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Email</label>-->
+    <!--                                <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-at"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="email" id="email" placeholder="Search By email" value="{{ request.GET.email }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Mobile Number</label>-->
+    <!--                                <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-at"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="mobile" id="mobile" placeholder="Search By Mobile Number" value="{{ request.GET.mobile }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">House no. & Building name</label>-->
+    <!--                                	 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-home"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="house_no" id="house_no" placeholder="Search By House no. & Building name" value="{{ request.GET.house_no }}" oninput="this.value = this.value.replace(/[^0-9]/g, '');">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Address</label>-->
+    <!--                                				 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="address" id="address" placeholder="Search By Address " value="{{ request.GET.address }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Area</label>-->
+    <!--                                <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-map-signs"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="area" id="area" placeholder="Search By Area " value="{{ request.GET.area }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">City</label>-->
+    <!--                                	 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-map"></i></span>-->
+    <!--                                <select name="city" aria-label="Select a City" id="city" value="{{ request.GET.city }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">-->
+    <!--                                    <option value="">Select City</option>-->
+    <!--                                    {% for city in cites %}-->
+    <!--                                        <option value="{{ city.city }}">{{ city.city }}</option>-->
+    <!--                                    {% endfor %}-->
+    <!--                                </select>-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Pincode</label>-->
+    <!--                                 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-map-pin"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="pincode" id="pincode" placeholder="Search By Pincode " value="{{ request.GET.pincode }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">State</label>-->
+    <!--                                	 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-globe"></i></span>-->
+    <!--                                <select name="state" aria-label="Select a City" id="state" value="{{ request.GET.state }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">-->
+    <!--                                    <option value="">Select City</option>-->
+    <!--                                    {% for city in cites %}-->
+    <!--                                        <option value="{{ city.state }}">{{ city.state }}</option>-->
+    <!--                                    {% endfor %}-->
+    <!--                                </select>-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Country</label>-->
+    <!--                                <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-globe"></i></span>-->
                                              
-                                    <input type="text" class="form-control slug-title" name="country" id="country" placeholder="Search By Country " value="{{ request.GET.country }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Segment</label>
-                                     <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-file-alt"></i></span>
-                                    <input type="text" class="form-control slug-title" name="segment" id="segment" placeholder="Search By Segment " value="{{ request.GET.segment }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Remark</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
+    <!--                                <input type="text" class="form-control slug-title" name="country" id="country" placeholder="Search By Country " value="{{ request.GET.country }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Segment</label>-->
+    <!--                                 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-file-alt"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="segment" id="segment" placeholder="Search By Segment " value="{{ request.GET.segment }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Remark</label>-->
+    <!--                                <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="far fa-comment-alt"></i></span>-->
                                              
-                                    <input type="text" class="form-control slug-title" name="remark" id="remark" placeholder="Search By Remark " value="{{ request.GET.remark }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Source</label>
-                                    <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-dice-d20"></i></span>
+    <!--                                <input type="text" class="form-control slug-title" name="remark" id="remark" placeholder="Search By Remark " value="{{ request.GET.remark }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Source</label>-->
+    <!--                                <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-dice-d20"></i></span>-->
                                              
-									<select name="source" aria-label="Select a Source" data-placeholder="Select a Source..." id="source" value="{{ request.GET.source }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">
-                                        <option value="">Select a Source...</option>
-    									{%for i in sources%}
-    									    <option value="{{i.lead_Type}}">{{i.lead_Type}}</option>
-    									{% endfor %}
-    								</select>
-    								</div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Next Followup Date</label>
-                                    	 <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                    <input type="date" class="form-control slug-title" name="next_followup_date" id="next_followup_date" placeholder="Search By Remark " value="{{ request.GET.next_followup_date }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Stage</label>
-                                     <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="fas fa-running"></i></span>
-                                    <input type="text" class="form-control slug-title" name="stage_by" id="stage_by" placeholder="Search By Stage " value="{{ request.GET.stage_by }}">
-                                </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <label for="inputEmail4" class="form-label">Assign</label>
-                                     <div class="input-group clockpicker">
-                                              <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>
-                                    <select name="assign_to" aria-label="Select a Segment" data-placeholder="Select a Segment..." id="assign_to" class="form-select form-select-solid" style="background-color: #ebebeb4a;" value="{{ request.GET.assign_to }}">
-										<option value="">Select a name...</option>
-										{%for i in assign_name%}
-											<option value="{{i.userId}}">{{i.name}}</option>
-										{% endfor %}
-									</select>
-                                </div>
-                                </div>
-                        </div>
-                    </div><br>
+				<!--					<select name="source" aria-label="Select a Source" data-placeholder="Select a Source..." id="source" value="{{ request.GET.source }}" class="form-select form-select-solid" style="background-color: #ebebeb4a;">-->
+    <!--                                    <option value="">Select a Source...</option>-->
+    <!--									{%for i in sources%}-->
+    <!--									    <option value="{{i.lead_Type}}">{{i.lead_Type}}</option>-->
+    <!--									{% endfor %}-->
+    <!--								</select>-->
+    <!--								</div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Next Followup Date</label>-->
+    <!--                                	 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>-->
+    <!--                                <input type="date" class="form-control slug-title" name="next_followup_date" id="next_followup_date" placeholder="Search By Remark " value="{{ request.GET.next_followup_date }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Stage</label>-->
+    <!--                                 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="fas fa-running"></i></span>-->
+    <!--                                <input type="text" class="form-control slug-title" name="stage_by" id="stage_by" placeholder="Search By Stage " value="{{ request.GET.stage_by }}">-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                            <div class="col-lg-12">-->
+    <!--                                <label for="inputEmail4" class="form-label">Assign</label>-->
+    <!--                                 <div class="input-group clockpicker">-->
+    <!--                                          <span class="input-group-text"><i class="far fa-hand-point-right"></i></span>-->
+    <!--                                <select name="assign_to" aria-label="Select a Segment" data-placeholder="Select a Segment..." id="assign_to" class="form-select form-select-solid" style="background-color: #ebebeb4a;" value="{{ request.GET.assign_to }}">-->
+				<!--						<option value="">Select a name...</option>-->
+				<!--						{%for i in assign_name%}-->
+				<!--							<option value="{{i.userId}}">{{i.name}}</option>-->
+				<!--						{% endfor %}-->
+				<!--					</select>-->
+    <!--                            </div>-->
+    <!--                            </div>-->
+    <!--                    </div>-->
+    <!--                </div><br>-->
                     
-                    <div style="display:flex;">
-                        <div class="col-lg-6" style="margin: 0px 0 0 15px;">
-                            <button type="submit" style="width:89%" class="btn btn-primary">Submit</button>
-                        </div> 
-                        <div class="col-lg-6" style="margin: 0px 0 0 15px;">
-                            <button type="button" id="resetButton" style="width:89%" class="btn btn-primary" onclick="resetForm();">Reset</button>
-                        </div>
-                    </div>  
-                        </form>
-                </div>
+    <!--                <div style="display:flex;">-->
+    <!--                    <div class="col-lg-6" style="margin: 0px 0 0 15px;">-->
+    <!--                        <button type="submit" style="width:89%" class="btn btn-primary">Submit</button>-->
+    <!--                    </div> -->
+    <!--                    <div class="col-lg-6" style="margin: 0px 0 0 15px;">-->
+    <!--                        <button type="button" id="resetButton" style="width:89%" class="btn btn-primary" onclick="resetForm();">Reset</button>-->
+    <!--                    </div>-->
+    <!--                </div>  -->
+    <!--                    </form>-->
+    <!--            </div>-->
 				<!--end side Filter-->
 			
 			
@@ -1199,6 +1213,17 @@ document.addEventListener("DOMContentLoaded", function() {
                     ${options}
                 </select>
             `,
+              didOpen: () => {
+                // Force display block for dropdown if hidden by CSS
+                const dropdown = document.getElementById('userDropdown');
+                dropdown.style.setProperty('display', 'block', 'important');
+
+                // Apply select2
+                $('#userDropdown').select2({
+                    dropdownParent: $('.swal2-popup'),
+                    width: '100%'
+                });
+            },
             showCancelButton: true,
             confirmButtonText: 'Assign',
             cancelButtonText: 'Cancel',

@@ -234,6 +234,7 @@ select {
                         <!--</p>-->
                     </div>
                     <div>
+                        <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-backward"></i> Back</a>
                         <a href="{% url 'meeting_list' %}" type="button"
 							class="btn btn-primary right-sidebar-in content-sidebar-menu">
 							<i class="bi bi-person-fill" style="font-size: 1rem;"></i>View Meeting
@@ -260,7 +261,7 @@ select {
                                         {% csrf_token %}
                                         
                                         <div class="col-lg-6">
-                                            <label class="form-label">Company</label>
+                                            <label class="form-label">Company <span style="color:red">*</span></label>
                                               <div class="input-group clockpicker">
                                               <span class="input-group-text"><i class="fas fa-landmark"></i></span>
                                             <select name="company_id" aria-label="Project Include" required data-placeholder="Select a Company..." 
@@ -273,7 +274,7 @@ select {
                                         </div>
                                    </div>
                                         <div class="col-lg-6">
-                                            <label class="form-label">Meeting Time</label>
+                                            <label class="form-label">Meeting Time <span style="color:red">*</span></label>
                                             <div class="input-group clockpicker">
                                               <span class="input-group-text"><i class="fa-solid fa-clock-rotate-left"></i></span>
                                             <select name="meeting_time" aria-label="Metting Time" required
@@ -287,7 +288,7 @@ select {
                                         </div>
 </div>
                                         <div class="col-lg-6">
-                                            <label for="inputName" class="form-label">Client Name</label>
+                                            <label for="inputName" class="form-label">Client Name <span style="color:red">*</span></label>
                                                    <div class="input-group clockpicker">
                                               <span class="input-group-text"><i class="fas fa-landmark"></i></span>
                                             <input type="text" required class="form-control slug-title"
@@ -296,7 +297,7 @@ select {
                                         </div>
 </div>
                                         <div class="col-lg-6">
-                                            <label for="inputRemark" class="form-label">Remark</label>
+                                            <label for="inputRemark" class="form-label">Remark <span style="color:red">*</span></label>
                                                 <div class="input-group clockpicker">
                                               <span class="input-group-text"><i class="far fa-comment-alt"></i></span>
                                             <input type="text" required class="form-control slug-title" name="remark"

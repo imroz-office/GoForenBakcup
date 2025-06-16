@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+   {% extends "base.html" %}
 {% load static %}
 
 {% block start %}
@@ -206,7 +206,10 @@ select {
             <div>
               <h1>{{ is_edit|yesno:"Edit Applicant,Add Applicant" }}</h1>
             </div>
-          <li><a href="{% url 'hiring_list' %}" class="btn btn-primary"><i class="fa-regular fa-address-book me-2"></i>View All</a></li>
+          <li>
+              <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-backward"></i> Back</a>
+              <!--<a href="{% url 'hiring_list' %}" class="btn btn-primary"><i class="fa-regular fa-address-book me-2"></i>View All</a>-->
+              </li>
         </div>
       </div>
     </div>
@@ -227,7 +230,7 @@ select {
   <input type="text"name="from_filling" class="form-control" value="NEW_CRM" hidden>
 
 <div class="col-lg-6">
-  <label for="applied_from_company" class="form-label">Apply from Company</label>
+  <label for="applied_from_company" class="form-label">Apply from Company <span style="color:red;">*</span></label>
   <!--<input type="text" id="applied_from_company" name="applied_from_company" class="form-control" value="Success Innovative Technologies Pvt Ltd">-->
 
     <select name="applied_from_company" required  id="applied_from_company" class="form-select form-select-solid" style="background-color: #ebebeb4a;">

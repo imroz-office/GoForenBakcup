@@ -200,13 +200,14 @@ select {
     <div class="container-fluid">
         <div class="row">
             <div class="main-div">
-                <div class="breadcrumb-wrapper breadcrumb-contacts"
+                <div class="breadcrumb-wrapper breadcrumb-contacts mb-3"
                     style="display: flex; justify-content: space-between;">
                     <div>
                         <h4>{{amc.company_name}} AMC Details</h4>
                     </div>
                     <div>
-                        <a href="{% url 'AMC' %}" class="btn btn-primary me-2"><i class="fa-solid fa-backward" style="margin-right:7px"></i>Back</a>
+                        <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary right-sidebar-in content-sidebar-menu"><i class="fa-solid fa-backward"></i> Back</a>
+                        <!--<a href="{% url 'AMC' %}" class="btn btn-primary me-2"><i class="fa-solid fa-backward" style="margin-right:7px"></i>Back</a>-->
                     </div>
                 </div>
             </div>

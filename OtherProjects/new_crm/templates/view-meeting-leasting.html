@@ -318,14 +318,14 @@ select {
     				<div class="row ec-vendor-uploads">
     					<div class="col-lg-12">
     						<div class="ec-vendor-upload-detail">
-                                <form class="form row g-3" id="addtaskForm" action="{% url 'dcr_excel' %}" method="post"> 
+                                <form class="form row g-3" id="addtaskForm" action="{% url 'meeting_list' %}" method="get"> 
                                  {% csrf_token %}
                                 <div class="col-lg-4">
                                     <div class="example">
                                         <p class="mb-1">Date Range With Time</p>
                                         <div class="input-group clockpicker">
                                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                                        <input type="text" class="form-control input-daterange-timepicker" name="fromDate" />
+                                        <input type="text" class="form-control input-daterange-timepicker" name="from_date" />
                                     </div>
                                     </div>
                                 </div>
@@ -343,7 +343,7 @@ select {
                                     <input type="text" class="form-control slug-title" name="name" id="name" placeholder="Search By Client Name" value="{{ request.GET.name }}">
                                 </div>
                                 </div>
-                               
+                                
                                  <div style="display:flex;justify-content:end">
                         <div class="col-lg-2" style="margin: 0px 0 0 15px;">
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -422,7 +422,7 @@ select {
                                     <label for="fromDate" class="form-label">From Date</label>
                                        <div class="input-group clockpicker">
                                               <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                    <input type="date" class="form-control slug-title" name="fromDate" id="fromDate" value="{{ request.GET.fromDate }}" >
+                                    <input type="date" class="form-control slug-title" name="from_date" id="fromDate" value="{{ request.GET.fromDate }}" >
                                 </div>
                                 </div>
                                 <div class="col-lg-12">

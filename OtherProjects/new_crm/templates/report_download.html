@@ -251,7 +251,9 @@ select {
                                         <p class="mb-1">Date Range With Time</p>
                                         <div class="input-group clockpicker">
                                         <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
-                                        <input type="text" class="form-control input-daterange-timepicker" name="fromDate" />
+                                        <!-- <input type="text" class="form-control input-daterange-timepicker" name="fromDate" /> -->
+                                         <input type="text" class="form-control input-daterange-timepicker" name="fromDate" value="{{ request.POST.fromDate|default:'' }}" />
+
                                     </div>
                                     </div>
                                 </div>

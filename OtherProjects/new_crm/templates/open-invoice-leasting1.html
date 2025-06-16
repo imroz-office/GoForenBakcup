@@ -27,6 +27,18 @@
 {% if request.GET.success1 %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Hide any select dropdowns inside swal popup
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .swal2-container select,
+            .swal2-container .select2-container {
+                display: none !important;
+            }
+            .dropdown-select.wide{
+                display:none;
+            }
+        `;
+        document.head.appendChild(style);
         Swal.fire({
             icon: 'success',
             title: 'Invoice Edit Successfully!',
@@ -693,7 +705,7 @@ select {
     						<div class="ec-vendor-upload-detail">
                                 <form class="form row g-3" id="addtaskForm" action="{% url 'invoice_excel' %}" method="post">
                                     {% csrf_token %}
-                                    <div class="col-lg-3">
+                                    <!-- <div class="col-lg-3">
                                         <label for="inputRemark" class="form-label">From Date</label>
                                         <input type="date" class="form-control slug-title" name="from_date">
                                     </div>
@@ -701,8 +713,17 @@ select {
                                     <div class="col-lg-3">
                                         <label for="inputRemark" class="form-label">To Date</label>
                                         <input type="date" class="form-control slug-title" name="to_date">
+                                    </div> -->
+                                <div class="col-lg-4">
+                                    <div class="example">
+                                        <p class="mb-1">Date Range With Time</p>
+                                         <div class="input-group clockpicker">
+                                        <span class="input-group-text"><i class="fa-solid fa-calendar-days"></i></span>
+                                        <input type="text" class="form-control input-daterange-timepicker" name="date_range" value="{{ request.GET.date_range }}">
                                     </div>
-                                    
+                                </div>
+                                </div>
+
                                     <div class="col-lg-3">
                                         <button type="submit" class="btn btn-primary">Download</button>
                                     </div>

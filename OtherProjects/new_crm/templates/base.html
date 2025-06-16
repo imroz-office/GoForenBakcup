@@ -852,7 +852,7 @@
                 if(response.company_data) {
                     var select = $("select[name='company']");
                     
-                   select.find('option').not(':lt(2)').remove();
+                  select.find('option').not(':lt(2)').remove();
                     
                     $.each(response.company_data, function(index, company) {
                         select.append(
